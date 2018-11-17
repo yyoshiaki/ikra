@@ -2,6 +2,12 @@
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとしてcount tableをexperiment matrix（tpTregTconv_rnaseq_experiment_table.csv）から自動でつくる。salmonを用いる。
 
+実行例
+
+```bash
+$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv 
+```
+
 ## やること
 
 - fastqかSRRの判別
