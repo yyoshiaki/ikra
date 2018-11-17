@@ -5,7 +5,7 @@
 実行例
 
 ```bash
-$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv 
+$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv examle mm10
 ```
 
 ## やること
