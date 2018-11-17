@@ -23,8 +23,7 @@ args
 
 ## 参考
 
-- [biocontainer : SNP-calling](http://biocontainers.pro/docs/containers-examples/SNP-Calling/)
+- [biocontainers : SNP-calling](http://biocontainers.pro/docs/containers-examples/SNP-Calling/)
 - [idep](http://bioinformatics.sdstate.edu/idep/)
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
-
