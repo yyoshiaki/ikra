@@ -8,6 +8,11 @@
 $ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv examle mm10
 ```
 
+args
+1. experiment matrix
+2. output dir
+3. reference
+
 ## やること
 
 - fastqかSRRの判別
@@ -18,6 +23,7 @@ $ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv examle mm10
 
 ## 参考
 
+- [biocontainer : SNP-calling](http://biocontainers.pro/docs/containers-examples/SNP-Calling/)
 - [idep](http://bioinformatics.sdstate.edu/idep/)
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
