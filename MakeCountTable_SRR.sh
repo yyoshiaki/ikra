@@ -11,7 +11,7 @@ COMMENTOUT
 EX_MATRIX_FILE=$1
 RUNINDOCKER=1
 THREADS=8
-REF_TRANSCRIPT=gencode.v29.lncRNA_transcripts.fa.gz
+REF_TRANSCRIPT=gencode.v29.transcripts.fa.gz
 INDEX=salmon_index
 PREFETCH=prefetch
 PFASTQ_DUMP=pfastq-dump
@@ -20,6 +20,7 @@ FASTQC=fastqc
 MULTIQC=multiqc
 TRIMMOMATIC=trimmomatic
 SALMON=salmon
+
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
@@ -64,17 +65,6 @@ fi
 echo ${1}
 cat $1
 
-
-# download reference transcripts
-if [[ ! -f "gencode.v29.lncRNA_transcripts.fa.gz" ]]; then
-  wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.transcripts.fa.gz
-fi
-
-# instance salmon index
-if [[ ! -f "$REF_TRANSCRIPT" ]]; then
-  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $INDEX
-fi
-
 # fastq_dump
 for i in `tail -n +2  $1`
 do
@@ -109,6 +99,16 @@ done
 # multiqc
 if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
   $MULTIQC -n multiqc_report_rawfastq.html .
+fi
+
+# download reference transcripts
+if [[ ! -f "gencode.v29.transcripts.fa.gz" ]]; then
+  wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.transcripts.fa.gz
+fi
+
+# instance salmon index
+if [[ ! -f "$REF_TRANSCRIPT" ]]; then
+  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $INDEX
 fi
 
 for i in `tail -n +2  $1`
