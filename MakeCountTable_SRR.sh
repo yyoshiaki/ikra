@@ -1,37 +1,18 @@
 #! bin/bash
-
-# track log.
-# set -xeu
-
-<<COMMENT_OUT
-
-usage
-
-```
-$ bash MakCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv examle mm10
-```
-
-params.
-1. experiment matrix
-2. output directly
-3. reference
-
+set -xeu
+<<COMMENTOUT
 - fastqかSRRの判別
 - trimmomatic
 - gtf, transcript file をGENCODEから
 - salmon
-- ignore example
-- mkdir for example
-
-COMMENT_OUT
+COMMENTOUT
 
 # 実験テーブル.csv
 EX_MATRIX_FILE=$1
-# dockerを使うときは1.
 RUNINDOCKER=1
-# number of threads.
-THREADS=4
-# define programs to run.
+THREADS=8
+REF_TRANSCRIPT=gencode.v29.lncRNA_transcripts.fa.gz
+INDEX=salmon_index
 PREFETCH=prefetch
 PFASTQ_DUMP=pfastq-dump
 FASTQ_DUMP=fastq-dump
@@ -39,19 +20,16 @@ FASTQC=fastqc
 MULTIQC=multiqc
 TRIMMOMATIC=trimmomatic
 SALMON=salmon
-
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
+  # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
   DRUN="docker run --rm -v $PWD:/data --workdir /data -i"
   #--user=biodocker
-
-  # set docker images and their version. search docker hub.
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc
   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
   SALMON_IMAGE=combinelab/salmon:latest
-
   docker pull $SRA_TOOLKIT_IMAGE
   docker pull $FASTQC_IMAGE
   docker pull $MULTIQC_IMAGE
@@ -65,7 +43,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
-  # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
+   # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
 fi
@@ -85,114 +63,103 @@ fi
 
 echo ${1}
 cat $1
-
-# prefetch
-# remove first row and extract each row.
-for i in `tail -n +2  $1`
-do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  echo "$name $fqfile"
-  # prefetch if you do not have SRA or FASTQ files.
-  if [[ ! -f "$SRA_ROOT/$SRR.sra" ]] && [[ ! -f "$SRR.fastq" ]]; then
-    $PREFETCH $SRR $DATA/--max-size $MAXSIZE
-  fi
-done
-
-
-# # pfastq_dump
+ # # prefetch
+# # 先頭一行をとばす。
+# for i in `tail -n +2  $1`
+# do
+# name=`echo $i | cut -d, -f1`
+# SRR=`echo $i | cut -d, -f2`
+# #   echo "$name $fqfile"
+# if [[ ! -f "$SRA_ROOT/$SRR.sra" ]] && [[ ! -f "$SRR.fastq" ]]; then
+# $PREFETCH $SRR --max-size $MAXSIZE
+# fi
+# done
+ # # pfastq_dump
 # for i in `tail -n +2  $1`
 # do
 # name=`echo $i | cut -d, -f1`
 # SRR=`echo $i | cut -d, -f2`
 # LAYOUT=`echo $i | cut -d, -f3`
-
-# # SE
+ # # SE
 # if [ $LAYOUT = SE ]; then
-
-# if [[ ! -f "$SRR.fastq.gz" ]]; then
+ # if [[ ! -f "$SRR.fastq.gz" ]]; then
 # $PFASTQ_DUMP --threads $THREADS $SRR.sra
 # gzip $SRR.fastq
 # fi
-
-# # PE
+ # # PE
 # else
 # if [[ ! -f "$SRR_1.fastq.gz" ]]; then
 # $PFASTQ_DUMP --threads $THREADS $SRR.sra --split-files
 # gzip $SRR_1.fastq
 # gzip $SRR_2.fastq
 # fi
-
-# fi
+ # fi
 # done
 
+# download reference transcripts
+if [[ ! -f "gencode.v29.lncRNA_transcripts.fa.gz" ]]; then
+  wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.transcripts.fa.gz
+fi
+
+# instance salmon index
+if [[ ! -f "$REF_TRANSCRIPT" ]]; then
+  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $INDEX
+fi
+
 # fastq_dump
-# remove first row and extract each row.
-<<COMMENT_OUT
 for i in `tail -n +2  $1`
 do
-  # first column
   name=`echo $i | cut -d, -f1`
-  # second column
   SRR=`echo $i | cut -d, -f2`
-  # third column
   LAYOUT=`echo $i | cut -d, -f3`
-  # -d: 区切り文字を指定する
-  # -f: 必要な項目を項目数で指定する
 
-  # SE
+   # SE
   if [ $LAYOUT = SE ]; then
+    # fastq_dump
     if [[ ! -f "$SRR.fastq.gz" ]]; then
       $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
     fi
-  # PE
-  else
-    if [[ ! -f "$SRR_1.fastq.gz" ]]; then
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
-    fi
-  fi
-done
-
-# fastqc
-for i in `tail -n +2  $1`
-do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
-  # SE
-  if [ $LAYOUT = SE ]; then
-    if [[ ! -f "${SRR}_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}.fastq.gz
-    fi
-  # PE
-  else
-    if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_1.fastq.gz
-    $FASTQC -t $THREADS ${SRR}_2.fastq.gz
-    fi
-  fi
-done
-
-
-# multiqc
-$MULTIQC -n multiqc_report_rawfastq.html .
-
-for i in `tail -n +2 $1`
-do
-  # SE
-  if [ $LAYOUT = SE ]; then
+    # fastqc
     if [[ ! -f "${SRR}_fastqc.zip" ]]; then
       $FASTQC -t $THREADS ${SRR}.fastq.gz
     fi
+    # multiqc
+    if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
+      $MULTIQC -n multiqc_report_rawfastq.html .
+    fi
+    # salmon
+    if [[ ! -f "salmon_output_${SRR}" ]]; then
+      mkdir salmon_output_${SRR}
+      $SALMON quant -i $INDEX -l A -r ${SRR}.fastq.gz -p $THREADS -o salmon_output_${SRR}
+    fi
+
   # PE
   else
+    # fastq_dump
+    if [[ ! -f "$SRR_1.fastq.gz" ]]; then
+      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+    fi
+    # fastqc
     if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
       $FASTQC -t $THREADS ${SRR}_1.fastq.gz
       $FASTQC -t $THREADS ${SRR}_2.fastq.gz
     fi
+    # multiqc
+    if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
+      $MULTIQC -n multiqc_report_rawfastq.html .
+    fi
+    # salmon
+    if [[ ! -f "salmon_output_${SRR}" ]]; then
+      salmon quant -i $INDEX -l A -1 ${SRR}_1.fastq.gz -2 ${SRR}_2.fastq.gz -p $THREADS -o salmon_output_${SRR}
+    fi
   fi
 done
 
+
+
+
+<<COMMENT_OUT
+# trimmomatic
 for i in `tail -n +2  $1`
 do
   name=`echo $i | cut -d, -f1`
@@ -200,27 +167,34 @@ do
   LAYOUT=`echo $i | cut -d, -f3`
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[ ! -f "${SRR}_fastqc.zip" ]]; then
-    $TRIMMOMATIC $LAYOUT -threads $THREADS -phred33 \
-    ${SRR}.fastq.gz \
-    ${SRR}_after_trim.fastq \
-    ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+    # trimmomatic
+    if [[ ! -f "${SRR}.trimmed.fastq.gz" ]]; then
+      $TRIMMOMATIC \
+      $LAYOUT \
+      -threads $THREADS \
+      -phred33 \
+      -trimlog log.${SRR}.txt \
+      ${SRR}.fastq.gz \
+      ${SRR}.trimmed.fastq.gz \
+      ILLUMINACLIP:adapters.fa:2:10:10  \
+      LEADING:20 \
+      TRAILING:20 \
+      MINLEN:30
     fi
   # PE
   else
-    if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-    $TRIMMOMATIC $LAYOUT -threads $THREADS -phred33 ${SRR}.fastq.gz ${SRR}_after_trim.fastq \
-    $FASTQC -t $THREADS ${SRR}_1.fastq.gz \
-    $FASTQC -t $THREADS ${SRR}_2.fastq.gz \
-    ${SRR}_paired_output_1.fq \
-    ${SRR}_unpaired_output_1.fq \
-    ${SRR}_paired_output_2.fq \
-    ${SRR}_unpaired_output_2.fq \
-    ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+    if [[ ! -f "${SRR}_1_paired.fastq.gz" ]]; then
+      $TRIMMOMATIC \
+      $LAYOUT \
+      -threads $THREADS \
+      -phred33 \
+      -trimlog log.${SRR}.txt \
+      ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
+      ${SRR}_1_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
+      ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
+      ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 \
+      TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     fi
   fi
 done
-
-
-
 COMMENT_OUT
