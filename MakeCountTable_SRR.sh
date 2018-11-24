@@ -3,7 +3,7 @@
 # track log.
 # set -xeu
 
-<<COMMEN_OUT
+<<COMMENT_OUT
 
 usage
 
@@ -23,7 +23,7 @@ params.
 - ignore example
 - mkdir for example
 
-COMMEN_OUT
+COMMENT_OUT
 
 # 実験テーブル.csv
 EX_MATRIX_FILE=$1
@@ -223,4 +223,4 @@ done
 
 
 
-COMMEN_OUT
+COMMENT_OUT
