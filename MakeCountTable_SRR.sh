@@ -28,7 +28,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc
-  TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
+  TRIMMOMATIC_IMAGE=fjukstad/trimmomatic:latest
   SALMON_IMAGE=combinelab/salmon:latest
   docker pull $SRA_TOOLKIT_IMAGE
   docker pull $FASTQC_IMAGE
@@ -92,16 +92,6 @@ do
     if [[ ! -f "${SRR}_fastqc.zip" ]]; then
       $FASTQC -t $THREADS ${SRR}.fastq.gz
     fi
-    # multiqc
-    if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
-      $MULTIQC -n multiqc_report_rawfastq.html .
-    fi
-    # salmon
-    if [[ ! -f "salmon_output_${SRR}" ]]; then
-      mkdir salmon_output_${SRR}
-      $SALMON quant -i $INDEX -l A -r ${SRR}.fastq.gz -p $THREADS -o salmon_output_${SRR}
-    fi
-
   # PE
   else
     # fastq_dump
@@ -113,17 +103,33 @@ do
       $FASTQC -t $THREADS ${SRR}_1.fastq.gz
       $FASTQC -t $THREADS ${SRR}_2.fastq.gz
     fi
-    # multiqc
-    if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
-      $MULTIQC -n multiqc_report_rawfastq.html .
+  fi
+done
+
+# multiqc
+if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
+  $MULTIQC -n multiqc_report_rawfastq.html .
+fi
+
+for i in `tail -n +2  $1`
+do
+  name=`echo $i | cut -d, -f1`
+  SRR=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
+  # SE
+  if [ $LAYOUT = SE ]; then
+    # salmon
+    if [[ ! -f "salmon_output_${SRR}" ]]; then
+      mkdir salmon_output_${SRR}
+      $SALMON quant -i $INDEX -l A -r ${SRR}.fastq.gz -p $THREADS -o salmon_output_${SRR}
     fi
+  else
     # salmon
     if [[ ! -f "salmon_output_${SRR}" ]]; then
       salmon quant -i $INDEX -l A -1 ${SRR}_1.fastq.gz -2 ${SRR}_2.fastq.gz -p $THREADS -o salmon_output_${SRR}
     fi
   fi
 done
-
 
 
 
