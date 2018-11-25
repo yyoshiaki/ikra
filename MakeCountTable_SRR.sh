@@ -74,41 +74,21 @@ LAYOUT=`echo $i | cut -d, -f3`
 
 # SE
 if [ $LAYOUT = SE ]; then
-
-if [[ ! -f "$SRR.fastq.gz" ]]; then
-$FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
-fi
-
+  if [[ ! -f "$SRR.fastq.gz" ]]; then
+    $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+  fi
+  if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}.fastq.gz
+  fi
 # PE
 else
-if [[ ! -f "$SRR_1.fastq.gz" ]]; then
-$FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
-fi
-
-fi
-done
-
-# fastqc
-for i in `tail -n +2  $1`
-do
-name=`echo $i | cut -d, -f1`
-SRR=`echo $i | cut -d, -f2`
-LAYOUT=`echo $i | cut -d, -f3`
-
-# SE
-if [ $LAYOUT = SE ]; then
-
-if [[ ! -f "${SRR}_fastqc.zip" ]]; then
-$FASTQC -t $THREADS ${SRR}.fastq.gz
-fi
-
-# PE
-else
-if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-$FASTQC -t $THREADS ${SRR}_1.fastq.gz
-$FASTQC -t $THREADS ${SRR}_2.fastq.gz
-fi
-
+  if [[ ! -f "$SRR_1.fastq.gz" ]]; then
+    $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+  fi
+  if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}_1.fastq.gz
+    $FASTQC -t $THREADS ${SRR}_2.fastq.gz
+  fi
 fi
 done
 
@@ -117,19 +97,15 @@ if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
   $MULTIQC -n multiqc_report_rawfastq.html .
 fi
 
-
-
-# download gencode.v29.transcripts.fa.gz
+# download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
   wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/$REF_TRANSCRIPT
 fi
-
 
 # instance salmon index
 if [[ ! -f "$INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $INDEX --type quasi -k 31
 fi
-
 
 for i in `tail -n +2  $1`
 do
