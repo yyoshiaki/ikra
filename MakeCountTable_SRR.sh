@@ -64,37 +64,128 @@ fi
 echo ${1}
 cat $1
 
+
 # fastq_dump
 for i in `tail -n +2  $1`
 do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
+name=`echo $i | cut -d, -f1`
+SRR=`echo $i | cut -d, -f2`
+LAYOUT=`echo $i | cut -d, -f3`
 
-   # SE
-  if [ $LAYOUT = SE ]; then
-    if [[ ! -f "$SRR.fastq.gz" ]]; then
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
-    fi
-    if [[ ! -f "${SRR}_fastqc.zip" ]]; then
-      $FASTQC -t $THREADS ${SRR}.fastq.gz
-    fi
-  # PE
-  else
-    if [[ ! -f "$SRR_1.fastq.gz" ]]; then
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
-    fi
-    if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-      $FASTQC -t $THREADS ${SRR}_1.fastq.gz
-      $FASTQC -t $THREADS ${SRR}_2.fastq.gz
-    fi
-  fi
+# SE
+if [ $LAYOUT = SE ]; then
+
+if [[ ! -f "$SRR.fastq.gz" ]]; then
+$FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+fi
+
+# PE
+else
+if [[ ! -f "$SRR_1.fastq.gz" ]]; then
+$FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+fi
+
+fi
+done
+
+# fastqc
+for i in `tail -n +2  $1`
+do
+name=`echo $i | cut -d, -f1`
+SRR=`echo $i | cut -d, -f2`
+LAYOUT=`echo $i | cut -d, -f3`
+
+# SE
+if [ $LAYOUT = SE ]; then
+
+if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+$FASTQC -t $THREADS ${SRR}.fastq.gz
+fi
+
+# PE
+else
+if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
+$FASTQC -t $THREADS ${SRR}_1.fastq.gz
+$FASTQC -t $THREADS ${SRR}_2.fastq.gz
+fi
+
+fi
 done
 
  # multiqc
 if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
   $MULTIQC -n multiqc_report_rawfastq.html .
 fi
+
+
+
+# download gencode.v29.transcripts.fa.gz
+if [[ ! -f "$REF_TRANSCRIPT" ]]; then
+  wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/$REF_TRANSCRIPT
+fi
+
+
+# instance salmon index
+if [[ ! -f "$INDEX" ]]; then
+  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $INDEX --type quasi -k 31
+fi
+
+
+for i in `tail -n +2  $1`
+do
+  name=`echo $i | cut -d, -f1`
+  SRR=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
+  # SE
+  if [ $LAYOUT = SE ]; then
+    if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
+      mkdir salmon_output_${SRR}
+      $SALMON quant -i $INDEX -l A -r ${SRR}.fastq.gz -p $THREADS -o salmon_output_${SRR}
+    fi
+   # PE
+  else
+    if [[ ! -f "salmon_output_${SRR}" ]]; then
+      salmon quant -i $INDEX -l A -1 ${SRR}_1.fastq.gz -2 ${SRR}_2.fastq.gz -p $THREADS -o salmon_output_${SRR}
+    fi
+  fi
+done
+
+<<COMMENTOUT
+
+# prefetch
+# 先頭一行をとばす。
+for i in `tail -n +2  $1`
+do
+name=`echo $i | cut -d, -f1`
+SRR=`echo $i | cut -d, -f2`
+#   echo "$name $fqfile"
+if [[ ! -f "$SRA_ROOT/$SRR.sra" ]] && [[ ! -f "$SRR.fastq" ]]; then
+$PREFETCH $SRR --max-size $MAXSIZE
+fi
+done
+# pfastq_dump
+for i in `tail -n +2  $1`
+do
+name=`echo $i | cut -d, -f1`
+SRR=`echo $i | cut -d, -f2`
+LAYOUT=`echo $i | cut -d, -f3`
+# SE
+if [ $LAYOUT = SE ]; then
+if [[ ! -f "$SRR.fastq.gz" ]]; then
+$PFASTQ_DUMP --threads $THREADS $SRR.sra
+gzip $SRR.fastq
+fi
+# PE
+else
+if [[ ! -f "$SRR_1.fastq.gz" ]]; then
+$PFASTQ_DUMP --threads $THREADS $SRR.sra --split-files
+gzip $SRR_1.fastq
+gzip $SRR_2.fastq
+fi
+fi
+done
+
+COMMENTOUT
 
 <<COMMENTOUT
 # trimmomatic
@@ -105,7 +196,7 @@ do
   LAYOUT=`echo $i | cut -d, -f3`
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[ ! -f "${SRR}.trimmed.fastq.gz" ]]; then
+    if [[ ! -f "${SRR}_after_trim.fastq" ]]; then
 
       $TRIMMOMATIC \
       $LAYOUT \
@@ -121,84 +212,8 @@ do
     fi
   # PE
   else
-    if [[ ! -f "${SRR}${SRR}_1_paired.fastq.gz" ]]; then
-      $TRIMMOMATIC \
-      $LAYOUT \
-      -threads $THREADS \
-      -phred33 \
-      -trimlog log.${SRR}.txt \
-      ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
-      ${SRR}_1_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
-      ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
-      ILLUMINACLIP:adapters.fa:2:30:10 \
-      LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-    fi
-  fi
-done
-COMMENTOUT
-
-# download gencode.v29.transcripts.fa.gz
-if [[ ! -f "$REF_TRANSCRIPT" ]]; then
-  wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/$REF_TRANSCRIPT
-fi
-
-# instance salmon index
-if [[ ! -f "$INDEX" ]]; then
-  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $INDEX --type quasi -k 31
-fi
-
-for i in `tail -n +2  $1`
-do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
-  # SE
-  if [ $LAYOUT = SE ]; then
-    if [[ ! -f "salmon_output_${SRR}" ]]; then
-      mkdir salmon_output_${SRR}
-    fi
-    if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
-      $SALMON quant -i $INDEX -l A -r ${SRR}.fastq.gz -p $THREADS -o salmon_output_${SRR}
-    fi
-   # PE
-  else
-    if [[ ! -f "salmon_output_${SRR}" ]]; then
-      salmon quant -i $INDEX -l A -1 ${SRR}_1.fastq.gz -2 ${SRR}_2.fastq.gz -p $THREADS -o salmon_output_${SRR}
-    fi
-  fi
-done
-
-
-<<COMMENTOUT
-# prefetch
-# 先頭一行をとばす。
-for i in `tail -n +2  $1`
-do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  # echo "$name $fqfile"
-  if [[ ! -f "$SRA_ROOT/$SRR.sra" ]] && [[ ! -f "$SRR.fastq" ]]; then
-    $PREFETCH $SRR --max-size $MAXSIZE
-  fi
-done
-# pfastq_dump
-for i in `tail -n +2  $1`
-do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
-  # SE
-  if [ $LAYOUT = SE ]; then
-    if [[ ! -f "$SRR.fastq.gz" ]]; then
-      $PFASTQ_DUMP --threads $THREADS $SRR.sra
-      gzip $SRR.fastq
-    fi
-  # PE
-  else
-    if [[ ! -f "$SRR_1.fastq.gz" ]]; then
-      $PFASTQ_DUMP --threads $THREADS $SRR.sra --split-files
-      gzip $SRR_1.fastq
-      gzip $SRR_2.fastq
+    if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
+      $TRIMMOMATIC $LAYOUT -threads $THREADS -phred33 -trimlog log.${SRR}.txt ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz ${SRR}_1_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     fi
   fi
 done
