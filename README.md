@@ -27,6 +27,7 @@ $ source ~/.bashrc
 
 - fastqかSRRの判別
 - trimmomatic
+- gene count tableの生成（tximportつかう？つかうならどうやってreproducibleに？https://hub.docker.com/r/fjukstad/tximport/~/dockerfile/　つかう？）
 
 ## やったこと
 

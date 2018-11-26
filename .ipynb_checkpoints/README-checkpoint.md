@@ -27,6 +27,7 @@ $ source ~/.bashrc
 
 - fastqかSRRの判別
 - trimmomatic
+- gene count tableの生成（tximportつかう？つかうならどうやってreproducibleに？https://hub.docker.com/r/fjukstad/tximport/~/dockerfile/　つかう？）
 
 ## やったこと
 
@@ -38,7 +39,6 @@ $ source ~/.bashrc
 ## 注意
 
 - MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数）
-- gtfはidep用にbasic annotationしか使っていない。必要に応じて拡張するべし。
 
 ## 参考
 
