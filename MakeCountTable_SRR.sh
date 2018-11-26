@@ -12,6 +12,7 @@ EX_MATRIX_FILE=$1
 RUNINDOCKER=1
 THREADS=8
 REF_TRANSCRIPT=gencode.v29.pc_translations.fa.gz
+
 INDEX=salmon_index
 PREFETCH=prefetch
 PFASTQ_DUMP=pfastq-dump
@@ -20,6 +21,7 @@ FASTQC=fastqc
 MULTIQC=multiqc
 TRIMMOMATIC=trimmomatic
 SALMON=salmon
+
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
