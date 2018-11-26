@@ -22,14 +22,16 @@ if [[ $REF_SPIECE = mouse ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M19
   REF_TRANSCRIPT=gencode.vM19.transcripts.fa.gz
   SALMON_INDEX=salmon_index_mouse
-  REF_GTF=gencode.vM19.annotation.gtf.gz
+  
+  # only basic anno for idep.
+  REF_GTF=gencode.vM19.chr_patch_hapl_scaff.basic.annotation.gtf.gz
 
 elif [[ $REF_SPIECE = human ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29
   # REF_TRANSCRIPT=gencode.v29.pc_translations.fa.gz
   REF_TRANSCRIPT=gencode.v29.transcripts.fa.gz
   SALMON_INDEX=salmon_index_human
-  REF_GTF=gencode.v29.annotation.gtf.gz
+  REF_GTF=gencode.v29.basic.annotation.gtf.gz
   
   
 else

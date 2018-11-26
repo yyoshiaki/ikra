@@ -38,6 +38,7 @@ $ source ~/.bashrc
 ## 注意
 
 - MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数）
+- gtfはidep用にbasic annotationしか使っていない。必要に応じて拡張するべし。
 
 ## 参考
 

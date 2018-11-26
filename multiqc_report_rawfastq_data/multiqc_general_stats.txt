@@ -1,9 +1,0 @@
-Sample	Salmon_mqc-generalstats-percent_mapped	Salmon_mqc-generalstats-num_mapped
-salmon_output_SRR5385247	0.0	0
-salmon_output_SRR5385248	0.0	0
-salmon_output_SRR5385249	0.0	0
-salmon_output_SRR5385250	0.0	0
-salmon_output_SRR5385251	0.0	0
-salmon_output_SRR5385252	0.0	0
-salmon_output_SRR5385255	0.0	0
-salmon_output_SRR5385256	0.0	0
