@@ -74,12 +74,15 @@ LAYOUT=`echo $i | cut -d, -f3`
 
 # SE
 if [ $LAYOUT = SE ]; then
+  # fastq_dump
   if [[ ! -f "$SRR.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
   fi
+  # fastqc
   if [[ ! -f "${SRR}_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}.fastq.gz
   fi
+  # trimmomatic
   <<COMMENTOUT
   if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
     $TRIMMOMATIC \
@@ -97,13 +100,16 @@ if [ $LAYOUT = SE ]; then
   COMMENTOUT
 # PE
 else
+  # fastq_dump
   if [[ ! -f "$SRR_1.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
   fi
+  # fastqc
   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_1.fastq.gz
     $FASTQC -t $THREADS ${SRR}_2.fastq.gz
   fi
+  # trimmomatic
   <<COMMENTOUT
   if [[ ! -f "${SRR}_1_paired.fastq.gz" ]]; then
     $TRIMMOMATIC \
