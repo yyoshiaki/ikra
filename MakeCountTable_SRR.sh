@@ -1,5 +1,5 @@
 #! bin/bash
-# set -xeu
+set -xeu
 <<COMMENTOUT
 - fastqかSRRの判別
 - trimmomatic
