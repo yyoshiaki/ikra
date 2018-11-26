@@ -80,6 +80,21 @@ if [ $LAYOUT = SE ]; then
   if [[ ! -f "${SRR}_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}.fastq.gz
   fi
+  <<COMMENTOUT
+  if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
+    $TRIMMOMATIC \
+    $LAYOUT \
+    -threads $THREADS \
+    -phred33 \
+    -trimlog log.${SRR}.txt \
+    ${SRR}.fastq.gz \
+    ${SRR}_trimmed.fastq.gz \
+    ILLUMINACLIP:adapters.fa:2:10:10 \
+    LEADING:20 \
+    TRAILING:20 \
+    MINLEN:30
+  fi
+  COMMENTOUT
 # PE
 else
   if [[ ! -f "$SRR_1.fastq.gz" ]]; then
@@ -89,6 +104,19 @@ else
     $FASTQC -t $THREADS ${SRR}_1.fastq.gz
     $FASTQC -t $THREADS ${SRR}_2.fastq.gz
   fi
+  <<COMMENTOUT
+  if [[ ! -f "${SRR}_1_paired.fastq.gz" ]]; then
+    $TRIMMOMATIC \
+    $LAYOUT \
+    -threads $THREADS \
+    -phred33 \
+    -trimlog log.${SRR}.txt \
+    ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
+    ${SRR}_1_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
+    ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
+    ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+  fi
+  COMMENTOUT
 fi
 done
 
@@ -121,7 +149,9 @@ do
    # PE
   else
     if [[ ! -f "salmon_output_${SRR}" ]]; then
-      salmon quant -i $INDEX -l A -1 ${SRR}_1.fastq.gz -2 ${SRR}_2.fastq.gz -p $THREADS -o salmon_output_${SRR}
+      salmon quant -i $INDEX -l A \
+      -1 ${SRR}_1.fastq.gz -2 ${SRR}_2.fastq.gz \
+      -p $THREADS -o salmon_output_${SRR}
     fi
   fi
 done
@@ -161,36 +191,4 @@ fi
 fi
 done
 
-COMMENTOUT
-
-<<COMMENTOUT
-# trimmomatic
-for i in `tail -n +2  $1`
-do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
-  # SE
-  if [ $LAYOUT = SE ]; then
-    if [[ ! -f "${SRR}_after_trim.fastq" ]]; then
-
-      $TRIMMOMATIC \
-      $LAYOUT \
-      -threads $THREADS \
-      -phred33 \
-      -trimlog log.${SRR}.txt \
-      ${SRR}.fastq.gz \
-      ${SRR}.trimmed.fastq.gz \
-      ILLUMINACLIP:adapters.fa:2:10:10  \
-      LEADING:20 \
-      TRAILING:20 \
-      MINLEN:30
-    fi
-  # PE
-  else
-    if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
-      $TRIMMOMATIC $LAYOUT -threads $THREADS -phred33 -trimlog log.${SRR}.txt ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz ${SRR}_1_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-    fi
-  fi
-done
 COMMENTOUT
