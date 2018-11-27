@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv mouse
+$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mouse
 
 - fastqかSRRの判別
 - trimmomatic
@@ -18,18 +18,23 @@ RUNINDOCKER=1
 THREADS=8
 REF_SPIECE=$2
 
+DOCKER=docker
+# DOCKER=udocker # udockerも指定できる。
+
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+
 if [[ $REF_SPIECE = mouse ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M19
   REF_TRANSCRIPT=gencode.vM19.transcripts.fa.gz
   SALMON_INDEX=salmon_index_mouse
-  REF_GTF=gencode.vM19.annotation.gtf.gz
+#   REF_GTF=gencode.vM19.annotation.gtf.gz
 
 elif [[ $REF_SPIECE = human ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29
   # REF_TRANSCRIPT=gencode.v29.pc_translations.fa.gz
   REF_TRANSCRIPT=gencode.v29.transcripts.fa.gz
   SALMON_INDEX=salmon_index_human
-  REF_GTF=gencode.v29.annotation.gtf.gz
+#   REF_GTF=gencode.v29.annotation.gtf.gz
   
   
 else
@@ -50,8 +55,7 @@ SALMON=salmon
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
-  DOCKER=docker
-  # DOCKER=udocker # udockerも指定できる。
+
   DRUN="$DOCKER run --rm -v $PWD:/data --workdir /data -i"
   #--user=biodocker
   
@@ -155,7 +159,6 @@ if [ $LAYOUT = SE ]; then
   fi
   
   # trimmomatic
-<<COMMENTOUT
   if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
     $TRIMMOMATIC \
     $LAYOUT \
@@ -169,7 +172,7 @@ if [ $LAYOUT = SE ]; then
     TRAILING:20 \
     MINLEN:30
   fi
-COMMENTOUT
+
   
 # PE
 else
@@ -185,7 +188,6 @@ else
   fi
   
   # trimmomatic
-<<COMMENTOUT
   if [[ ! -f "${SRR}_1_paired.fastq.gz" ]]; then
     $TRIMMOMATIC \
     $LAYOUT \
@@ -197,7 +199,6 @@ else
     ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
     ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
   fi
-COMMENTOUT
 
 fi
 done
@@ -212,13 +213,13 @@ if [[ ! -f "$REF_TRANSCRIPT" ]]; then
   wget $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
 fi
 
-# download $REF_GTF
-if [[ ! -f "$REF_GTF" ]]; then
-  wget $BASE_REF_TRANSCRIPT/$REF_GTF
-fi
+# # download $REF_GTF
+# if [[ ! -f "$REF_GTF" ]]; then
+#   wget $BASE_REF_TRANSCRIPT/$REF_GTF
+# fi
 
 # instance salmon index
-if [[ ! -f "$SALMON_INDEX" ]]; then
+if [[ ! -d "$SALMON_INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
 fi
 
@@ -238,7 +239,7 @@ do
       -r ${SRR}.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
-      -g $REF_GTF
+#       -g $REF_GTF
     fi
     
    # PE
@@ -252,8 +253,12 @@ do
       -2 ${SRR}_2.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
-      -g $REF_GTF
+#       -g $REF_GTF
     fi
   fi
 done
 
+ # multiqc
+if [[ ! -f "multiqc_report_aftersalmon.html" ]]; then
+  $MULTIQC -n multiqc_report_aftersalmon.html .
+fi
