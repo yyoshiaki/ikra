@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mouse
+$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv mouse
 
 - fastqかSRRの判別
 - trimmomatic
