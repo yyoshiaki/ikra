@@ -1,9 +1,0 @@
-Module	Section	Sample Name	Source
-FastQC	all_sections	SRR5385251	/data/SRR5385251_fastqc.zip
-FastQC	all_sections	SRR5385250	/data/SRR5385250_fastqc.zip
-FastQC	all_sections	SRR5385252	/data/SRR5385252_fastqc.zip
-FastQC	all_sections	SRR5385255	/data/SRR5385255_fastqc.zip
-FastQC	all_sections	SRR5385247	/data/SRR5385247_fastqc.zip
-FastQC	all_sections	SRR5385256	/data/SRR5385256_fastqc.zip
-FastQC	all_sections	SRR5385248	/data/SRR5385248_fastqc.zip
-FastQC	all_sections	SRR5385249	/data/SRR5385249_fastqc.zip
