@@ -5,3 +5,5 @@ salmon*
 *.zip
 multiqc*
 log*
+counttable.tsv
+designtable.csv

@@ -28,6 +28,7 @@ if [[ $REF_SPIECE = mouse ]]; then
   REF_TRANSCRIPT=gencode.vM19.transcripts.fa.gz
   SALMON_INDEX=salmon_index_mouse
 #   REF_GTF=gencode.vM19.annotation.gtf.gz
+  TX2SYMBOL=gencode.vM19.metadata.MGI.gz
 
 elif [[ $REF_SPIECE = human ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29
@@ -35,7 +36,7 @@ elif [[ $REF_SPIECE = human ]]; then
   REF_TRANSCRIPT=gencode.v29.transcripts.fa.gz
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
-  
+  TX2SYMBOL=gencode.v29.metadata.HGNC.gz
   
 else
   echo No reference speice!
@@ -50,13 +51,15 @@ FASTQC=fastqc
 MULTIQC=multiqc
 TRIMMOMATIC=trimmomatic
 SALMON=salmon
+RSCRIPT_TXIMPORT=Rscript
 
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/data --workdir /data -i"
+  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+  SCRIPT_DIR="."
   #--user=biodocker
   
   COWSAY_IMAGE=docker/whalesay
@@ -66,6 +69,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
   SALMON_IMAGE=combinelab/salmon:latest
+  RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
@@ -73,6 +77,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $MULTIQC_IMAGE
   $DOCKER pull $TRIMMOMATIC_IMAGE
   $DOCKER pull $SALMON_IMAGE
+  $DOCKER pull $RSCRIPT_TXIMPORT_IMAGE
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
   PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
@@ -83,6 +88,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
+  RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
+  
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
@@ -176,7 +183,7 @@ if [ $LAYOUT = SE ]; then
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
   fi
   
@@ -234,6 +241,11 @@ fi
 #   wget $BASE_REF_TRANSCRIPT/$REF_GTF
 # fi
 
+# download $TX2SYMBOL
+if [[ ! -f "$REF_TRANSCRIPT" ]]; then
+  wget $BASE_REF_TRANSCRIPT/$TX2SYMBOL
+fi
+
 # instance salmon index
 if [[ ! -d "$SALMON_INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
@@ -274,7 +286,13 @@ do
   fi
 done
 
- # multiqc
+# multiqc
 if [[ ! -f "multiqc_report.html" ]]; then
   $MULTIQC -n multiqc_report.html .
 fi
+
+# tximport
+if [[ ! -f "counttable.tsv" ]]; then
+  $RSCRIPT_TXIMPORT $SCRIPT_DIR/tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
+fi
+
