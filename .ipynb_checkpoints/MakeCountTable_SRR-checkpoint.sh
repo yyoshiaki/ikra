@@ -64,6 +64,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc
   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
+#   TRIMMOMATIC_IMAGR=comics/trimmomatic
   SALMON_IMAGE=combinelab/salmon:latest
   
   $DOCKER pull $COWSAY_IMAGE
@@ -79,7 +80,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
-  TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
+#   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
+  TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
@@ -167,12 +169,16 @@ if [ $LAYOUT = SE ]; then
     -trimlog log.${SRR}.txt \
     ${SRR}.fastq.gz \
     ${SRR}_trimmed.fastq.gz \
-    ILLUMINACLIP:adapters.fa:2:10:10 \
+    ILLUMINACLIP:adapters/TruSeq3-SE.fa:2:10:10 \
     LEADING:20 \
     TRAILING:20 \
     MINLEN:30
   fi
 
+  # fastqc
+  if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
+  fi
   
 # PE
 else
@@ -188,25 +194,35 @@ else
   fi
   
   # trimmomatic
-  if [[ ! -f "${SRR}_1_paired.fastq.gz" ]]; then
+  if [[ ! -f "${SRR}_1_trimmed_paired.fastq.gz" ]]; then
     $TRIMMOMATIC \
     $LAYOUT \
     -threads $THREADS \
     -phred33 \
     -trimlog log.${SRR}.txt \
     ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
-    ${SRR}_1_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
-    ${SRR}_2_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
-    ILLUMINACLIP:adapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+    ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
+    ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
+#     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+    ILLUMINACLIP:adapters/TruSeq2-PE.fa:2:30:10 \
+    LEADING:3 \
+    TRAILING:3 \
+    SLIDINGWINDOW:4:15 \
+    MINLEN:36
   fi
-
+  
+  # fastqc
+  if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}_1_trimmed_paired.fastq.gz
+    $FASTQC -t $THREADS ${SRR}_2_trimmed_paired.fastq.gz
+  fi
 fi
 done
 
  # multiqc
-if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
-  $MULTIQC -n multiqc_report_rawfastq.html .
-fi
+# if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
+#   $MULTIQC -n multiqc_report_rawfastq.html .
+# fi
 
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
@@ -259,6 +275,6 @@ do
 done
 
  # multiqc
-if [[ ! -f "multiqc_report_aftersalmon.html" ]]; then
-  $MULTIQC -n multiqc_report_aftersalmon.html .
+if [[ ! -f "multiqc_report.html" ]]; then
+  $MULTIQC -n multiqc_report.html .
 fi
