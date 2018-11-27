@@ -26,8 +26,8 @@ $ source ~/.bashrc
 ## やること
 
 - fastqかSRRの判別
-- trimmomatic
-- gene count tableの生成（tximportつかう？つかうならどうやってreproducibleに？https://hub.docker.com/r/fjukstad/tximport/~/dockerfile/　つかう？あんまりファイル分けたくない気持ちがあるのでshell scriptの中でRかけたりしない？）
+- trimmomaticのadapterの指定
+- multiqcの処理がうまく行かない（毎回実行されてしまう。）
 
 ## やったこと
 
@@ -35,6 +35,8 @@ $ source ~/.bashrc
 - 生物種の判別(アナログ)
 - gtf, transcript file をGENCODEから
 - salmon
+- trimmomatic
+- tximport
 
 ## 注意
 
