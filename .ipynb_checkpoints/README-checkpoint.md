@@ -9,10 +9,10 @@ $ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv human
 ```
 
 args
-1. experiment matrix
+1. experiment matrix(csv)
 2. reference(human or mouse)
 
-experiment matrixは
+experiment matrixはカンマ区切りで（csv形式）
 
 |  name  |  SRR or fastq  |  Layout | condition1 | ... | 
 | ---- | ---- | - | - | - |  
@@ -39,7 +39,7 @@ $ source ~/.bashrc
 
 - fastqかSRRの判別
 - trimmomaticのadapterの指定
-- multiqcの処理がうまく行かない（毎回実行されてしまう。）
+- パーミッションを変えないとtrimmomaticで弾かける。
 
 ## やったこと
 
