@@ -24,7 +24,7 @@ nameはアンダーバー区切りでcondition、replicateをつなげて書く�
 
 ## Install
 
-dockerかudockerをインストール済みであること。
+dockerかudocker(v1.1.3)をインストール済みであること。
 もしくは、すべてのソフトを手動でインストールして、MakeCountTable*.shの`RUNINDOCKER=1`に設定する。
 shell scriptなのでpathを通すだけ。以下は一例。
 
