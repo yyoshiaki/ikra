@@ -261,7 +261,7 @@ do
   
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[ ! -d "salmon_output_${SRR}/quant.sf" ]]; then
+    if [[ ! -d "salmon_output_${SRR}" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
