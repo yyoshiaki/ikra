@@ -12,10 +12,11 @@ $ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mous
 
 COMMENTOUT
 
+
 # 実験テーブル.csv
 EX_MATRIX_FILE=$1
 RUNINDOCKER=1
-THREADS=8
+THREADS=4
 REF_SPIECE=$2
 
 DOCKER=docker
@@ -70,6 +71,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
   SALMON_IMAGE=combinelab/salmon:latest
+#   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   
   $DOCKER pull $COWSAY_IMAGE
@@ -89,6 +91,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
+#   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
   
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
