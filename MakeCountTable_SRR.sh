@@ -261,7 +261,7 @@ do
   
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[ ! -d "salmon_output_${SRR}" ]]; then
+    if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
@@ -274,7 +274,7 @@ do
     
    # PE
   else
-    if [[ ! -d "salmon_output_${SRR}" ]]; then
+    if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       salmon quant -i $SALMON_INDEX \
@@ -306,4 +306,6 @@ fi
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
 
-  chmod 777 .
+  chmod 755 .
+
+fi
