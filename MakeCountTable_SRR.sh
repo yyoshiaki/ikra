@@ -264,7 +264,7 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -r ${SRR}.fastq.gz \
+      -r ${SRR}_trimmed.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
@@ -277,8 +277,8 @@ do
       # libtype auto detection mode
       salmon quant -i $SALMON_INDEX \
       -l A \
-      -1 ${SRR}_1.fastq.gz \
-      -2 ${SRR}_2.fastq.gz \
+      -1 ${SRR}_1_trimmed_paired.fastq.gz \
+      -2 ${SRR}_2_trimmed_paired.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
