@@ -41,6 +41,8 @@ $ source ~/.bashrc
 - trimmomaticのadapterの指定
 - パーミッションを変えないとtrimmomaticで弾かける。
 
+フォルダのパーミッションを777にしてrunした後755にしているが、果たして大丈夫？
+
 ## やったこと
 
 - udockerの対応
