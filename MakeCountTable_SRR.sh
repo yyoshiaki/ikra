@@ -64,6 +64,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SCRIPT_DIR="."
   #--user=biodocker
   
+  # 危険！
   chmod 777 .
   
   COWSAY_IMAGE=docker/whalesay
@@ -247,11 +248,6 @@ fi
 #   wget $BASE_REF_TRANSCRIPT/$REF_GTF
 # fi
 
-# download $TX2SYMBOL
-if [[ ! -f "$REF_TRANSCRIPT" ]]; then
-  wget $BASE_REF_TRANSCRIPT/$TX2SYMBOL
-fi
-
 # instance salmon index
 if [[ ! -d "$SALMON_INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
@@ -295,6 +291,11 @@ done
 # multiqc
 if [[ ! -f "multiqc_report.html" ]]; then
   $MULTIQC -n multiqc_report.html .
+fi
+
+# download $TX2SYMBOL
+if [[ ! -f "$TX2SYMBOL" ]]; then
+  wget $BASE_REF_TRANSCRIPT/$TX2SYMBOL
 fi
 
 # tximport
