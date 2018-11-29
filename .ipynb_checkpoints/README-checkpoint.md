@@ -12,8 +12,20 @@ args
 1. experiment matrix
 2. reference(human or mouse)
 
+experiment matrixは
+
+|  name  |  SRR or fastq  |  Layout | condition1 | ... | 
+| ---- | ---- | - | - | - |  
+|  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
+|  Treg_LN_2  |  SRR5385248  | SE | Treg | ... |
+
+nameはアンダーバー区切りでcondition、replicateをつなげて書く。
+前3列は必須。
+
 ## Install
 
+dockerかudockerをインストール済みであること。
+もしくは、すべてのソフトを手動でインストールして、MakeCountTable*.shの`RUNINDOCKER=1`に設定する。
 shell scriptなのでpathを通すだけ。以下は一例。
 
 ```bash

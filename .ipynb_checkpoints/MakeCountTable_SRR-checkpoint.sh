@@ -59,10 +59,12 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-#   DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
-  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i -e LOCAL_UID=$(id -u $USER) -e LOCAL_GID=$(id -g $USER)"
+  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+
   SCRIPT_DIR="."
   #--user=biodocker
+  
+  chmod 777 .
   
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
@@ -300,3 +302,7 @@ if [[ ! -f "counttable.tsv" ]]; then
   $RSCRIPT_TXIMPORT $SCRIPT_DIR/tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
 fi
 
+
+if [[ "$RUNINDOCKER" -eq "1" ]]; then
+
+  chmod 777 .
