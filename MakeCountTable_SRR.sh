@@ -58,7 +58,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+#   DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i -e LOCAL_UID=$(id -u $USER) -e LOCAL_GID=$(id -g $USER)"
   SCRIPT_DIR="."
   #--user=biodocker
   
@@ -87,7 +88,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
-  # SALMON="$DRUN $SALMON_IMAGE $SALMON"
+  SALMON="$DRUN $SALMON_IMAGE $SALMON"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
   
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
@@ -259,7 +260,7 @@ do
   
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
+    if [[ ! -d "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
@@ -272,7 +273,7 @@ do
     
    # PE
   else
-    if [[ ! -f "salmon_output_${SRR}" ]]; then
+    if [[ ! -d "salmon_output_${SRR}" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       salmon quant -i $SALMON_INDEX \

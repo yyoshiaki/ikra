@@ -58,7 +58,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+#   DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i -e LOCAL_UID=$(id -u $USER) -e LOCAL_GID=$(id -g $USER)"
   SCRIPT_DIR="."
   #--user=biodocker
   
@@ -259,12 +260,12 @@ do
   
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
+    if [[ ! -d "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -r ${SRR}.fastq.gz \
+      -r ${SRR}_trimmed.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
@@ -272,13 +273,13 @@ do
     
    # PE
   else
-    if [[ ! -f "salmon_output_${SRR}" ]]; then
+    if [[ ! -d "salmon_output_${SRR}" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
       salmon quant -i $SALMON_INDEX \
       -l A \
-      -1 ${SRR}_1.fastq.gz \
-      -2 ${SRR}_2.fastq.gz \
+      -1 ${SRR}_1_trimmed_paired.fastq.gz \
+      -2 ${SRR}_2_trimmed_paired.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
