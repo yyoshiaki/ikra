@@ -107,7 +107,7 @@ MAXSIZE=20G
 SRA_ROOT=$HOME/ncbi/public/sra
 
 # テスト用。ダウンロードするread数。全部使うときは0に
-MAX_SPOT_ID=100000
+MAX_SPOT_ID=5000000
 
 if [ $MAX_SPOT_ID = 0 ]; then
   MAX_SPOT_ID=""
