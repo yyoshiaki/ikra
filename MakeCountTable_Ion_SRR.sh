@@ -50,7 +50,9 @@ PFASTQ_DUMP=pfastq-dump
 FASTQ_DUMP=fastq-dump
 FASTQC=fastqc
 MULTIQC=multiqc
-TRIMMOMATIC=trimmomatic
+FASTXTRIMMER=fastx_trimmer
+FASTQQUALITYTRIMMER=fastq_quality_trimmer
+# TRIMMOMATIC=trimmomatic
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
 
@@ -71,6 +73,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc
+  FASTXTOOLS_IMAGE=biocontainers/fastxtools:v0.0.14_cv2
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
   SALMON_IMAGE=combinelab/salmon:latest
@@ -81,6 +84,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
   $DOCKER pull $MULTIQC_IMAGE
+  $DOCKER pull $FASTXTOOLS_IMAGE
 #   $DOCKER pull $TRIMMOMATIC_IMAGE
   $DOCKER pull $SALMON_IMAGE
   $DOCKER pull $RSCRIPT_TXIMPORT_IMAGE
@@ -91,6 +95,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
+  FASTXTRIMMER="$DRUN $FASTXTOOLS_IMAGE $FASTXTRIMMER"
+  FASTQQUALITYTRIMMER="$DRUN $FASTXTOOLS_IMAGE $FASTQQUALITYTRIMMER"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
