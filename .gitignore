@@ -1,9 +1,1 @@
-*.html
-*.gz
-SRR*
-salmon*
-*.zip
-multiqc*
-log*
-counttable.tsv
-designtable.csv
+test/*

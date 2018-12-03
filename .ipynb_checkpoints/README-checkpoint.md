@@ -14,10 +14,17 @@ args
 
 experiment matrixはカンマ区切りで（csv形式）
 
+Illumina用
 |  name  |  SRR or fastq  |  Layout | condition1 | ... | 
 | ---- | ---- | - | - | - |  
 |  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  SRR5385248  | SE | Treg | ... |
+
+Ion用(fastq.gz)
+|  name  |  fastq.gz  |  condition1 | ... | 
+| ---- | ---- | - | - | 
+|  Treg_LN_1  | SRR5385247.fastq.gz | Treg | ...|
+|  Treg_LN_2  |  SRR5385248.fastq.gz  |  Treg | ... |
 
 nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 前3列は必須。
@@ -33,6 +40,13 @@ $ git clone https://github.com/yyoshiaki/auto_counttable_maker.git
 $ cd auto_counttable_maker
 $ echo "export PATH=$PATH:$PWD" >> ~/.bashrc 
 $ source ~/.bashrc
+```
+
+## test
+
+Ion
+```
+$ cd test/Ion && bash ../../MakeCountTable_Ion_fastq.sh Ion_fastq.csv mouse
 ```
 
 ## やること
@@ -51,6 +65,10 @@ $ source ~/.bashrc
 - salmon
 - trimmomatic
 - tximport
+- fastxtools(Ion用)
+
+
+- 181203 test dirの配置を変更。
 
 ## 注意
 
