@@ -220,7 +220,7 @@ if [ $LAYOUT = SE ]; then
     -trimlog log.${SRR}.txt \
     ${SRR}.fastq.gz \
     ${SRR}_trimmed.fastq.gz \
-    ILLUMINACLIP:${SCRIPT_DIR}/adapters/${ADAPTER}:2:10:10 \
+    ILLUMINACLIP:${ADAPTER}:2:10:10 \
     HEADCROP:10 \
     LEADING:20 \
     TRAILING:20 \
@@ -245,7 +245,7 @@ else
     ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
 #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-    ILLUMINACLIP:${SCRIPT_DIR}/adapters/${ADAPTER}:2:30:10 \
+    ILLUMINACLIP:${ADAPTER}:2:30:10 \
     HEADCROP:10 \
     LEADING:3 \
     TRAILING:3 \
