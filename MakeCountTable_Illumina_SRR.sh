@@ -323,7 +323,7 @@ fi
 
 # tximport
 if [[ ! -f "counttable.tsv" ]]; then
-  $RSCRIPT_TXIMPORT $SCRIPT_DIR/tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
+  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
 fi
 
 
