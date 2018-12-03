@@ -150,7 +150,7 @@ do
   
   # fastx-toolkit
   if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed.fastq.gz" ]]; then
-    gunzip -c ${dirname_fq}/${basename_fq}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${dirname_fq}/${basename_fq}.trimmed.fastq.gz
+    gunzip -c ${dirname_fq}/${basename_fq}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
   fi
 
   # fastqc
@@ -191,7 +191,6 @@ do
   basename_fq="${fqname_ext%.*.*}"
   dirname_fq=`dirname $fq`
   
-  # SE
   if [[ ! -f "salmon_output_${basename_fq}/quant.sf" ]]; then
     mkdir salmon_output_${basename_fq}
     # libtype auto detection mode
@@ -201,7 +200,6 @@ do
     -p $THREADS \
     -o salmon_output_${basename_fq} \
 #   -g $REF_GTF
-    fi
   fi
 done
 

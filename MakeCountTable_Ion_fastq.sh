@@ -191,7 +191,6 @@ do
   basename_fq="${fqname_ext%.*.*}"
   dirname_fq=`dirname $fq`
   
-  # SE
   if [[ ! -f "salmon_output_${basename_fq}/quant.sf" ]]; then
     mkdir salmon_output_${basename_fq}
     # libtype auto detection mode
@@ -201,7 +200,6 @@ do
     -p $THREADS \
     -o salmon_output_${basename_fq} \
 #   -g $REF_GTF
-    fi
   fi
 done
 
