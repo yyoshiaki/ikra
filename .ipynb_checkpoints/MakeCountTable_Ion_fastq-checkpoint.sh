@@ -127,6 +127,9 @@ fi
 echo ${1}
 cat $1
 
+# tximport_R.Rを取ってくる。
+cp $SCRIPT_DIR/tximport_R.R ./
+
 if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
   $MULTIQC -n multiqc_report_raw_reads.html .
 fi

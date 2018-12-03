@@ -120,6 +120,12 @@ fi
 echo ${1}
 cat $1
 
+# tximport_R.Rを取ってくる。
+cp $SCRIPT_DIR/tximport_R.R ./
+
+# trimmomaticのadaptersを取ってくる。
+cp -r $SCRIPT_DIR/adapters/*.fa ./
+
 
 # # prefetch
 # # 先頭一行をとばす。

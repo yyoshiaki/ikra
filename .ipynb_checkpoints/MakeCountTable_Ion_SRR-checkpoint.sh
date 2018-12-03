@@ -125,41 +125,8 @@ fi
 echo ${1}
 cat $1
 
-
-# # prefetch
-# # 先頭一行をとばす。
-# for i in `tail -n +2  $1`
-# do
-# name=`echo $i | cut -d, -f1`
-# SRR=`echo $i | cut -d, -f2`
-# #   echo "$name $fqfile"
-# if [[ ! -f "$SRA_ROOT/$SRR.sra" ]] && [[ ! -f "$SRR.fastq" ]]; then
-# $PREFETCH $SRR --max-size $MAXSIZE
-# fi
-# done
-# # pfastq_dump
-# for i in `tail -n +2  $1`
-# do
-# name=`echo $i | cut -d, -f1`
-# SRR=`echo $i | cut -d, -f2`
-# LAYOUT=`echo $i | cut -d, -f3`
-# # SE
-# if [ $LAYOUT = SE ]; then
-# if [[ ! -f "$SRR.fastq.gz" ]]; then
-# $PFASTQ_DUMP --threads $THREADS $SRR.sra
-# gzip $SRR.fastq
-# fi
-# # PE
-# else
-# if [[ ! -f "$SRR_1.fastq.gz" ]]; then
-# $PFASTQ_DUMP --threads $THREADS $SRR.sra --split-files
-# gzip $SRR_1.fastq
-# gzip $SRR_2.fastq
-# fi
-# fi
-# done
-
-
+# tximport_R.Rを取ってくる。
+cp $SCRIPT_DIR/tximport_R.R ./
 
 # fastq_dump
 for i in `tail -n +2  $1`
@@ -190,10 +157,9 @@ do
 
 done
 
- # multiqc
-# if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
-#   $MULTIQC -n multiqc_report_rawfastq.html .
-# fi
+if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
+  $MULTIQC -n multiqc_report_raw_reads.html .
+fi
 
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
