@@ -73,7 +73,7 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 ## 注意
 
 - MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数）
-- macbook proはテスト通らなかった（メモリの問題？）
+- macbook proはテスト通らなかった（メモリの問題？salmonがおかしい。）
 
 ## 参考
 
