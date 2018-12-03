@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mouse
+$ bash MakeCountTable_SRR.sh csv mouse
 
 - fastqかSRRの判別
 - trimmomatic
@@ -18,6 +18,13 @@ EX_MATRIX_FILE=$1
 RUNINDOCKER=1
 THREADS=4
 REF_SPIECE=$2
+
+# 十分大きなものにする。
+MAXSIZE=20G
+SRA_ROOT=$HOME/ncbi/public/sra
+
+# テスト用。ダウンロードするread数。全部使うときは0に
+MAX_SPOT_ID=100000
 
 DOCKER=docker
 # DOCKER=udocker # udockerも指定できる。
@@ -59,9 +66,9 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
+  DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
 
-  SCRIPT_DIR="."
+  SCRIPT_DIR=`dirname "$0"`
   #--user=biodocker
   
   # 危険！
@@ -102,12 +109,6 @@ else
   echo "RUNNING LOCAL"
 fi
 
-# 十分大きなものにする。
-MAXSIZE=20G
-SRA_ROOT=$HOME/ncbi/public/sra
-
-# テスト用。ダウンロードするread数。全部使うときは0に
-MAX_SPOT_ID=5000000
 
 if [ $MAX_SPOT_ID = 0 ]; then
   MAX_SPOT_ID=""
@@ -161,6 +162,7 @@ do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
+ADAPTER=`echo $i | cut -d, -f4`
 
 # SE
 if [ $LAYOUT = SE ]; then
@@ -172,26 +174,6 @@ if [ $LAYOUT = SE ]; then
   # fastqc
   if [[ ! -f "${SRR}_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}.fastq.gz
-  fi
-  
-  # trimmomatic
-  if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
-    $TRIMMOMATIC \
-    $LAYOUT \
-    -threads $THREADS \
-    -phred33 \
-    -trimlog log.${SRR}.txt \
-    ${SRR}.fastq.gz \
-    ${SRR}_trimmed.fastq.gz \
-    ILLUMINACLIP:adapters/TruSeq3-SE.fa:2:10:10 \
-    LEADING:20 \
-    TRAILING:20 \
-    MINLEN:30
-  fi
-
-  # fastqc
-  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
   fi
   
 # PE
@@ -206,7 +188,45 @@ else
     $FASTQC -t $THREADS ${SRR}_1.fastq.gz
     $FASTQC -t $THREADS ${SRR}_2.fastq.gz
   fi
+fi
+done
+
+if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
+  $MULTIQC -n multiqc_report_raw_reads.html .
+fi
+
+
+for i in `tail -n +2  $1`
+do
+name=`echo $i | cut -d, -f1`
+SRR=`echo $i | cut -d, -f2`
+LAYOUT=`echo $i | cut -d, -f3`
+ADAPTER=`echo $i | cut -d, -f4`
+
+# SE
+if [ $LAYOUT = SE ]; then
+  # trimmomatic
+  if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
+    $TRIMMOMATIC \
+    $LAYOUT \
+    -threads $THREADS \
+    -phred33 \
+    -trimlog log.${SRR}.txt \
+    ${SRR}.fastq.gz \
+    ${SRR}_trimmed.fastq.gz \
+    ILLUMINACLIP:${SCRIPT_DIR}/adapters/${ADAPTER}:2:10:10 \
+    LEADING:20 \
+    TRAILING:20 \
+    MINLEN:30
+  fi
+
+  # fastqc
+  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
+  fi
   
+# PE
+else
   # trimmomatic
   if [[ ! -f "${SRR}_1_trimmed_paired.fastq.gz" ]]; then
     $TRIMMOMATIC \
@@ -218,7 +238,7 @@ else
     ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
 #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-    ILLUMINACLIP:adapters/TruSeq2-PE.fa:2:30:10 \
+    ILLUMINACLIP:${SCRIPT_DIR}/adapters/${ADAPTER}:2:30:10 \
     LEADING:3 \
     TRAILING:3 \
     SLIDINGWINDOW:4:15 \
@@ -232,11 +252,6 @@ else
   fi
 fi
 done
-
- # multiqc
-# if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
-#   $MULTIQC -n multiqc_report_rawfastq.html .
-# fi
 
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then

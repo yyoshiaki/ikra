@@ -5,7 +5,7 @@
 ## 実行例
 
 ```bash
-$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv mouse
+$ bash MakeCountTable_Illumina_SRR.sh experiment_table.csv mouse
 ```
 
 args
@@ -14,20 +14,19 @@ args
 
 experiment matrixはカンマ区切りで（csv形式）
 
-Illumina用
-|  name  |  SRR or fastq  |  Layout | condition1 | ... | 
-| ---- | ---- | - | - | - |  
-|  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
-|  Treg_LN_2  |  SRR5385248  | SE | Treg | ... |
 
-Ion用(fastq.gz)
-|  name  |  fastq.gz  |  condition1 | ... | 
-| ---- | ---- | - | - | 
-|  Treg_LN_1  | SRR5385247.fastq.gz | Treg | ...|
-|  Treg_LN_2  |  SRR5385248.fastq.gz  |  Treg | ... |
+
+|  name  |  SRR or fastq  |  Layout | adapter | condition1 | ... | 
+| ---- | ---- | - | - | - | - |
+|  Treg_LN_1  | SRR5385247 | SE | TruSeq2-SE.fa | Treg | ...|
+|  Treg_LN_2  |  SRR5385248  | SE |TruSeq2-SE.fa | Treg | ... |
+
 
 nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 前3列は必須。
+
+- Illumina用 : adapterは`./adapters`に入っているものを使う。(test : [SRP041655](https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=SRP041655))
+- Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
 ## Install
 
@@ -44,15 +43,22 @@ $ source ~/.bashrc
 
 ## test
 
-Ion
+Illumina
+
+```bash
+$ cd test/Illumina && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
 ```
+
+
+Ion (ThermoFisher)
+
+```bash
 $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
 ## やること
 
-- fastqかSRRの判別
-- trimmomaticのadapterの指定
+- 各種テスト
 - パーミッションを変えないとtrimmomaticで弾かける。
 
 フォルダのパーミッションを777にしてrunした後755にしているが、果たして大丈夫？
@@ -66,6 +72,8 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 - trimmomatic
 - tximport
 - fastxtools(Ion用)
+- trimmomaticのadapterの指定(IonS5をIlluminaに合わせたフォーマットに)
+- fastqかSRRの判別(マニュアル)
 
 
 - 181203 test dirの配置を変更。
