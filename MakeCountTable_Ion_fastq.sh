@@ -61,8 +61,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
-  DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
+  DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
+#   DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
   
   SCRIPT_DIR="."
   #--user=biodocker
@@ -95,7 +95,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   PFASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $PFASTQ_DUMP"
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
-  MULTIQC="$DRUN_SIMPLE $MULTIQC_IMAGE $MULTIQC"
+#   MULTIQC="$DRUN_SIMPLE $MULTIQC_IMAGE $MULTIQC"
+  MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
@@ -149,11 +150,11 @@ do
   
   # fastx-toolkit
   if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed.fastq.gz" ]]; then
-    gunzip -c ${dirname_fq}/${basename_fq}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 -i basename_fq.fastq.gz | $FASTQQUALITYTRIMMER -Q33 -t 18 -l 20 -o ${dirname_fq}/${basename_fq}.trimmed.fastq
+    gunzip -c ${dirname_fq}/${basename_fq}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${dirname_fq}/${SRR}_trimmed_fastqc.zip" ]]; then
+  if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
   fi
   

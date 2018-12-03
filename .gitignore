@@ -1,2 +1,2 @@
 test/*
-!test/Ion/Ion_fastq.csv
+!test/Ion/Ion_*
