@@ -179,8 +179,8 @@ do
   fi
 
   # fastx-toolkit
-  if [[ ! -f "${dirname_fq}/${SRR}_trimmed.fastq.gz" ]]; then
-    gunzip -c ${dirname_fq}/${SRR}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${dirname_fq}/${SRR}_trimmed.fastq.gz
+  if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
+    gunzip -c ${SRR}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${SRR}_trimmed.fastq.gz
   fi
 
   # fastqc
