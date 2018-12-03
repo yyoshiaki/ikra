@@ -1,1 +1,2 @@
 test/*
+!test/Ion/Ion_fastq.csv
