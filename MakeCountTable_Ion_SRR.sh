@@ -59,8 +59,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
-  DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
+  DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
 
   SCRIPT_DIR="."
   #--user=biodocker
@@ -91,7 +90,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   PFASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $PFASTQ_DUMP"
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
-  MULTIQC="$DRUN_SIMPLE $MULTIQC_IMAGE $MULTIQC"
+  MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
