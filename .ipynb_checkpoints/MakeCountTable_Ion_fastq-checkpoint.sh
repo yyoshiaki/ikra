@@ -62,7 +62,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
   DRUN="$DOCKER run --rm -v $PWD:/data -v $SCRIPT_DIR:/data --workdir /data -i"
-  DRUN_SIMPLE="$DOCKER run --rm -i"
+  DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
   
   SCRIPT_DIR="."
   #--user=biodocker
@@ -154,7 +154,7 @@ do
 
   # fastqc
   if [[ ! -f "${dirname_fq}/${SRR}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${dirname_fq}/${SRR}_trimmed.fastq.gz
+    $FASTQC -t $THREADS ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
   fi
   
 done

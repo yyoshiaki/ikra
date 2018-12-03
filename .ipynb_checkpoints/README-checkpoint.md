@@ -46,7 +46,7 @@ $ source ~/.bashrc
 
 Ion
 ```
-$ cd test/Ion && bash ../../MakeCountTable_Ion_fastq.sh Ion_fastq.csv mouse
+$ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
 ## やること
