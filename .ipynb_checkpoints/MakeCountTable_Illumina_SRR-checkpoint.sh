@@ -215,6 +215,7 @@ if [ $LAYOUT = SE ]; then
     ${SRR}.fastq.gz \
     ${SRR}_trimmed.fastq.gz \
     ILLUMINACLIP:${SCRIPT_DIR}/adapters/${ADAPTER}:2:10:10 \
+    HEADCROP:10 \
     LEADING:20 \
     TRAILING:20 \
     MINLEN:30
@@ -239,6 +240,7 @@ else
     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
 #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     ILLUMINACLIP:${SCRIPT_DIR}/adapters/${ADAPTER}:2:30:10 \
+    HEADCROP:10 \
     LEADING:3 \
     TRAILING:3 \
     SLIDINGWINDOW:4:15 \
