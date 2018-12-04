@@ -64,7 +64,6 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
 #   DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
   
-  SCRIPT_DIR="."
   #--user=biodocker
   
   # 危険！
