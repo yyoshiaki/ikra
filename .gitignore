@@ -2,3 +2,4 @@ test/Ion/*
 !test/Ion/Ion_*
 test/Illumina/*
 !test/Illumina/Illumina_SE_SRR.csv
+*.gz
