@@ -185,7 +185,7 @@ if [ $LAYOUT = SE ]; then
 # PE
 else
   # fastq_dump
-  if [[ ! -f "$SRR_1.fastq.gz" ]]; then
+  if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
   fi
   
