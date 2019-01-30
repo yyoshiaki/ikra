@@ -1,5 +1,7 @@
 # auto_counttable_maker
 
+![sushi](img/salmon1.jpg)
+
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとしてcount tableをexperiment matrix（tpTregTconv_rnaseq_experiment_table.csv）から自動でつくる。salmonを用いる。
 
 ## 実行例
@@ -16,7 +18,7 @@ experiment matrixはカンマ区切りで（csv形式）
 
 
 
-|  name  |  SRR or fastq  |  Layout | adapter | condition1 | ... | 
+|  name  |  SRR or fastq  |  Layout | adapter | condition1 | ... |
 | ---- | ---- | - | - | - | - |
 |  Treg_LN_1  | SRR5385247 | SE | TruSeq2-SE.fa | Treg | ...|
 |  Treg_LN_2  |  SRR5385248  | SE |TruSeq2-SE.fa | Treg | ... |
@@ -40,7 +42,7 @@ shell scriptなのでpathを通すだけ。以下は一例。
 ```bash
 $ git clone https://github.com/yyoshiaki/auto_counttable_maker.git
 $ cd auto_counttable_maker
-$ echo "export PATH=$PATH:$PWD" >> ~/.bashrc 
+$ echo "export PATH=$PATH:$PWD" >> ~/.bashrc
 $ source ~/.bashrc
 ```
 
