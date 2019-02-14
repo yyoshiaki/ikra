@@ -1,3 +1,7 @@
+t
+t
+t
+
 # auto_counttable_maker　<img src="img/salmon1.jpg" width="30%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとしてcount tableをexperiment matrix（tpTregTconv_rnaseq_experiment_table.csv）から自動でつくる。salmonを用いる。
