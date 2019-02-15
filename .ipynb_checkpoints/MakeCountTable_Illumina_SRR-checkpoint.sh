@@ -185,7 +185,7 @@ if [ $LAYOUT = SE ]; then
 # PE
 else
   # fastq_dump
-  if [[ ! -f "$SRR_1.fastq.gz" ]]; then
+  if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
   fi
   
@@ -300,7 +300,7 @@ do
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
-      salmon quant -i $SALMON_INDEX \
+      $SALMON quant -i $SALMON_INDEX \
       -l A \
       -1 ${SRR}_1_trimmed_paired.fastq.gz \
       -2 ${SRR}_2_trimmed_paired.fastq.gz \
