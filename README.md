@@ -86,6 +86,15 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 - MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数）
 - macbook proはテスト通らなかった（メモリの問題？salmonがおかしい。）
 
+## 開発戦略
+
+今はまだ完成とは言えないので各自
+
+Fork -> Pull Request into master
+
+という流れだが、ある程度固まったら、Development branchを設けるので、そこにPRして貰う予定。
+
+
 ## 参考
 
 - [biocontainers : SNP-calling](http://biocontainers.pro/docs/containers-examples/SNP-Calling/)
