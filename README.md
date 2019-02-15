@@ -46,20 +46,35 @@ $ source ~/.bashrc
 
 ## test
 
-Illumina
+### Illumina trimmomatic ver.
+
+#### SE
 
 ```bash
-$ cd test/Illumina && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
 ```
 
-Illumina trim_galore ver.
+#### PE
 
 ```bash
-$ cd test/Illumina && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_PE_SRR.csv mouse
 ```
 
+### Illumina trim_galore ver.
 
-Ion (ThermoFisher)
+#### SE
+
+```bash
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse
+```
+
+#### PE
+
+```bash
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse
+```
+
+### Ion (ThermoFisher)
 
 ```bash
 $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
