@@ -81,7 +81,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   MULTIQC_IMAGE=maxulysse/multiqc
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIMGALORE_IMAGE=dhspence/docker-trimgalore
+  TRIMGALORE_IMAGE=miasteinberg/trim-galore
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
