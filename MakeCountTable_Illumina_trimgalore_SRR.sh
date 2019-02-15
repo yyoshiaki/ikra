@@ -3,10 +3,10 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_SRR.sh csv mouse
+$ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv mouse
 
 - fastqかSRRの判別
-- trimmomatic
+- trim_galore
 - gtf, transcript file をGENCODEから
 - salmon
 
@@ -81,7 +81,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   MULTIQC_IMAGE=maxulysse/multiqc
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIM
+  TRIMGALORE_IMAGE=dhspence/docker-trimgalore
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
@@ -90,7 +90,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
   $DOCKER pull $MULTIQC_IMAGE
-  $DOCKER pull $TRIMMOMATIC_IMAGE
+  # $DOCKER pull $TRIMMOMATIC_IMAGE
+  $DOCKER pull $TRIMGALORE_IMAGE
   $DOCKER pull $SALMON_IMAGE
   $DOCKER pull $RSCRIPT_TXIMPORT_IMAGE
 
@@ -101,7 +102,8 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
-  TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
+  # TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
+  TRIMGALORE="$DRUN $TRIMGALORE_IMAGE $TRIMGALORE"
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
