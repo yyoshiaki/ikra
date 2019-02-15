@@ -128,7 +128,7 @@ cat $1
 cp $SCRIPT_DIR/tximport_R.R ./
 
 # trimmomaticのadaptersを取ってくる。
-cp -r $SCRIPT_DIR/adapters/*.fa ./
+# cp -r $SCRIPT_DIR/adapters/*.fa ./
 
 
 # # prefetch
