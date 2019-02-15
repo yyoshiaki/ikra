@@ -73,7 +73,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   #--user=biodocker
 
   # 危険！
-#   chmod 777 .
+  chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
