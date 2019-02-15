@@ -52,6 +52,12 @@ Illumina
 $ cd test/Illumina && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
 ```
 
+Illumina trim_galore ver.
+
+```bash
+$ cd test/Illumina && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse
+```
+
 
 Ion (ThermoFisher)
 
@@ -73,6 +79,7 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 - gtf, transcript file をGENCODEから
 - salmon
 - trimmomatic
+- trim_galore!
 - tximport
 - fastxtools(Ion用)
 - trimmomaticのadapterの指定(IonS5をIlluminaに合わせたフォーマットに)

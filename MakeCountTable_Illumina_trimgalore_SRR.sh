@@ -45,7 +45,7 @@ elif [[ $REF_SPIECE = human ]]; then
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
   TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-  
+
 else
   echo No reference speice!
   exit
@@ -71,10 +71,10 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 
   SCRIPT_DIR=`dirname "$0"`
   #--user=biodocker
-  
+
   # 危険！
 #   chmod 777 .
-  
+
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
@@ -85,7 +85,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
-  
+
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
@@ -105,7 +105,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
-  
+
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
@@ -178,19 +178,19 @@ if [ $LAYOUT = SE ]; then
   if [[ ! -f "$SRR.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
   fi
-  
+
   # fastqc
   if [[ ! -f "${SRR}_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}.fastq.gz
   fi
-  
+
 # PE
 else
   # fastq_dump
   if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
   fi
-  
+
   # fastqc
   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_1.fastq.gz
@@ -211,58 +211,84 @@ SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
 ADAPTER=`echo $i | cut -d, -f4`
 
+# # SE
+# if [ $LAYOUT = SE ]; then
+#   # trimmomatic
+#   if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
+#     $TRIMMOMATIC \
+#     $LAYOUT \
+#     -threads $THREADS \
+#     -phred33 \
+#     -trimlog log.${SRR}.txt \
+#     ${SRR}.fastq.gz \
+#     ${SRR}_trimmed.fastq.gz \
+#     ILLUMINACLIP:${ADAPTER}:2:10:10 \
+#     HEADCROP:10 \
+#     LEADING:20 \
+#     TRAILING:20 \
+#     MINLEN:30
+#   fi
+#
+#   # fastqc
+#   if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
+#     $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
+#   fi
+#
+# # PE
+# else
+#   # trimmomatic
+#   if [[ ! -f "${SRR}_1_trimmed_paired.fastq.gz" ]]; then
+#     $TRIMMOMATIC \
+#     $LAYOUT \
+#     -threads $THREADS \
+#     -phred33 \
+#     -trimlog log.${SRR}.txt \
+#     ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
+#     ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
+#     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
+# #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+#     ILLUMINACLIP:${ADAPTER}:2:30:10 \
+#     HEADCROP:10 \
+#     LEADING:3 \
+#     TRAILING:3 \
+#     SLIDINGWINDOW:4:15 \
+#     MINLEN:36
+#   fi
+#
+#   # fastqc
+#   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
+#     $FASTQC -t $THREADS ${SRR}_1_trimmed_paired.fastq.gz
+#     $FASTQC -t $THREADS ${SRR}_2_trimmed_paired.fastq.gz
+#   fi
+# fi
+# done
+
+# trim_galore
 # SE
 if [ $LAYOUT = SE ]; then
-  # trimmomatic
-  if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
-    $TRIMMOMATIC \
-    $LAYOUT \
-    -threads $THREADS \
-    -phred33 \
-    -trimlog log.${SRR}.txt \
-    ${SRR}.fastq.gz \
-    ${SRR}_trimmed.fastq.gz \
-    ILLUMINACLIP:${ADAPTER}:2:10:10 \
-    HEADCROP:10 \
-    LEADING:20 \
-    TRAILING:20 \
-    MINLEN:30
+  if [[ ! -f "${SRR}_trimmed.fq.gz" ]]; then
+    $TRIMGALORE ${SRR}.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
+  if [[ ! -f "${SRR}_trimmed_fq.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}_trimmed.fq.gz
   fi
-  
+
 # PE
 else
   # trimmomatic
-  if [[ ! -f "${SRR}_1_trimmed_paired.fastq.gz" ]]; then
-    $TRIMMOMATIC \
-    $LAYOUT \
-    -threads $THREADS \
-    -phred33 \
-    -trimlog log.${SRR}.txt \
-    ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
-    ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
-    ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
-#     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-    ILLUMINACLIP:${ADAPTER}:2:30:10 \
-    HEADCROP:10 \
-    LEADING:3 \
-    TRAILING:3 \
-    SLIDINGWINDOW:4:15 \
-    MINLEN:36
+  if [[ ! -f " ${SRR}_val_1.fq" ]]; then
+    $TRIMGALORE --paired ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz
   fi
-  
+
   # fastqc
   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_1_trimmed_paired.fastq.gz
-    $FASTQC -t $THREADS ${SRR}_2_trimmed_paired.fastq.gz
+    $FASTQC -t $THREADS ${SRR}_val_1.fq
+    $FASTQC -t $THREADS ${SRR}_val_2.fq
   fi
 fi
 done
-
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
   wget $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
@@ -283,7 +309,7 @@ do
   name=`echo $i | cut -d, -f1`
   SRR=`echo $i | cut -d, -f2`
   LAYOUT=`echo $i | cut -d, -f3`
-  
+
   # SE
   if [ $LAYOUT = SE ]; then
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
@@ -291,12 +317,12 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -r ${SRR}_trimmed.fastq.gz \
+      -r ${SRR}_trimmed.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
     fi
-    
+
    # PE
   else
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
@@ -304,8 +330,8 @@ do
       # libtype auto detection mode
        quant -i $SALMON_INDEX \
       -l A \
-      -1 ${SRR}_1_trimmed_paired.fastq.gz \
-      -2 ${SRR}_2_trimmed_paired.fastq.gz \
+      -1 ${SRR}_val_1.fq \
+      -2 ${SRR}_val_2.fq \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
