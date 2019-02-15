@@ -244,13 +244,13 @@ else
     ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
     ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
-#     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
     ILLUMINACLIP:${ADAPTER}:2:30:10 \
     HEADCROP:10 \
     LEADING:3 \
     TRAILING:3 \
     SLIDINGWINDOW:4:15 \
     MINLEN:36
+#     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
   fi
   
   # fastqc
