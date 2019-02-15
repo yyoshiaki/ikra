@@ -330,7 +330,7 @@ do
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
-       quant -i $SALMON_INDEX \
+      $SALMON quant -i $SALMON_INDEX \
       -l A \
       -1 ${SRR}_val_1.fq \
       -2 ${SRR}_val_2.fq \
