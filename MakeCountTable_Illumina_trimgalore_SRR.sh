@@ -280,14 +280,14 @@ if [ $LAYOUT = SE ]; then
 # PE
 else
   # trimmomatic
-  if [[ ! -f " ${SRR}_val_1.fq.gz" ]]; then
+  if [[ ! -f " ${SRR}_1_val_1.fq.gz" ]]; then
     $TRIMGALORE --paired ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_val_1.fq.gz
-    $FASTQC -t $THREADS ${SRR}_val_2.fq.gz
+  if [[ ! -f "${SRR}_1_val_1_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${SRR}_1_val_1.fq.gz
+    $FASTQC -t $THREADS ${SRR}_2_val_2.fq.gz
   fi
 fi
 done
@@ -332,8 +332,8 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -1 ${SRR}_val_1.fq.gz \
-      -2 ${SRR}_val_2.fq.gz \
+      -1 ${SRR}_1_val_1.fq.gz \
+      -2 ${SRR}_2_val_2.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
 #       -g $REF_GTF
