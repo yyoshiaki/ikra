@@ -1,7 +1,3 @@
-t
-t
-t
-
 # auto_counttable_maker　<img src="img/salmon1.jpg" width="30%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとしてcount tableをexperiment matrix（tpTregTconv_rnaseq_experiment_table.csv）から自動でつくる。salmonを用いる。
@@ -50,14 +46,35 @@ $ source ~/.bashrc
 
 ## test
 
-Illumina
+### Illumina trimmomatic ver.
+
+#### SE
 
 ```bash
-$ cd test/Illumina && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
 ```
 
+#### PE
 
-Ion (ThermoFisher)
+```bash
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_PE_SRR.csv mouse
+```
+
+### Illumina trim_galore ver.
+
+#### SE
+
+```bash
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse
+```
+
+#### PE
+
+```bash
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse
+```
+
+### Ion (ThermoFisher)
 
 ```bash
 $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
@@ -77,6 +94,7 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 - gtf, transcript file をGENCODEから
 - salmon
 - trimmomatic
+- trim_galore!
 - tximport
 - fastxtools(Ion用)
 - trimmomaticのadapterの指定(IonS5をIlluminaに合わせたフォーマットに)
@@ -89,6 +107,15 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 
 - MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数）
 - macbook proはテスト通らなかった（メモリの問題？salmonがおかしい。）
+
+## 開発戦略
+
+今はまだ完成とは言えないので各自
+
+Fork -> Pull Request into master
+
+という流れだが、ある程度固まったら、Development branchを設けるので、そこにPRして貰う予定。
+
 
 ## 参考
 

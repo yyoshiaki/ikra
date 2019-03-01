@@ -1,5 +1,8 @@
 test/Ion/*
 !test/Ion/Ion_*
-test/Illumina/*
-!test/Illumina/Illumina_SE_SRR.csv
+test/Illumina_SE/*
+!test/Illumina_SE/Illumina_SE_SRR.csv
+test/Illumina_PE/*
+!test/Illumina_PE/Illumina_PE_SRR.csv
+test/Illumina
 *.gz
