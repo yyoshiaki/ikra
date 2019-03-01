@@ -113,7 +113,7 @@ fi
 if [ $MAX_SPOT_ID = 0 ]; then
   MAX_SPOT_ID=""
 else
-  $COWSAY "test mode( MAX_SPOT_ID is set)"
+  #$COWSAY "test mode( MAX_SPOT_ID is set)"
   MAX_SPOT_ID="-X $MAX_SPOT_ID"
 fi
 
@@ -292,6 +292,7 @@ do
       -r ${SRR}_trimmed.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
+      --gcBias
 #       -g $REF_GTF
     fi
     
@@ -306,6 +307,7 @@ do
       -2 ${SRR}_2_trimmed_paired.fastq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
+      --gcBias
 #       -g $REF_GTF
     fi
   fi
