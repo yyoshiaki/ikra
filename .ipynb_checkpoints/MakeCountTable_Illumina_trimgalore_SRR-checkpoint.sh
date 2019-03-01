@@ -57,7 +57,8 @@ PFASTQ_DUMP=pfastq-dump
 FASTQ_DUMP=fastq-dump
 FASTQC=fastqc
 MULTIQC=multiqc
-TRIMMOMATIC=trimmomatic
+# TRIMMOMATIC=trimmomatic
+TRIMGALORE=trim_galore
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
 
@@ -72,14 +73,15 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   #--user=biodocker
   
   # 危険！
-  chmod 777 .
+#   chmod 777 .
   
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc
-  TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
+#   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
+  TRIM
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
@@ -300,7 +302,7 @@ do
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
       mkdir salmon_output_${SRR}
       # libtype auto detection mode
-      $SALMON quant -i $SALMON_INDEX \
+       quant -i $SALMON_INDEX \
       -l A \
       -1 ${SRR}_1_trimmed_paired.fastq.gz \
       -2 ${SRR}_2_trimmed_paired.fastq.gz \
