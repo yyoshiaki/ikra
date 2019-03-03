@@ -28,7 +28,12 @@ nameはアンダーバー区切りでcondition、replicateをつなげて書く�
 - Illumina用 : adapterは`./adapters`に入っているものを使う。(test : [SRP041655](https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=SRP041655))
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
-outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
+### 仕様について
+
+- outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
+- GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
+RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
+
 
 
 ## Install
@@ -99,6 +104,7 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 - fastxtools(Ion用)
 - trimmomaticのadapterの指定(IonS5をIlluminaに合わせたフォーマットに)
 - fastqかSRRの判別(マニュアル)
+- gcbias correctionの導入
 
 
 - 181203 test dirの配置を変更。
