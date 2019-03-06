@@ -61,6 +61,7 @@ MULTIQC=multiqc
 TRIMGALORE=trim_galore
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
+WGET=wget
 
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
@@ -85,6 +86,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
+  WGET_IMAGE=fjukstad/tximport
 
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE

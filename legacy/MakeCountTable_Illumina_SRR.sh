@@ -45,7 +45,7 @@ elif [[ $REF_SPIECE = human ]]; then
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
   TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-  
+
 else
   echo No reference speice!
   exit
@@ -70,10 +70,10 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 
   SCRIPT_DIR=`dirname "$0"`
   #--user=biodocker
-  
+
   # 危険！
   chmod 777 .
-  
+
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
@@ -83,7 +83,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
-  
+
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
@@ -103,7 +103,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
-  
+
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
@@ -176,19 +176,19 @@ if [ $LAYOUT = SE ]; then
   if [[ ! -f "$SRR.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
   fi
-  
+
   # fastqc
   if [[ ! -f "${SRR}_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}.fastq.gz
   fi
-  
+
 # PE
 else
   # fastq_dump
   if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
     $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
   fi
-  
+
   # fastqc
   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_1.fastq.gz
@@ -231,7 +231,7 @@ if [ $LAYOUT = SE ]; then
   if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
   fi
-  
+
 # PE
 else
   # trimmomatic
@@ -252,7 +252,7 @@ else
     MINLEN:36
 #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
   fi
-  
+
   # fastqc
   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_1_trimmed_paired.fastq.gz
@@ -281,7 +281,7 @@ do
   name=`echo $i | cut -d, -f1`
   SRR=`echo $i | cut -d, -f2`
   LAYOUT=`echo $i | cut -d, -f3`
-  
+
   # SE
   if [ $LAYOUT = SE ]; then
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
@@ -295,7 +295,7 @@ do
       --gcBias
 #       -g $REF_GTF
     fi
-    
+
    # PE
   else
     if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
