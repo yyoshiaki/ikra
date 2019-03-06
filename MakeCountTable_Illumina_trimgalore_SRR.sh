@@ -109,6 +109,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
+  WGET="$DRUN $WGET_IMAGE $WGET"
 
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
