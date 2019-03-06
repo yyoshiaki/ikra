@@ -295,7 +295,7 @@ fi
 done
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
-  wget $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
+  $WGET $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
 fi
 
 # # download $REF_GTF
@@ -352,7 +352,7 @@ fi
 
 # download $TX2SYMBOL
 if [[ ! -f "$TX2SYMBOL" ]]; then
-  wget $BASE_REF_TRANSCRIPT/$TX2SYMBOL
+  $WGET $BASE_REF_TRANSCRIPT/$TX2SYMBOL
 fi
 
 # tximport
