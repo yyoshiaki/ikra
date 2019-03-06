@@ -5,7 +5,7 @@
 ## 実行例
 
 ```bash
-$ bash MakeCountTable_Illumina_SRR.sh experiment_table.csv mouse
+$ bash MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv mouse
 ```
 
 args
@@ -25,7 +25,7 @@ experiment matrixはカンマ区切りで（csv形式）
 nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 前3列は必須。
 
-- Illumina用 : adapterは`./adapters`に入っているものを使う。(test : [SRP041655](https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=SRP041655))
+- Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
 ### 仕様について
@@ -50,20 +50,6 @@ $ source ~/.bashrc
 ```
 
 ## test
-
-### Illumina trimmomatic ver.
-
-#### SE
-
-```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_SE_SRR.csv mouse
-```
-
-#### PE
-
-```bash
-$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_SRR.sh Illumina_PE_SRR.csv mouse
-```
 
 ### Illumina trim_galore ver.
 

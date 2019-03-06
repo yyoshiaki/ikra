@@ -174,7 +174,7 @@ do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
-ADAPTER=`echo $i | cut -d, -f4`
+# ADAPTER=`echo $i | cut -d, -f4`
 
 # SE
 if [ $LAYOUT = SE ]; then
@@ -213,7 +213,7 @@ do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
-ADAPTER=`echo $i | cut -d, -f4`
+# ADAPTER=`echo $i | cut -d, -f4`
 
 # # SE
 # if [ $LAYOUT = SE ]; then
