@@ -275,7 +275,7 @@ if [ $LAYOUT = SE ]; then
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_trimmed_fq.zip" ]]; then
+  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_trimmed.fq.gz
   fi
 
