@@ -71,6 +71,13 @@ $ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
+### Macのひと
+
+salmonがmacで走らない問題だが、[DBCLS太田さん](https://github.com/inutano)に解決していただいた。macではdefaultで2Gbしかメモリをdockerに振っていないことが原因らしい。写真のように、8Gb等大きめのメモリ量を割り振って、Apply & Restartすると解決する。
+
+![img](img/docker_mac0.png)
+![img](img/docker_mac1.png)
+
 ## やること
 
 - 各種テスト
