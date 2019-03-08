@@ -356,7 +356,8 @@ do
       -r ${SRR}_trimmed.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
-      --gcBias
+      --gcBias \
+      --validateMappings
 #       -g $REF_GTF
     fi
 
@@ -371,7 +372,8 @@ do
       -2 ${SRR}_2_val_2.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
-      --gcBias
+      --gcBias \
+      --validateMappings
 #       -g $REF_GTF
     fi
   fi
