@@ -6,3 +6,5 @@ test/Illumina_PE/*
 !test/Illumina_PE/Illumina_PE_SRR.csv
 test/Illumina
 *.gz
+*.ipynb_checkpoints*
+*.Rhistory

@@ -61,6 +61,7 @@ MULTIQC=multiqc
 TRIMGALORE=trim_galore
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
+WGET=wget
 
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
@@ -85,6 +86,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
+  WGET_IMAGE=fjukstad/tximport
 
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
@@ -107,6 +109,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
+  WGET="$DRUN $WGET_IMAGE $WGET"
 
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
@@ -172,7 +175,7 @@ do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
-ADAPTER=`echo $i | cut -d, -f4`
+# ADAPTER=`echo $i | cut -d, -f4`
 
 # SE
 if [ $LAYOUT = SE ]; then
@@ -211,7 +214,7 @@ do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
-ADAPTER=`echo $i | cut -d, -f4`
+# ADAPTER=`echo $i | cut -d, -f4`
 
 # # SE
 # if [ $LAYOUT = SE ]; then
@@ -273,7 +276,7 @@ if [ $LAYOUT = SE ]; then
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_trimmed_fq.zip" ]]; then
+  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${SRR}_trimmed.fq.gz
   fi
 
@@ -293,7 +296,7 @@ fi
 done
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
-  wget $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
+  $WGET $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
 fi
 
 # # download $REF_GTF
@@ -350,7 +353,7 @@ fi
 
 # download $TX2SYMBOL
 if [[ ! -f "$TX2SYMBOL" ]]; then
-  wget $BASE_REF_TRANSCRIPT/$TX2SYMBOL
+  $WGET $BASE_REF_TRANSCRIPT/$TX2SYMBOL
 fi
 
 # tximport
