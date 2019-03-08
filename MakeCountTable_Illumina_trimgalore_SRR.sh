@@ -24,7 +24,8 @@ MAXSIZE=20G
 SRA_ROOT=$HOME/ncbi/public/sra
 
 # テスト用。ダウンロードするread数。全部使うときは0に
-MAX_SPOT_ID=100000
+# MAX_SPOT_ID=100000
+MAX_SPOT_ID=0
 
 DOCKER=docker
 # DOCKER=udocker # udockerも指定できる。
@@ -55,6 +56,7 @@ COWSAY=cowsay
 PREFETCH=prefetch
 PFASTQ_DUMP=pfastq-dump
 FASTQ_DUMP=fastq-dump
+FASTERQ_DUMP=fasterq-dump
 FASTQC=fastqc
 MULTIQC=multiqc
 # TRIMMOMATIC=trimmomatic
@@ -62,6 +64,7 @@ TRIMGALORE=trim_galore
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
 WGET=wget
+PIGZ=pigz
 
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
@@ -87,6 +90,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
+  PIGZ_IMAGE=genevera/docker-pigz
 
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
@@ -96,11 +100,13 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $TRIMGALORE_IMAGE
   $DOCKER pull $SALMON_IMAGE
   $DOCKER pull $RSCRIPT_TXIMPORT_IMAGE
+  $DOCKER pull $PIGZ_IMAGE
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
   PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
   PFASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $PFASTQ_DUMP"
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
+  FASTERQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTERQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
@@ -110,6 +116,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
   WGET="$DRUN $WGET_IMAGE $WGET"
+  PIGZ="$DRUN $PIGZ_IMAGE"
 
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
@@ -177,11 +184,27 @@ SRR=`echo $i | cut -d, -f2`
 LAYOUT=`echo $i | cut -d, -f3`
 # ADAPTER=`echo $i | cut -d, -f4`
 
+<<COMMENTOUT
+
+There is no -N|--minSpotId and no -X|--maxSpotId option.
+fasterq-dump version 2.9.1 processes always the whole accession,
+although it may support partial access in future versions.
+
+ということで条件分岐させる。
+
+COMMENTOUT
+
 # SE
 if [ $LAYOUT = SE ]; then
   # fastq_dump
   if [[ ! -f "$SRR.fastq.gz" ]]; then
-    $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+    if [[ $MAX_SPOT_ID == "" ]]; then
+      $FASTERQ_DUMP $SRR --threads $THREADS
+      # gzip $SRR.fastq
+      $PIGZ $SRR.fastq
+    else
+      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+    fi
   fi
 
   # fastqc
@@ -193,7 +216,15 @@ if [ $LAYOUT = SE ]; then
 else
   # fastq_dump
   if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
-    $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+    if [[ $MAX_SPOT_ID == "" ]]; then
+      $FASTERQ_DUMP $SRR --split-files --threads $THREADS
+      # gzip ${SRR}_1.fastq
+      # gzip ${SRR}_2.fastq
+      $PIGZ ${SRR}_1.fastq
+      $PIGZ ${SRR}_2.fastq
+    else
+      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+    fi
   fi
 
   # fastqc

@@ -2,6 +2,10 @@
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとしてcount tableをexperiment matrix（tpTregTconv_rnaseq_experiment_table.csv）から自動でつくる。salmonを用いる。
 
+## 注意
+
+MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数） -> optionが実装されたときにdefaultでtest modeにならないように変更する予定。それまでは各自`MakeCountTable_Illumina_trimgalore_SRR.sh`の中を変更する。
+
 ## 実行例
 
 ```bash
@@ -33,8 +37,6 @@ nameはアンダーバー区切りでcondition、replicateをつなげて書く�
 - outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
 - GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
-
-
 
 ## Install
 
@@ -100,13 +102,6 @@ salmonがmacで走らない問題だが、[DBCLS太田さん](https://github.com
 - gcbias correctionの導入
 
 
-- 181203 test dirの配置を変更。
-
-## 注意
-
-- MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数）
-- macbook proはテスト通らなかった（メモリの問題？salmonがおかしい。）
-
 ## 開発戦略
 
 今はまだ完成とは言えないので各自
@@ -114,7 +109,6 @@ salmonがmacで走らない問題だが、[DBCLS太田さん](https://github.com
 Fork -> Pull Request into master
 
 という流れだが、ある程度固まったら、Development branchを設けるので、そこにPRして貰う予定。
-
 
 ## 参考
 
