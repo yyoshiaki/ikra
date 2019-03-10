@@ -4,9 +4,10 @@
 
 ## 注意
 
-MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数） -> optionが実装されたときにdefaultでtest modeにならないように変更する予定。それまでは各自`MakeCountTable_Illumina_trimgalore_SRR.sh`の中を変更する。
+MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数)。デフォルトは現在全リード取得。時間がかかるので、テストの場合は各自`MakeCountTable_Illumina_trimgalore_SRR.sh`の中を変更する。
+optionが実装されたときにtest modeについてもオプション立てれるようにする予定。
 
-## 実行例
+## Usage
 
 ```bash
 $ bash MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv mouse
@@ -18,12 +19,10 @@ args
 
 experiment matrixはカンマ区切りで（csv形式）
 
-
-
-|  name  |  SRR or fastq  |  Layout | adapter | condition1 | ... |
-| ---- | ---- | - | - | - | - |
-|  Treg_LN_1  | SRR5385247 | SE | TruSeq2-SE.fa | Treg | ...|
-|  Treg_LN_2  |  SRR5385248  | SE |TruSeq2-SE.fa | Treg | ... |
+|  name  |  SRR or fastq  |  Layout  | condition1 | ... |
+| ---- | ---- | - | - | - |
+|  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
+|  Treg_LN_2  |  SRR5385248  | SE  | Treg | ... |
 
 
 nameはアンダーバー区切りでcondition、replicateをつなげて書く。
@@ -37,6 +36,7 @@ nameはアンダーバー区切りでcondition、replicateをつなげて書く�
 - outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
 - GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
+- validateMappings optionを採用。（alignment-base modeでは使えない。）詳しくは[salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/)。
 
 ## Install
 
@@ -75,15 +75,14 @@ $ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
 
 ### Macのひと
 
-salmonがmacで走らない問題だが、[DBCLS太田さん](https://github.com/inutano)に解決していただいた。macではdefaultで2Gbしかメモリをdockerに振っていないことが原因らしい。写真のように、8Gb等大きめのメモリ量を割り振って、Apply & Restartすると解決する。
+salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com/inutano)に解決していただいた。macではdefaultで2Gbしかメモリをdockerに振っていないことが原因らしい。写真のように、8Gb等大きめのメモリ量を割り振って、Apply & Restartすると解決する。
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
 
 ## やること
 
-- 各種テスト
-- パーミッションを変えないとtrimmomaticで弾かける。
+[issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)を参照のこと。
 
 フォルダのパーミッションを777にしてrunした後755にしているが、果たして大丈夫？
 
@@ -97,10 +96,15 @@ salmonがmacで走らない問題だが、[DBCLS太田さん](https://github.com
 - trim_galore!
 - tximport
 - fastxtools(Ion用)
-- trimmomaticのadapterの指定(IonS5をIlluminaに合わせたフォーマットに)
 - fastqかSRRの判別(マニュアル)
-- gcbias correctionの導入
+- salmon gcbias correctionの導入
+- salomn validateMappings
+- pigz(gzipのマルチスレッド版)
+- fasterq-dump
 
+## legacy
+
+trimmomaticを使ったトリミングを用いたフローは`./legacy`に移動しました。
 
 ## 開発戦略
 
