@@ -80,6 +80,12 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
 
+## Tips
+
+SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)が爆速でおすすめ。
+
+<img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
+
 ## やること
 
 [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)を参照のこと。
