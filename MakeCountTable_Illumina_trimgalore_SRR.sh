@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv mouse
+$ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv [--test, --help] [--spiece VALUE]
 
 - fastqかSRRの判別
 - trim_galore
@@ -12,12 +12,97 @@ $ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv mouse
 
 COMMENTOUT
 
+#　オプション関連ここから
+
+#　変数 EX_MATRIX_FILE, REF_SPIECE はここで定義
+#　if [[ $IF_TEST = true ]]; then でテストモード用の実行が可能
+
+#　今まで$1 = EX_MATRIX_FILEだったのを変更している
+#　以降の$1をEX_MATRIX_FILEで置き換える必要がある？(必要なら修正お願いします...)
+
+set +u
+
+PROGNAME="$( basename $0 )"
+
+# Usage
+function usage() {
+  cat << EOS >&2
+Usage: ${PROGNAME} experiment_table.csv [--test, --help] [--spiece VALUE]
+  args
+    1.experiment matrix(csv)
+
+Options:
+  -t, --test    test mode.
+  -s, --spiece  reference spiece[human or mouse].(default: human)
+  -h, --help    Show usage.
+EOS
+  exit 1
+}
+
+# デフォルト値を先に定義しておく
+REF_SPIECE="human"
+
+# オプションをパース
+PARAM=()
+for opt in "$@"; do
+    case "${opt}" in
+        #　モード選択など引数の無いオプションの場合
+        '-t'|'--test' )
+            IF_TEST=true; shift
+            ;;
+        #　引数が必須の場合
+        '-s'|'--spiece' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "${PROGNAME}: option requires an argument -- $( echo $1 | sed 's/^-*//' )" 1>&2
+                exit 1
+            fi
+            REF_SPIECE="$2"
+            shift 2
+            ;;
+        '-h' | '--help' )
+            usage
+            ;;
+        '--' | '-' )
+            shift
+            PARAM+=( "$@" )
+            break
+            ;;
+        -* )
+            echo "${PROGNAME}: illegal option -- '$( echo $1 | sed 's/^-*//' )'" 1>&2
+            exit 1
+            ;;
+        * )
+            if [[ -n "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+                PARAM+=( "$1" ); shift
+            fi
+            ;;
+    esac
+done
+
+# オプション無しの値を使う場合はここで処理する
+EX_MATRIX_FILE="${PARAM}"; PARAM=("${PARAM[@]:1}")
+
+[[ -z "${EX_MATRIX_FILE}" ]] && usage
+
+# 規定外のオプションがある場合にはusageを表示
+if [[ -n "${PARAM[@]}" ]]; then
+    usage
+fi
+
+# 結果を表示(オプションテスト用)
+cat << EOS | column -t
+EX_MATRIX_FILE ${EX_MATRIX_FILE}
+REF_SPIECE ${REF_SPIECE}
+IF_TEST ${IF_TEST:-false}
+EOS
+
+set -u
+
+#　オプション関連ここまで
 
 # 実験テーブル.csv
-EX_MATRIX_FILE=$1
 RUNINDOCKER=1
 THREADS=4
-REF_SPIECE=$2
 
 # 十分大きなものにする。
 MAXSIZE=20G
