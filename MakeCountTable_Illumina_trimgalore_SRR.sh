@@ -32,15 +32,15 @@ Usage: ${PROGNAME} experiment_table.csv [--test, --help] [--spiece VALUE]
     1.experiment matrix(csv)
 
 Options:
-  -t, --test    test mode.
-  -s, --spiece  reference spiece[human or mouse].(default: human)
+  -t, --test    test mode(MAX_SPOT_ID=100000).(dafault : False)
+  -s, --spiece  reference spiece[human or mouse].(default: mouse)
   -h, --help    Show usage.
 EOS
   exit 1
 }
 
 # デフォルト値を先に定義しておく
-REF_SPIECE="human"
+REF_SPIECE="mouse"
 
 # オプションをパース
 PARAM=()
@@ -110,7 +110,7 @@ SRA_ROOT=$HOME/ncbi/public/sra
 
 # テスト用。ダウンロードするread数。全部使うときは0に
 # MAX_SPOT_ID=100000
-MAX_SPOT_ID=0
+# MAX_SPOT_ID=0
 
 DOCKER=docker
 # DOCKER=udocker # udockerも指定できる。
@@ -209,11 +209,12 @@ else
 fi
 
 
-if [ $MAX_SPOT_ID = 0 ]; then
-  MAX_SPOT_ID=""
-else
+# if [ $MAX_SPOT_ID = 0 ]; then
+if [ $IF_TEST = true ]; then
   $COWSAY "test mode( MAX_SPOT_ID is set)"
-  MAX_SPOT_ID="-X $MAX_SPOT_ID"
+  MAX_SPOT_ID="-X 100000"
+else
+  MAX_SPOT_ID=""
 fi
 
 echo ${1}
