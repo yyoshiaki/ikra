@@ -65,7 +65,7 @@ for opt in "$@"; do
         #　引数が任意の場合
         '-t'|'--threads' )
             THREADS=4; shift
-            if [[ -n "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+            if [[ -n "$EX_MATRIX_FILE" ]] && [[ ! "$1" =~ ^-+ ]]; then
                 THREADS="$1"; shift
             fi
             ;;
@@ -230,8 +230,8 @@ else
   MAX_SPOT_ID=""
 fi
 
-echo ${1}
-cat $1
+echo $EX_MATRIX_FILE
+cat $EX_MATRIX_FILE
 
 # tximport_R.Rを取ってくる。
 cp $SCRIPT_DIR/tximport_R.R ./
@@ -276,7 +276,7 @@ cp $SCRIPT_DIR/tximport_R.R ./
 
 
 # fastq_dump
-for i in `tail -n +2  $1`
+for i in `tail -n +2  $EX_MATRIX_FILE`
 do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
@@ -339,7 +339,7 @@ if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
 fi
 
 
-for i in `tail -n +2  $1`
+for i in `tail -n +2  $EX_MATRIX_FILE`
 do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
@@ -439,7 +439,7 @@ if [[ ! -d "$SALMON_INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
 fi
 
-for i in `tail -n +2  $1`
+for i in `tail -n +2  $EX_MATRIX_FILE`
 do
   name=`echo $i | cut -d, -f1`
   SRR=`echo $i | cut -d, -f2`
