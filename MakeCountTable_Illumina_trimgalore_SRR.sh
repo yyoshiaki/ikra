@@ -13,6 +13,7 @@ $ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv [--test, --help] [--spiece 
 COMMENTOUT
 
 #　オプション関連ここから
+#　大部分は http://dojineko.hateblo.jp/entry/2016/06/30/225113 から引用させていただきました。
 
 #　変数 EX_MATRIX_FILE, REF_SPIECE はここで定義
 #　if [[ $IF_TEST = true ]]; then でテストモード用の実行が可能
@@ -27,37 +28,46 @@ PROGNAME="$( basename $0 )"
 # Usage
 function usage() {
   cat << EOS >&2
-Usage: ${PROGNAME} experiment_table.csv [--test, --help] [--spiece VALUE]
+Usage: ${PROGNAME} experiment_table.csv spiece [--test, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
+    2.reference(human or mouse)
 
 Options:
-  -t, --test    test mode(MAX_SPOT_ID=100000).(dafault : False)
-  -s, --spiece  reference spiece[human or mouse].(default: mouse)
+  --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  -u, --udocker
+  -w, --without-docker
+  -t, --threads
   -h, --help    Show usage.
 EOS
   exit 1
 }
 
 # デフォルト値を先に定義しておく
-REF_SPIECE="mouse"
+RUNINDOCKER=1
+DOCKER=docker
+THREADS=1
 
 # オプションをパース
 PARAM=()
 for opt in "$@"; do
     case "${opt}" in
         #　モード選択など引数の無いオプションの場合
-        '-t'|'--test' )
+        '--test' )
             IF_TEST=true; shift
             ;;
-        #　引数が必須の場合
-        '-s'|'--spiece' )
-            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                echo "${PROGNAME}: option requires an argument -- $( echo $1 | sed 's/^-*//' )" 1>&2
-                exit 1
+        '-u'|'--undocker' )
+            DOCKER=udocker; shift
+            ;;
+        '-w'|'--without-docker' )
+            RUNINDOCKER=0; shift
+            ;;
+        #　引数が任意の場合
+        '-t'|'--threads' )
+            THREADS=4; shift
+            if [[ -n "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
+                THREADS="$1"; shift
             fi
-            REF_SPIECE="$2"
-            shift 2
             ;;
         '-h' | '--help' )
             usage
@@ -81,8 +91,10 @@ done
 
 # オプション無しの値を使う場合はここで処理する
 EX_MATRIX_FILE="${PARAM}"; PARAM=("${PARAM[@]:1}")
+REF_SPIECE="${PARAM}"; PARAM=("${PARAM[@]:1}")
 
 [[ -z "${EX_MATRIX_FILE}" ]] && usage
+[[ -z "${REF_SPIECE}" ]] && usage
 
 # 規定外のオプションがある場合にはusageを表示
 if [[ -n "${PARAM[@]}" ]]; then
@@ -93,6 +105,9 @@ fi
 cat << EOS | column -t
 EX_MATRIX_FILE ${EX_MATRIX_FILE}
 REF_SPIECE ${REF_SPIECE}
+RUNINDOCKER ${RUNINDOCKER}
+DOCKER ${DOCKER}
+THREADS ${THREADS}
 IF_TEST ${IF_TEST:-false}
 EOS
 
@@ -101,8 +116,6 @@ set -u
 #　オプション関連ここまで
 
 # 実験テーブル.csv
-RUNINDOCKER=1
-THREADS=4
 
 # 十分大きなものにする。
 MAXSIZE=20G
