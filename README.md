@@ -9,13 +9,24 @@ optionが実装されたときにtest modeについてもオプション立て�
 
 ## Usage
 
-```bash
-$ bash MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv mouse
+```
+Usage: bash MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv spiece [--test, --help, --without-docker, --udocker] [--threads [VALUE]]
+  args
+    1.experiment matrix(csv)
+    2.reference(human or mouse)
+
+Options:
+  --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  -u, --udocker
+  -w, --without-docker
+  -t, --threads
+  -h, --help    Show usage.
 ```
 
-args
-1. experiment matrix(csv)
-2. reference(human or mouse)
+1. test optionは各サンプルにおいてリード数を100000に限定する。
+2. udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
+3. without-docker modeはすべてのツールをインストールし他状態で動く。非推奨。
+4. threads
 
 experiment matrixはカンマ区切りで（csv形式）
 
