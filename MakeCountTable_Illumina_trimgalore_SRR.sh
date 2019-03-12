@@ -65,7 +65,7 @@ for opt in "$@"; do
         #　引数が任意の場合
         '-t'|'--threads' )
             THREADS=4; shift
-            if [[ -n "$EX_MATRIX_FILE" ]] && [[ ! "$1" =~ ^-+ ]]; then
+            if [[ -n "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
                 THREADS="$1"; shift
             fi
             ;;
