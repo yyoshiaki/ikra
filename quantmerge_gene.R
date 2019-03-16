@@ -2,7 +2,7 @@ library(tximport)
 library(readr)
 library(RCurl)
 
-# 2018/12/05 Y.Yasumizu
+# 2019/03/16 Y.Yasumizu
 # usage : Rscript quantmerge_gene.R
 # automatically detect salmon output (*/salmon_output_${name}/quant.sf)
 

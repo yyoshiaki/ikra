@@ -3,7 +3,7 @@
 library(tximport)
 library(readr)
 
-# Rscript tximport_R.R gencode.vM19.metadata.MGI.gz tpTregTconv_rnaseq_experiment_table.csv
+# Rscript tximport_R.R gencode.vM19.metadata.MGI.gz Illumina_PE_SRR.csv
 
 args1 = commandArgs(trailingOnly=TRUE)[1]
 args2 = commandArgs(trailingOnly=TRUE)[2]
