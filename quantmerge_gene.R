@@ -3,11 +3,7 @@ library(readr)
 library(RCurl)
 
 # 2019/03/16 Y.Yasumizu
-<<<<<<< HEAD
 # usage : Rscript quantmerge_gene.R
-=======
-# usage : Rscript quantmerge_gene.R　gencode.vM19.metadata.MGI.gz experiment_table
->>>>>>> 0ed50ff1091149ce0d49c6c0d6e9db396eee4e73
 # automatically detect salmon output (*/salmon_output_${name}/quant.sf)
 
 # metadataがないときはダウンロードする。
