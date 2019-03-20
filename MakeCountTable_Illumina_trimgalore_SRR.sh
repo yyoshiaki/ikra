@@ -47,6 +47,7 @@ EOS
 RUNINDOCKER=1
 DOCKER=docker
 THREADS=1
+IF_TEST=false
 
 # オプションをパース
 PARAM=()
