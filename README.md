@@ -118,6 +118,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - salomn validateMappings
 - pigz(gzipのマルチスレッド版)
 - fasterq-dump
+- cwl開発少しだけ
 
 ## legacy
 
