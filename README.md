@@ -118,6 +118,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - salomn validateMappings
 - pigz(gzipのマルチスレッド版)
 - fasterq-dump
+- cwl開発少しだけ
 
 ## legacy
 
@@ -127,9 +128,7 @@ trimmomaticを使ったトリミングを用いたフローは`./legacy`に移�
 
 今はまだ完成とは言えないので各自
 
-Fork -> Pull Request into master
-
-という流れだが、ある程度固まったら、Development branchを設けるので、そこにPRして貰う予定。
+**"development" branchの中** でFork -> Pull Request。直接masterは変えない。
 
 ## 参考
 
@@ -137,3 +136,18 @@ Fork -> Pull Request into master
 - [idep](http://bioinformatics.sdstate.edu/idep/)
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
+
+## cwl版の開発
+
+2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。
+とりあえずPEでtrim_galoreとsalmonをcwl化した。
+
+```
+cd test/cwl_PE && bash test.sh
+```
+
+
+## cwl_toolsの由来、参考
+
+- https://github.com/pitagora-galaxy/cwl
+- https://github.com/roryk/salmon-cwl
