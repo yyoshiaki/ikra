@@ -42,17 +42,19 @@ inputs:
       1
       int: number of threads to run Salmon
 outputs:
-  - id: quantdir
-    type: Directory
+  - id: quant
+    type: File
     outputBinding:
-      glob: .
+      glob: quant.sf
 arguments:
   - quant
   - position: 4
     prefix: ''
+    separate: false
     valueFrom: '--gcBias'
   - position: 5
     prefix: ''
+    separate: false
     valueFrom: '--validateMappings'
 requirements:
   - class: DockerRequirement

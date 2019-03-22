@@ -5,6 +5,8 @@ test/Illumina_SE/*
 test/Illumina_PE/*
 !test/Illumina_PE/Illumina_PE_SRR.csv
 test/Illumina
+test/cwl_PE/salmon_index_mouse
+test/cwl_PE/docker*
 *.gz
 *.ipynb_checkpoints*
 *.Rhistory

@@ -135,3 +135,18 @@ trimmomaticを使ったトリミングを用いたフローは`./legacy`に移�
 - [idep](http://bioinformatics.sdstate.edu/idep/)
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
+
+## cwl版の開発
+
+2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。
+とりあえずPEでtrim_galoreとsalmonをcwl化した。
+
+```
+cd test/cwl_PE && bash test.sh
+```
+
+
+## cwl_toolsの由来、参考
+
+- https://github.com/pitagora-galaxy/cwl
+- https://github.com/roryk/salmon-cwl
