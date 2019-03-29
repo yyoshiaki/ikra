@@ -163,7 +163,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
+  DRUN="$DOCKER run -u `id -u $USER` --rm -v $PWD:/home --workdir /home "
 
   SCRIPT_DIR=`dirname "$0"`
   #--user=biodocker
