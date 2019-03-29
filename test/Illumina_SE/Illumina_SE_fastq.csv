@@ -1,0 +1,9 @@
+name,SRR,Layout,Foxp3,CNS2
+Foxp3high_CNS2KO_1,SRR1269713.fastq.gz,SE,Foxp3high,CNS2KO
+Foxp3low_CNS2KO_1,SRR1269714.fastq.gz,SE,Foxp3low,CNS2KO
+Foxp3high_WT_1,SRR1269715.fastq.gz,SE,Foxp3high,WT
+Foxp3low_WT_1,SRR1269716.fastq.gz,SE,Foxp3low,WT
+Foxp3high_WT_2,SRR1269717.fastq.gz,SE,Foxp3high,WT
+Foxp3low_WT_2,SRR1269718.fastq.gz,SE,Foxp3low,WT
+Foxp3low_CNS2KO_2,SRR1269712.fastq.gz,SE,Foxp3low,CNS2KO
+Foxp3high_CNS2KO_2,SRR1269711.fastq.gz,SE,Foxp3high,CNS2KO

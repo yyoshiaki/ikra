@@ -3,12 +3,6 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv [--test, --help] [--spiece VALUE]
-
-- fastqかSRRの判別
-- trim_galore
-- gtf, transcript file をGENCODEから
-- salmon
 
 COMMENTOUT
 
@@ -35,6 +29,7 @@ Usage: ${PROGNAME} experiment_table.csv spiece [--test, --help, --without-docker
 
 Options:
   --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
   -t, --threads
@@ -48,6 +43,7 @@ RUNINDOCKER=1
 DOCKER=docker
 THREADS=1
 IF_TEST=false
+IF_FASTQ=false
 
 # オプションをパース
 PARAM=()
@@ -56,6 +52,9 @@ for opt in "$@"; do
         #　モード選択など引数の無いオプションの場合
         '--test' )
             IF_TEST=true; shift
+            ;;
+        '--fastq' )
+            IF_FASTQ=true; shift
             ;;
         '-u'|'--undocker' )
             DOCKER=udocker; shift
@@ -110,6 +109,7 @@ RUNINDOCKER ${RUNINDOCKER}
 DOCKER ${DOCKER}
 THREADS ${THREADS}
 IF_TEST ${IF_TEST:-false}
+IF_FASTQ ${IF_FASTQ:-false}
 EOS
 
 set -u
@@ -169,7 +169,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   #--user=biodocker
 
   # 危険！
-  chmod 777 .
+  # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
@@ -287,46 +287,49 @@ although it may support partial access in future versions.
 
 COMMENTOUT
 
-# SE
-if [ $LAYOUT = SE ]; then
-  # fastq_dump
-  if [[ ! -f "$SRR.fastq.gz" ]]; then
-    if [[ $MAX_SPOT_ID == "" ]]; then
-      $FASTERQ_DUMP $SRR --threads $THREADS
-      # gzip $SRR.fastq
-      $PIGZ $SRR.fastq
-    else
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+if [ $IF_FASTQ = false ]; then
+# fasterq_dump
+  # SE
+  if [ $LAYOUT = SE ]; then
+    # fastq_dump
+    if [[ ! -f "$SRR.fastq.gz" ]]; then
+      if [[ $MAX_SPOT_ID == "" ]]; then
+        $FASTERQ_DUMP $SRR --threads $THREADS
+        # gzip $SRR.fastq
+        $PIGZ $SRR.fastq
+      else
+        $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+      fi
+    fi
+
+    # fastqc
+    if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+      $FASTQC -t $THREADS ${SRR}.fastq.gz
+    fi
+
+  # PE
+  else
+    # fastq_dump
+    if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
+      if [[ $MAX_SPOT_ID == "" ]]; then
+        $FASTERQ_DUMP $SRR --split-files --threads $THREADS
+        # gzip ${SRR}_1.fastq
+        # gzip ${SRR}_2.fastq
+        $PIGZ ${SRR}_1.fastq
+        $PIGZ ${SRR}_2.fastq
+      else
+        $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+      fi
+    fi
+
+    # fastqc
+    if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
+      $FASTQC -t $THREADS ${SRR}_1.fastq.gz
+      $FASTQC -t $THREADS ${SRR}_2.fastq.gz
     fi
   fi
-
-  # fastqc
-  if [[ ! -f "${SRR}_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}.fastq.gz
-  fi
-
-# PE
-else
-  # fastq_dump
-  if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
-    if [[ $MAX_SPOT_ID == "" ]]; then
-      $FASTERQ_DUMP $SRR --split-files --threads $THREADS
-      # gzip ${SRR}_1.fastq
-      # gzip ${SRR}_2.fastq
-      $PIGZ ${SRR}_1.fastq
-      $PIGZ ${SRR}_2.fastq
-    else
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
-    fi
-  fi
-
-  # fastqc
-  if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_1.fastq.gz
-    $FASTQC -t $THREADS ${SRR}_2.fastq.gz
-  fi
+  done
 fi
-done
 
 if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
   $MULTIQC -n multiqc_report_raw_reads.html .
@@ -335,62 +338,23 @@ fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
-name=`echo $i | cut -d, -f1`
-SRR=`echo $i | cut -d, -f2`
-LAYOUT=`echo $i | cut -d, -f3`
-# ADAPTER=`echo $i | cut -d, -f4`
+if [ $IF_FASTQ = false ]; then
+  # fasterq_dump
+  name=`echo $i | cut -d, -f1`
+  SRR=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
+else
+  name=`echo $i | cut -d, -f1`
+  fq=`echo $i | cut -d, -f2`
+  fqname_ext="${fq##*/}"
+  # echo $fqname_ext
 
-# # SE
-# if [ $LAYOUT = SE ]; then
-#   # trimmomatic
-#   if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
-#     $TRIMMOMATIC \
-#     $LAYOUT \
-#     -threads $THREADS \
-#     -phred33 \
-#     -trimlog log.${SRR}.txt \
-#     ${SRR}.fastq.gz \
-#     ${SRR}_trimmed.fastq.gz \
-#     ILLUMINACLIP:${ADAPTER}:2:10:10 \
-#     HEADCROP:10 \
-#     LEADING:20 \
-#     TRAILING:20 \
-#     MINLEN:30
-#   fi
-#
-#   # fastqc
-#   if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
-#     $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
-#   fi
-#
-# # PE
-# else
-#   # trimmomatic
-#   if [[ ! -f "${SRR}_1_trimmed_paired.fastq.gz" ]]; then
-#     $TRIMMOMATIC \
-#     $LAYOUT \
-#     -threads $THREADS \
-#     -phred33 \
-#     -trimlog log.${SRR}.txt \
-#     ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
-#     ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
-#     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
-# #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-#     ILLUMINACLIP:${ADAPTER}:2:30:10 \
-#     HEADCROP:10 \
-#     LEADING:3 \
-#     TRAILING:3 \
-#     SLIDINGWINDOW:4:15 \
-#     MINLEN:36
-#   fi
-#
-#   # fastqc
-#   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-#     $FASTQC -t $THREADS ${SRR}_1_trimmed_paired.fastq.gz
-#     $FASTQC -t $THREADS ${SRR}_2_trimmed_paired.fastq.gz
-#   fi
-# fi
-# done
+  # ファイル名を取り出す（拡張子なし）
+  basename_fq="${fqname_ext%.*.*}"
+  dirname_fq=`dirname $fq`
+  SRR=${dirname_fq}/${basename_fq}
+fi
+
 
 # trim_galore
 # SE
@@ -435,9 +399,22 @@ fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
+  if [ $IF_FASTQ = false ]; then
+    # fasterq_dump
+    name=`echo $i | cut -d, -f1`
+    SRR=`echo $i | cut -d, -f2`
+    LAYOUT=`echo $i | cut -d, -f3`
+  else
+    name=`echo $i | cut -d, -f1`
+    fq=`echo $i | cut -d, -f2`
+    fqname_ext="${fq##*/}"
+    # echo $fqname_ext
+
+    # ファイル名を取り出す（拡張子なし）
+    basename_fq="${fqname_ext%.*.*}"
+    dirname_fq=`dirname $fq`
+    SRR=${dirname_fq}/${basename_fq}
+  fi
 
   # SE
   if [ $LAYOUT = SE ]; then
@@ -488,8 +465,8 @@ if [[ ! -f "counttable.tsv" ]]; then
 fi
 
 
-if [[ "$RUNINDOCKER" -eq "1" ]]; then
-
-  chmod 755 .
-
-fi
+# if [[ "$RUNINDOCKER" -eq "1" ]]; then
+#
+#   chmod 755 .
+#
+# fi
