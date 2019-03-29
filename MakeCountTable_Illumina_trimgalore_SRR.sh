@@ -343,6 +343,7 @@ if [ $IF_FASTQ = false ]; then
   name=`echo $i | cut -d, -f1`
   SRR=`echo $i | cut -d, -f2`
   LAYOUT=`echo $i | cut -d, -f3`
+  dirname_fq=""
 else
   name=`echo $i | cut -d, -f1`
   fq=`echo $i | cut -d, -f2`
@@ -353,33 +354,34 @@ else
   # ファイル名を取り出す（拡張子なし）
   basename_fq="${fqname_ext%.*.*}"
   dirname_fq=`dirname $fq`
-  SRR=${dirname_fq}/${basename_fq}
+  dirname_fq=${dirname_fq}/
+  SRR=${basename_fq}
 fi
 
 
 # trim_galore
 # SE
 if [ $LAYOUT = SE ]; then
-  if [[ ! -f "${SRR}_trimmed.fq.gz" ]]; then
-    $TRIMGALORE ${SRR}.fastq.gz
+  if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
+    $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_trimmed.fq.gz
+  if [[ ! -f "${dirname_fq}${SRR}_trimmed_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${dirname_fq}${SRR}_trimmed.fq.gz
   fi
 
 # PE
 else
   # trimmomatic
-  if [[ ! -f " ${SRR}_1_val_1.fq.gz" ]]; then
-    $TRIMGALORE --paired ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz
+  if [[ ! -f " ${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
+    $TRIMGALORE --paired ${dirname_fq}${SRR}_1.fastq.gz ${dirname_fq}${SRR}_2.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_1_val_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_1_val_1.fq.gz
-    $FASTQC -t $THREADS ${SRR}_2_val_2.fq.gz
+  if [[ ! -f "${dirname_fq}${SRR}_1_val_1_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${dirname_fq}${SRR}_1_val_1.fq.gz
+    $FASTQC -t $THREADS ${dirname_fq}${SRR}_2_val_2.fq.gz
   fi
 fi
 done
@@ -405,6 +407,7 @@ do
     name=`echo $i | cut -d, -f1`
     SRR=`echo $i | cut -d, -f2`
     LAYOUT=`echo $i | cut -d, -f3`
+    dirname_fq=""
   else
     name=`echo $i | cut -d, -f1`
     fq=`echo $i | cut -d, -f2`
@@ -415,7 +418,8 @@ do
     # ファイル名を取り出す（拡張子なし）
     basename_fq="${fqname_ext%.*.*}"
     dirname_fq=`dirname $fq`
-    SRR=${dirname_fq}/${basename_fq}
+    dirname_fq=${dirname_fq}/
+    SRR=${basename_fq}
   fi
 
   # SE
@@ -425,7 +429,7 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -r ${SRR}_trimmed.fq.gz \
+      -r ${dirname_fq}${SRR}_trimmed.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
       --gcBias \
@@ -440,8 +444,8 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -1 ${SRR}_1_val_1.fq.gz \
-      -2 ${SRR}_2_val_2.fq.gz \
+      -1 ${dirname_fq}${SRR}_1_val_1.fq.gz \
+      -2 ${dirname_fq}${SRR}_2_val_2.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
       --gcBias \
