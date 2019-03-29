@@ -164,7 +164,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
   if [[ $DOCKER = docker ]]; then
-    DRUN="$DOCKER run  -u `id -u`:`id -g` --rm -v $PWD:/home  -e HOME=/home --workdir /home "
+    DRUN="$DOCKER run  -u `id -u`:`id -g` --rm -v $PWD:/home -e HOME=/home --workdir /home "
   elif [[ $DOCKER = udocker ]]; then
     DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home "
   fi
