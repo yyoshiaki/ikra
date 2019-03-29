@@ -10,7 +10,7 @@ optionが実装されたときにtest modeについてもオプション立て�
 ## Usage
 
 ```
-Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -26,16 +26,24 @@ Options:
 
 1. test optionは各サンプルにおいてリード数を100000に限定する。
 2. udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
-3. without-docker modeはすべてのツールをインストールし他状態で動く。非推奨。
+3. without-docker modeはすべてのツールをインストールした状態で動く。非推奨。
 4. threads
 
 experiment matrixはカンマ区切りで（csv形式）
 
-|  name  |  SRR or fastq  |  Layout  | condition1 | ... |
+**SRR mode**
+
+|  name  |  SRR |  Layout  | condition1 | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  SRR5385248  | SE  | Treg | ... |
 
+**fastq mode**
+
+|  name  |  fastq |  Layout  | condition1 | ... |
+| ---- | ---- | - | - | - |
+|  Treg_LN_1  | hoge/SRR5385247.fastq.gz | SE | Treg | ...|
+|  Treg_LN_2  |  hoge/SRR5385248.fastq.gz  | SE  | Treg | ... |
 
 nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 前3列は必須。
@@ -73,7 +81,7 @@ $ source ~/.bashrc
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse --test -t 50
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse --test -t 10
 ```
 
 **fastq mode**
@@ -81,7 +89,7 @@ $ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --fastq
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
 #### PE
@@ -89,7 +97,7 @@ $ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse --test -t 50
 ```
 
 **fastq mode**
@@ -97,7 +105,7 @@ $ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_fastq.csv mouse --fastq
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_fastq.csv mouse --fastq -t 10
 ```
 
 ### Ion (ThermoFisher)
@@ -131,7 +139,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - 生物種の判別(アナログ)
 - gtf, transcript file をGENCODEから
 - salmon
-- trimmomatic
+- trimmomatic(legacy)
 - trim_galore!
 - tximport
 - fastxtools(Ion用)
