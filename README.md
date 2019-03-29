@@ -10,13 +10,14 @@ optionが実装されたときにtest modeについてもオプション立て�
 ## Usage
 
 ```
-Usage: bash MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv spiece [--test, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
 
 Options:
   --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
   -t, --threads
@@ -38,6 +39,7 @@ experiment matrixはカンマ区切りで（csv形式）
 
 nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 前3列は必須。
+自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`fastq.gz`のみに対応。
 
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
@@ -68,22 +70,34 @@ $ source ~/.bashrc
 
 #### SE
 
-SRR mode
+**SRR mode**
 
 ```bash
 $ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse --test -t 50
 ```
 
-fastq mode
+**fastq mode**
+
+SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --test --fastq
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --fastq
 ```
 
 #### PE
 
+**SRR mode**
+
 ```bash
 $ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse
+```
+
+**fastq mode**
+
+SRR modeを実行したあとしかできない。（fastqはつけていないから。）
+
+```bash
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_fastq.csv mouse --fastq
 ```
 
 ### Ion (ThermoFisher)

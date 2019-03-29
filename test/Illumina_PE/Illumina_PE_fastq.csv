@@ -1,0 +1,7 @@
+name,fastq,Layout
+PID_1,SRR7501484.fastq.gz,PE
+PID_2,SRR7501485.fastq.gz,PE
+PID_3,SRR7501486.fastq.gz,PE
+WT_1,SRR7501481.fastq.gz,PE
+WT_2,SRR7501483.fastq.gz,PE
+WT_3,SRR7501482.fastq.gz,PE

@@ -22,7 +22,7 @@ PROGNAME="$( basename $0 )"
 # Usage
 function usage() {
   cat << EOS >&2
-Usage: ${PROGNAME} experiment_table.csv spiece [--test, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -163,7 +163,11 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run  -u `id -u`:`id -g` --rm -v $PWD:/home --workdir /home "
+  if [[ $DOCKER = docker ]]; then
+    DRUN="$DOCKER run  -u `id -u`:`id -g` --rm -v $PWD:/home --workdir /home "
+  elif [[ $DOCKER = udocker ]]; then
+    DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home "
+  fi
 
   SCRIPT_DIR=`dirname "$0"`
   #--user=biodocker
