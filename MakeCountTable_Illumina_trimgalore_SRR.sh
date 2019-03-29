@@ -269,6 +269,7 @@ cp $SCRIPT_DIR/tximport_R.R ./
 
 
 
+if [ $IF_FASTQ = false ]; then
 # fastq_dump
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
@@ -287,7 +288,6 @@ although it may support partial access in future versions.
 
 COMMENTOUT
 
-if [ $IF_FASTQ = false ]; then
 # fasterq_dump
   # SE
   if [ $LAYOUT = SE ]; then
@@ -328,7 +328,7 @@ if [ $IF_FASTQ = false ]; then
       $FASTQC -t $THREADS ${SRR}_2.fastq.gz
     fi
   fi
-  done
+done
 fi
 
 if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
