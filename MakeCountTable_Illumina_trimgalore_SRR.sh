@@ -346,6 +346,7 @@ if [ $IF_FASTQ = false ]; then
 else
   name=`echo $i | cut -d, -f1`
   fq=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
   fqname_ext="${fq##*/}"
   # echo $fqname_ext
 
@@ -407,6 +408,7 @@ do
   else
     name=`echo $i | cut -d, -f1`
     fq=`echo $i | cut -d, -f2`
+    LAYOUT=`echo $i | cut -d, -f3`
     fqname_ext="${fq##*/}"
     # echo $fqname_ext
 

@@ -68,8 +68,16 @@ $ source ~/.bashrc
 
 #### SE
 
+SRR mode
+
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse --test -t 50
+```
+
+fastq mode
+
+```bash
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --test --fastq
 ```
 
 #### PE
