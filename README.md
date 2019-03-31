@@ -40,7 +40,7 @@ experiment matrixはカンマ区切りで（csv形式）
 
 **fastq mode**
 
-|  name  |  fastq |  Layout  | condition1 | ... |
+|  name  |  fastq(PREFIX) |  Layout  | condition1 | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
