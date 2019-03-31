@@ -42,12 +42,13 @@ experiment matrixはカンマ区切りで（csv形式）
 
 |  name  |  fastq |  Layout  | condition1 | ... |
 | ---- | ---- | - | - | - |
-|  Treg_LN_1  | hoge/SRR5385247.fastq.gz | SE | Treg | ...|
-|  Treg_LN_2  |  hoge/SRR5385248.fastq.gz  | SE  | Treg | ... |
+|  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
+|  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
 
-nameはアンダーバー区切りでcondition、replicateをつなげて書く。
-前3列は必須。
-自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`fastq.gz`のみに対応。
+- nameはアンダーバー区切りでcondition、replicateをつなげて書く。
+- 前3列は必須。
+- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`fastq.gz`のみに対応。
+- fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
 
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))

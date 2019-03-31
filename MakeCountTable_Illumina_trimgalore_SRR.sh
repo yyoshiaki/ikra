@@ -356,7 +356,8 @@ else
   # echo $fqname_ext
 
   # ファイル名を取り出す（拡張子なし）
-  basename_fq="${fqname_ext%.*.*}"
+  # basename_fq="${fqname_ext%.*.*}"
+  basename_fq=${fqname_ext}
   dirname_fq=`dirname $fq`
   dirname_fq=${dirname_fq}/
   SRR=${basename_fq}
@@ -420,7 +421,8 @@ do
     # echo $fqname_ext
 
     # ファイル名を取り出す（拡張子なし）
-    basename_fq="${fqname_ext%.*.*}"
+    # basename_fq="${fqname_ext%.*.*}"
+    basename_fq=${fqname_ext}
     dirname_fq=`dirname $fq`
     dirname_fq=${dirname_fq}/
     SRR=${basename_fq}
