@@ -28,11 +28,13 @@ Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --witho
     2.reference(human or mouse)
 
 Options:
-  --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  --test  test mode(MAX_SPOT_ID=100000). (dafault : False)
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
   -t, --threads
+  -s1, --suffix_PE_1    suffix for PE fastq files.(default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files.(default : _2.fastq.gz)
   -h, --help    Show usage.
 EOS
   exit 1
@@ -44,6 +46,8 @@ DOCKER=docker
 THREADS=1
 IF_TEST=false
 IF_FASTQ=false
+SUFFIX_PE_1=_1.fastq.gz
+SUFFIX_PE_2=_2.fastq.gz
 
 # オプションをパース
 PARAM=()
@@ -68,6 +72,23 @@ for opt in "$@"; do
             if [[ -n "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
                 THREADS="$1"; shift
             fi
+            ;;
+        '-s1'|'--suffix_PE_1' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+            SUFFIX_PE_1="$2"
+            shift 2
+            ;;
+
+        '-s2'|'--suffix_PE_2' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+            SUFFIX_PE_2="$2"
+            shift 2
             ;;
         '-h' | '--help' )
             usage
@@ -328,8 +349,8 @@ COMMENTOUT
 
     # fastqc
     if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-      $FASTQC -t $THREADS ${SRR}_1.fastq.gz
-      $FASTQC -t $THREADS ${SRR}_2.fastq.gz
+      $FASTQC -t $THREADS ${SRR}${SUFFIX_PE_1}
+      $FASTQC -t $THREADS ${SRR}${SUFFIX_PE_2}
     fi
   fi
 done
@@ -380,7 +401,7 @@ if [ $LAYOUT = SE ]; then
 else
   # trimmomatic
   if [[ ! -f " ${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
-    $TRIMGALORE --paired ${dirname_fq}${SRR}_1.fastq.gz ${dirname_fq}${SRR}_2.fastq.gz
+    $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
   fi
 
   # fastqc

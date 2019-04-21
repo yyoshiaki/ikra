@@ -21,6 +21,8 @@ Options:
   -u, --udocker
   -w, --without-docker
   -t, --threads
+  -s1, --suffix_PE_1    suffix for PE fastq files.(default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files.(default : _2.fastq.gz)
   -h, --help    Show usage.
 ```
 
@@ -49,6 +51,7 @@ experiment matrixはカンマ区切りで（csv形式）
 - 前3列は必須。
 - 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`fastq.gz`のみに対応。
 - fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
+- suffixが`_1.fastq.gz`,`_2.fastq.gz`ではない場合は-s1, -s2オプションをつける。
 
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
