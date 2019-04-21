@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mouse
+$ bash ikura_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mouse
 
 - fastqかSRRの判別
 - trimmomatic
@@ -38,7 +38,7 @@ elif [[ $REF_SPIECE = human ]]; then
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
   TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-  
+
 else
   echo No reference speice!
   exit
@@ -64,10 +64,10 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
 
   #--user=biodocker
-  
+
   # 危険！
   chmod 777 .
-  
+
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
@@ -78,7 +78,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
-  
+
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
@@ -101,7 +101,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
-  
+
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
@@ -133,7 +133,7 @@ do
 
   name=`echo $i | cut -d, -f1`
   SRR=`echo $i | cut -d, -f2`
-  
+
   # fastq_dump
   if [[ ! -f "$SRR.fastq.gz" ]]; then
   $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
@@ -180,7 +180,7 @@ do
   name=`echo $i | cut -d, -f1`
   SRR=`echo $i | cut -d, -f2`
   LAYOUT=`echo $i | cut -d, -f3`
-  
+
 
   if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
     mkdir salmon_output_${SRR}

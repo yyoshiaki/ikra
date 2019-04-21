@@ -1,16 +1,16 @@
-# auto_counttable_maker　<img src="img/salmon1.jpg" width="30%" align="right" />
+# Ikra　-RNAseq pipeline centered on Salmon- <img src="img/salmon1.jpg" width="30%" align="right" />
 
-[idep](http://bioinformatics.sdstate.edu/idep/)のinputとしてcount tableをexperiment matrix（tpTregTconv_rnaseq_experiment_table.csv）から自動でつくる。salmonを用いる。
+[idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
 ## 注意
 
-MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数)。デフォルトは現在全リード取得。時間がかかるので、テストの場合は各自`MakeCountTable_Illumina_trimgalore_SRR.sh`の中を変更する。
+MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数)。デフォルトは現在全リード取得。時間がかかるので、テストの場合は各自`ikura.sh`の中を変更する。
 optionが実装されたときにtest modeについてもオプション立てれるようにする予定。
 
 ## Usage
 
 ```
-Usage: MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: ikra.sh experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -85,7 +85,7 @@ $ source ~/.bashrc
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse --test -t 10
+$ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_SRR.csv mouse --test -t 10
 ```
 
 **fastq mode**
@@ -93,7 +93,7 @@ $ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --fastq -t 10
+$ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
 #### PE
@@ -101,7 +101,7 @@ $ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse --test -t 50
+$ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_SRR.csv mouse --test -t 50
 ```
 
 **fastq mode**
@@ -109,13 +109,13 @@ $ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Il
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+$ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_fastq.csv mouse --fastq -t 10
 ```
 
 ### Ion (ThermoFisher)
 
 ```bash
-$ cd test/Ion && bash ../../MakeCountTable_Ion_SRR.sh Ion_SRR.csv mouse
+$ cd test/Ion && bash ../../ikura_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
 ### Macのひと
@@ -153,6 +153,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - pigz(gzipのマルチスレッド版)
 - fasterq-dump
 - cwl開発少しだけ
+- 名前の変更（ikura）
 
 ## legacy
 

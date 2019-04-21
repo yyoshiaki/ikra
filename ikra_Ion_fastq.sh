@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_Ion_fastq.sh Ion_fastq.csv mouse
+$ bash ikura_Ion_fastq.sh Ion_fastq.csv mouse
 
 - fastqかSRRの判別
 - trimmomatic
@@ -38,7 +38,7 @@ elif [[ $REF_SPIECE = human ]]; then
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
   TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-  
+
 else
   echo No reference speice!
   exit
@@ -63,12 +63,12 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 
   DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
 #   DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
-  
+
   #--user=biodocker
-  
+
   # 危険！
   chmod 777 .
-  
+
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
@@ -79,7 +79,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
-  
+
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
@@ -103,7 +103,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
-  
+
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
@@ -146,12 +146,12 @@ do
   dirname_fq=`dirname $fq`
 
 
-  
+
   # fastqc
   if [[ ! -f "${dirname_fq}/${basename_fq}_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${dirname_fq}/${basename_fq}.fastq.gz
   fi
-  
+
   # fastx-toolkit
   if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed.fastq.gz" ]]; then
     gunzip -c ${dirname_fq}/${basename_fq}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
@@ -161,7 +161,7 @@ do
   if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed_fastqc.zip" ]]; then
     $FASTQC -t $THREADS ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
   fi
-  
+
 done
 
  # multiqc
@@ -194,7 +194,7 @@ do
   # ファイル名を取り出す（拡張子なし）
   basename_fq="${fqname_ext%.*.*}"
   dirname_fq=`dirname $fq`
-  
+
   if [[ ! -f "salmon_output_${basename_fq}/quant.sf" ]]; then
     mkdir salmon_output_${basename_fq}
     # libtype auto detection mode
