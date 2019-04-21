@@ -2,10 +2,6 @@
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
-## 注意
-
-MAX_SPOT_IDが0以外の値のときはテストモード（fastq-dumpでダウンロードするread数)。デフォルトは現在全リード取得。時間がかかるので、テストの場合は各自`ikura.sh`の中を変更する。
-
 ## Usage
 
 ```
