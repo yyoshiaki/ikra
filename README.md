@@ -10,34 +10,48 @@ optionが実装されたときにtest modeについてもオプション立て�
 ## Usage
 
 ```
-Usage: bash MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv spiece [--test, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: MakeCountTable_Illumina_trimgalore_SRR.sh experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
 
 Options:
   --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
   -t, --threads
+  -s1, --suffix_PE_1    suffix for PE fastq files.(default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files.(default : _2.fastq.gz)
   -h, --help    Show usage.
 ```
 
 1. test optionは各サンプルにおいてリード数を100000に限定する。
 2. udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
-3. without-docker modeはすべてのツールをインストールし他状態で動く。非推奨。
+3. without-docker modeはすべてのツールをインストールした状態で動く。非推奨。
 4. threads
 
 experiment matrixはカンマ区切りで（csv形式）
 
-|  name  |  SRR or fastq  |  Layout  | condition1 | ... |
+**SRR mode**
+
+|  name  |  SRR |  Layout  | condition1 | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  SRR5385248  | SE  | Treg | ... |
 
+**fastq mode**
 
-nameはアンダーバー区切りでcondition、replicateをつなげて書く。
-前3列は必須。
+|  name  |  fastq(PREFIX) |  Layout  | condition1 | ... |
+| ---- | ---- | - | - | - |
+|  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
+|  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
+
+- nameはアンダーバー区切りでcondition、replicateをつなげて書く。
+- 前3列は必須。
+- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`fastq.gz`のみに対応。
+- fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
+- suffixが`_1.fastq.gz`,`_2.fastq.gz`ではない場合は-s1, -s2オプションをつける。
 
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
@@ -68,14 +82,34 @@ $ source ~/.bashrc
 
 #### SE
 
+**SRR mode**
+
 ```bash
-$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_SRR.csv mouse --test -t 10
+```
+
+**fastq mode**
+
+SRR modeを実行したあとしかできない。（fastqはつけていないから。）
+
+```bash
+$ cd test/Illumina_SE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
 #### PE
 
+**SRR mode**
+
 ```bash
-$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_SRR.csv mouse --test -t 50
+```
+
+**fastq mode**
+
+SRR modeを実行したあとしかできない。（fastqはつけていないから。）
+
+```bash
+$ cd test/Illumina_PE && bash ../../MakeCountTable_Illumina_trimgalore_SRR.sh Illumina_PE_fastq.csv mouse --fastq -t 10
 ```
 
 ### Ion (ThermoFisher)
@@ -109,7 +143,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - 生物種の判別(アナログ)
 - gtf, transcript file をGENCODEから
 - salmon
-- trimmomatic
+- trimmomatic(legacy)
 - trim_galore!
 - tximport
 - fastxtools(Ion用)
