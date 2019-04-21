@@ -1,6 +1,4 @@
-# Ikra v1.1 -RNAseq pipeline centered on Salmon-
-
-<img src="img/salmon1.jpg" width="30%" align="right" />
+# Ikra v1.1 -RNAseq pipeline centered on Salmon-<img src="img/ikura.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
@@ -23,8 +21,9 @@ Options:
   -u, --udocker
   -w, --without-docker
   -t, --threads
-  -s1, --suffix_PE_1    suffix for PE fastq files.(default : _1.fastq.gz)
-  -s2, --suffix_PE_2    suffix for PE fastq files.(default : _2.fastq.gz)
+  -o, --output  output file. (default : output.tsv)
+  -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
 ```
 
@@ -32,8 +31,9 @@ Options:
 2. udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
 3. without-docker modeはすべてのツールをインストールした状態で動く。非推奨。
 4. threads
+5. outputはデフォルトでは`output.tsv`。
 
-experiment matrixはカンマ区切りで（csv形式）
+experiment matrixはカンマ区切りで（csv形式）。
 
 **SRR mode**
 
@@ -68,7 +68,7 @@ RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-se
 ## Install
 
 dockerかudocker(v1.1.3)をインストール済みであること。
-もしくは、すべてのソフトを手動でインストールして、MakeCountTable*.shの`RUNINDOCKER=1`に設定する。
+もしくは、すべてのソフトを手動でインストールして、ikura*.shの`RUNINDOCKER=1`に設定する。
 shell scriptなのでpathを通すだけ。以下は一例。
 
 ```bash

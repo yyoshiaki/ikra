@@ -33,8 +33,9 @@ Options:
   -u, --udocker
   -w, --without-docker
   -t, --threads
-  -s1, --suffix_PE_1    suffix for PE fastq files.(default : _1.fastq.gz)
-  -s2, --suffix_PE_2    suffix for PE fastq files.(default : _2.fastq.gz)
+  -o, --output  output file. (default : output.tsv)
+  -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
 EOS
   exit 1
@@ -48,6 +49,7 @@ IF_TEST=false
 IF_FASTQ=false
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
+OUTPUT_FILE=output.tsv
 
 # オプションをパース
 PARAM=()
@@ -90,6 +92,15 @@ for opt in "$@"; do
             SUFFIX_PE_2="$2"
             shift 2
             ;;
+
+          '-o'|'--output' )
+              if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                  echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                  exit 1
+              fi
+              OUTPUT_FILE="$2"
+              shift 2
+              ;;
         '-h' | '--help' )
             usage
             ;;
@@ -493,8 +504,8 @@ if [[ ! -f "$TX2SYMBOL" ]]; then
 fi
 
 # tximport
-if [[ ! -f "counttable.tsv" ]]; then
-  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE $OUTPUT_FILE
 fi
 
 

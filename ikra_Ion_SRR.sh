@@ -23,6 +23,7 @@ DOCKER=docker
 # DOCKER=udocker # udockerも指定できる。
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
+OUTPUT_FILE=output.tsv
 
 if [[ $REF_SPIECE = mouse ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M19
@@ -205,8 +206,8 @@ if [[ ! -f "$TX2SYMBOL" ]]; then
 fi
 
 # tximport
-if [[ ! -f "counttable.tsv" ]]; then
-  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE $OUTPUT_FILE
 fi
 
 
