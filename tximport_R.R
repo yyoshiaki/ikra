@@ -18,5 +18,5 @@ names(files) <- exp.table$name
 # txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene)
 txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene, countsFromAbundance="scaledTPM")
 
-write.table(txi.salmon$counts, file=arg3, sep="\t",col.names=NA,row.names=T,quote=F,append=F)
+write.table(txi.salmon$counts, file=args3, sep="\t",col.names=NA,row.names=T,quote=F,append=F)
 # write.table(exp.table[-c(2,3,4)], file="designtable.csv",row.names=F,quote=F,append=F)
