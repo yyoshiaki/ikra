@@ -3,7 +3,7 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_Ion_fastq.sh Ion_fastq.csv mouse
+$ bash ikura_SRR.sh tpTregTconv_rnaseq_experiment_table.csv outdir mouse
 
 - fastqかSRRの判別
 - trimmomatic
@@ -23,6 +23,7 @@ DOCKER=docker
 # DOCKER=udocker # udockerも指定できる。
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
+OUTPUT_FILE=output.tsv
 
 if [[ $REF_SPIECE = mouse ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M19
@@ -38,7 +39,7 @@ elif [[ $REF_SPIECE = human ]]; then
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
   TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-  
+
 else
   echo No reference speice!
   exit
@@ -62,13 +63,12 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
   DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
-#   DRUN_SIMPLE="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
-  
+
   #--user=biodocker
-  
+
   # 危険！
   chmod 777 .
-  
+
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
@@ -79,7 +79,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON_IMAGE=combinelab/salmon:latest
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
-  
+
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
@@ -94,7 +94,6 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   PFASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $PFASTQ_DUMP"
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
-#   MULTIQC="$DRUN_SIMPLE $MULTIQC_IMAGE $MULTIQC"
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
   FASTXTRIMMER="$DRUN $FASTXTOOLS_IMAGE $FASTXTRIMMER"
   FASTQQUALITYTRIMMER="$DRUN $FASTXTOOLS_IMAGE $FASTQQUALITYTRIMMER"
@@ -103,25 +102,25 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
-  
+
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
   echo "RUNNING LOCAL"
 fi
 
-# # 十分大きなものにする。
-# MAXSIZE=20G
-# SRA_ROOT=$HOME/ncbi/public/sra
+# 十分大きなものにする。
+MAXSIZE=20G
+SRA_ROOT=$HOME/ncbi/public/sra
 
-# # テスト用。ダウンロードするread数。全部使うときは0に
-# MAX_SPOT_ID=5000000
+# テスト用。ダウンロードするread数。全部使うときは0に
+MAX_SPOT_ID=5000000
 
-# if [ $MAX_SPOT_ID = 0 ]; then
-#   MAX_SPOT_ID=""
-# else
-#   $COWSAY "test mode( MAX_SPOT_ID is set)"
-#   MAX_SPOT_ID="-X $MAX_SPOT_ID"
-# fi
+if [ $MAX_SPOT_ID = 0 ]; then
+  MAX_SPOT_ID=""
+else
+  $COWSAY "test mode( MAX_SPOT_ID is set)"
+  MAX_SPOT_ID="-X $MAX_SPOT_ID"
+fi
 
 echo ${1}
 cat $1
@@ -129,45 +128,38 @@ cat $1
 # tximport_R.Rを取ってくる。
 cp $SCRIPT_DIR/tximport_R.R ./
 
-if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
-  $MULTIQC -n multiqc_report_raw_reads.html .
-fi
-
 # fastq_dump
 for i in `tail -n +2  $1`
 do
+
   name=`echo $i | cut -d, -f1`
-  fq=`echo $i | cut -d, -f2`
-  fqname_ext="${fq##*/}"
-  # echo $fqname_ext
+  SRR=`echo $i | cut -d, -f2`
 
-  # ファイル名を取り出す（拡張子なし）
-  basename_fq="${fqname_ext%.*.*}"
-  dirname_fq=`dirname $fq`
-
-
-  
-  # fastqc
-  if [[ ! -f "${dirname_fq}/${basename_fq}_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${dirname_fq}/${basename_fq}.fastq.gz
+  # fastq_dump
+  if [[ ! -f "$SRR.fastq.gz" ]]; then
+  $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
   fi
-  
+
+  # fastqc
+  if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+  $FASTQC -t $THREADS ${SRR}.fastq.gz
+  fi
+
   # fastx-toolkit
-  if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed.fastq.gz" ]]; then
-    gunzip -c ${dirname_fq}/${basename_fq}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
+  if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
+    gunzip -c ${SRR}.fastq.gz | $FASTXTRIMMER -Q33 -f 1 -l 220 | $FASTQQUALITYTRIMMER -z -Q33 -t 18 -l 20 -o ${SRR}_trimmed.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${dirname_fq}/${basename_fq}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${dirname_fq}/${basename_fq}_trimmed.fastq.gz
+  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
+  $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
   fi
-  
+
 done
 
- # multiqc
-# if [[ ! -f "multiqc_report_rawfastq.html" ]]; then
-#   $MULTIQC -n multiqc_report_rawfastq.html .
-# fi
+if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
+  $MULTIQC -n multiqc_report_raw_reads.html .
+fi
 
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
@@ -187,22 +179,18 @@ fi
 for i in `tail -n +2  $1`
 do
   name=`echo $i | cut -d, -f1`
-  fq=`echo $i | cut -d, -f2`
-  fqname_ext="${fq##*/}"
-  # echo $fqname_ext
+  SRR=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
 
-  # ファイル名を取り出す（拡張子なし）
-  basename_fq="${fqname_ext%.*.*}"
-  dirname_fq=`dirname $fq`
-  
-  if [[ ! -f "salmon_output_${basename_fq}/quant.sf" ]]; then
-    mkdir salmon_output_${basename_fq}
+
+  if [[ ! -f "salmon_output_${SRR}/quant.sf" ]]; then
+    mkdir salmon_output_${SRR}
     # libtype auto detection mode
     $SALMON quant -i $SALMON_INDEX \
     -l A \
-    -r ${dirname_fq}/${basename_fq}_trimmed.fastq.gz \
+    -r ${SRR}_trimmed.fastq.gz \
     -p $THREADS \
-    -o salmon_output_${basename_fq} \
+    -o salmon_output_${SRR} \
 #   -g $REF_GTF
   fi
 done
@@ -218,8 +206,8 @@ if [[ ! -f "$TX2SYMBOL" ]]; then
 fi
 
 # tximport
-if [[ ! -f "counttable.tsv" ]]; then
-  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE $OUTPUT_FILE
 fi
 
 

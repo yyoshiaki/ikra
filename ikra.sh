@@ -3,12 +3,6 @@ set -xeu
 
 <<COMMENTOUT
 
-$ bash MakeCountTable_Illumina_trimgalore_SRR.sh csv [--test, --help] [--spiece VALUE]
-
-- fastqかSRRの判別
-- trim_galore
-- gtf, transcript file をGENCODEから
-- salmon
 
 COMMENTOUT
 
@@ -28,16 +22,20 @@ PROGNAME="$( basename $0 )"
 # Usage
 function usage() {
   cat << EOS >&2
-Usage: ${PROGNAME} experiment_table.csv spiece [--test, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
 
 Options:
-  --test  test mode(MAX_SPOT_ID=100000).(dafault : False)
+  --test  test mode(MAX_SPOT_ID=100000). (dafault : False)
+  --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
   -t, --threads
+  -o, --output  output file. (default : output.tsv)
+  -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
 EOS
   exit 1
@@ -48,6 +46,10 @@ RUNINDOCKER=1
 DOCKER=docker
 THREADS=1
 IF_TEST=false
+IF_FASTQ=false
+SUFFIX_PE_1=_1.fastq.gz
+SUFFIX_PE_2=_2.fastq.gz
+OUTPUT_FILE=output.tsv
 
 # オプションをパース
 PARAM=()
@@ -56,6 +58,9 @@ for opt in "$@"; do
         #　モード選択など引数の無いオプションの場合
         '--test' )
             IF_TEST=true; shift
+            ;;
+        '--fastq' )
+            IF_FASTQ=true; shift
             ;;
         '-u'|'--undocker' )
             DOCKER=udocker; shift
@@ -70,6 +75,32 @@ for opt in "$@"; do
                 THREADS="$1"; shift
             fi
             ;;
+        '-s1'|'--suffix_PE_1' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+            SUFFIX_PE_1="$2"
+            shift 2
+            ;;
+
+        '-s2'|'--suffix_PE_2' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+            SUFFIX_PE_2="$2"
+            shift 2
+            ;;
+
+          '-o'|'--output' )
+              if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                  echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                  exit 1
+              fi
+              OUTPUT_FILE="$2"
+              shift 2
+              ;;
         '-h' | '--help' )
             usage
             ;;
@@ -110,6 +141,7 @@ RUNINDOCKER ${RUNINDOCKER}
 DOCKER ${DOCKER}
 THREADS ${THREADS}
 IF_TEST ${IF_TEST:-false}
+IF_FASTQ ${IF_FASTQ:-false}
 EOS
 
 set -u
@@ -163,13 +195,17 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
   # docker を走らせ終わったらコンテナを削除。(-rm)ホストディレクトリをコンテナにマウントする。(-v)
 
-  DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home -i"
+  if [[ $DOCKER = docker ]]; then
+    DRUN="$DOCKER run  -u `id -u`:`id -g` --rm -v $PWD:/home -e HOME=/home --workdir /home "
+  elif [[ $DOCKER = udocker ]]; then
+    DRUN="$DOCKER run --rm -v $PWD:/home --workdir /home "
+  fi
 
   SCRIPT_DIR=`dirname "$0"`
   #--user=biodocker
 
   # 危険！
-  chmod 777 .
+  # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
@@ -269,6 +305,7 @@ cp $SCRIPT_DIR/tximport_R.R ./
 
 
 
+if [ $IF_FASTQ = false ]; then
 # fastq_dump
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
@@ -287,46 +324,48 @@ although it may support partial access in future versions.
 
 COMMENTOUT
 
-# SE
-if [ $LAYOUT = SE ]; then
-  # fastq_dump
-  if [[ ! -f "$SRR.fastq.gz" ]]; then
-    if [[ $MAX_SPOT_ID == "" ]]; then
-      $FASTERQ_DUMP $SRR --threads $THREADS
-      # gzip $SRR.fastq
-      $PIGZ $SRR.fastq
-    else
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+# fasterq_dump
+  # SE
+  if [ $LAYOUT = SE ]; then
+    # fastq_dump
+    if [[ ! -f "$SRR.fastq.gz" ]]; then
+      if [[ $MAX_SPOT_ID == "" ]]; then
+        $FASTERQ_DUMP $SRR --threads $THREADS
+        # gzip $SRR.fastq
+        $PIGZ $SRR.fastq
+      else
+        $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip
+      fi
+    fi
+
+    # fastqc
+    if [[ ! -f "${SRR}_fastqc.zip" ]]; then
+      $FASTQC -t $THREADS ${SRR}.fastq.gz
+    fi
+
+  # PE
+  else
+    # fastq_dump
+    if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
+      if [[ $MAX_SPOT_ID == "" ]]; then
+        $FASTERQ_DUMP $SRR --split-files --threads $THREADS
+        # gzip ${SRR}_1.fastq
+        # gzip ${SRR}_2.fastq
+        $PIGZ ${SRR}_1.fastq
+        $PIGZ ${SRR}_2.fastq
+      else
+        $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
+      fi
+    fi
+
+    # fastqc
+    if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
+      $FASTQC -t $THREADS ${SRR}${SUFFIX_PE_1}
+      $FASTQC -t $THREADS ${SRR}${SUFFIX_PE_2}
     fi
   fi
-
-  # fastqc
-  if [[ ! -f "${SRR}_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}.fastq.gz
-  fi
-
-# PE
-else
-  # fastq_dump
-  if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
-    if [[ $MAX_SPOT_ID == "" ]]; then
-      $FASTERQ_DUMP $SRR --split-files --threads $THREADS
-      # gzip ${SRR}_1.fastq
-      # gzip ${SRR}_2.fastq
-      $PIGZ ${SRR}_1.fastq
-      $PIGZ ${SRR}_2.fastq
-    else
-      $FASTQ_DUMP $SRR $MAX_SPOT_ID --gzip --split-files
-    fi
-  fi
-
-  # fastqc
-  if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_1.fastq.gz
-    $FASTQC -t $THREADS ${SRR}_2.fastq.gz
-  fi
-fi
 done
+fi
 
 if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
   $MULTIQC -n multiqc_report_raw_reads.html .
@@ -335,86 +374,51 @@ fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
-name=`echo $i | cut -d, -f1`
-SRR=`echo $i | cut -d, -f2`
-LAYOUT=`echo $i | cut -d, -f3`
-# ADAPTER=`echo $i | cut -d, -f4`
+if [ $IF_FASTQ = false ]; then
+  # fasterq_dump
+  name=`echo $i | cut -d, -f1`
+  SRR=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
+  dirname_fq=""
+else
+  name=`echo $i | cut -d, -f1`
+  fq=`echo $i | cut -d, -f2`
+  LAYOUT=`echo $i | cut -d, -f3`
+  fqname_ext="${fq##*/}"
+  # echo $fqname_ext
 
-# # SE
-# if [ $LAYOUT = SE ]; then
-#   # trimmomatic
-#   if [[ ! -f "${SRR}_trimmed.fastq.gz" ]]; then
-#     $TRIMMOMATIC \
-#     $LAYOUT \
-#     -threads $THREADS \
-#     -phred33 \
-#     -trimlog log.${SRR}.txt \
-#     ${SRR}.fastq.gz \
-#     ${SRR}_trimmed.fastq.gz \
-#     ILLUMINACLIP:${ADAPTER}:2:10:10 \
-#     HEADCROP:10 \
-#     LEADING:20 \
-#     TRAILING:20 \
-#     MINLEN:30
-#   fi
-#
-#   # fastqc
-#   if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
-#     $FASTQC -t $THREADS ${SRR}_trimmed.fastq.gz
-#   fi
-#
-# # PE
-# else
-#   # trimmomatic
-#   if [[ ! -f "${SRR}_1_trimmed_paired.fastq.gz" ]]; then
-#     $TRIMMOMATIC \
-#     $LAYOUT \
-#     -threads $THREADS \
-#     -phred33 \
-#     -trimlog log.${SRR}.txt \
-#     ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz \
-#     ${SRR}_1_trimmed_paired.fastq.gz ${SRR}_1_unpaired.fastq.gz \
-#     ${SRR}_2_trimmed_paired.fastq.gz ${SRR}_2_unpaired.fastq.gz \
-# #     LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-#     ILLUMINACLIP:${ADAPTER}:2:30:10 \
-#     HEADCROP:10 \
-#     LEADING:3 \
-#     TRAILING:3 \
-#     SLIDINGWINDOW:4:15 \
-#     MINLEN:36
-#   fi
-#
-#   # fastqc
-#   if [[ ! -f "${SRR}_1_fastqc.zip" ]]; then
-#     $FASTQC -t $THREADS ${SRR}_1_trimmed_paired.fastq.gz
-#     $FASTQC -t $THREADS ${SRR}_2_trimmed_paired.fastq.gz
-#   fi
-# fi
-# done
+  # ファイル名を取り出す（拡張子なし）
+  # basename_fq="${fqname_ext%.*.*}"
+  basename_fq=${fqname_ext}
+  dirname_fq=`dirname $fq`
+  dirname_fq=${dirname_fq}/
+  SRR=${basename_fq}
+fi
+
 
 # trim_galore
 # SE
 if [ $LAYOUT = SE ]; then
-  if [[ ! -f "${SRR}_trimmed.fq.gz" ]]; then
-    $TRIMGALORE ${SRR}.fastq.gz
+  if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
+    $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_trimmed.fq.gz
+  if [[ ! -f "${dirname_fq}${SRR}_trimmed_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${dirname_fq}${SRR}_trimmed.fq.gz
   fi
 
 # PE
 else
   # trimmomatic
-  if [[ ! -f " ${SRR}_1_val_1.fq.gz" ]]; then
-    $TRIMGALORE --paired ${SRR}_1.fastq.gz ${SRR}_2.fastq.gz
+  if [[ ! -f " ${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
+    $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
   fi
 
   # fastqc
-  if [[ ! -f "${SRR}_1_val_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${SRR}_1_val_1.fq.gz
-    $FASTQC -t $THREADS ${SRR}_2_val_2.fq.gz
+  if [[ ! -f "${dirname_fq}${SRR}_1_val_1_fastqc.zip" ]]; then
+    $FASTQC -t $THREADS ${dirname_fq}${SRR}_1_val_1.fq.gz
+    $FASTQC -t $THREADS ${dirname_fq}${SRR}_2_val_2.fq.gz
   fi
 fi
 done
@@ -435,9 +439,26 @@ fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
+  if [ $IF_FASTQ = false ]; then
+    # fasterq_dump
+    name=`echo $i | cut -d, -f1`
+    SRR=`echo $i | cut -d, -f2`
+    LAYOUT=`echo $i | cut -d, -f3`
+    dirname_fq=""
+  else
+    name=`echo $i | cut -d, -f1`
+    fq=`echo $i | cut -d, -f2`
+    LAYOUT=`echo $i | cut -d, -f3`
+    fqname_ext="${fq##*/}"
+    # echo $fqname_ext
+
+    # ファイル名を取り出す（拡張子なし）
+    # basename_fq="${fqname_ext%.*.*}"
+    basename_fq=${fqname_ext}
+    dirname_fq=`dirname $fq`
+    dirname_fq=${dirname_fq}/
+    SRR=${basename_fq}
+  fi
 
   # SE
   if [ $LAYOUT = SE ]; then
@@ -446,7 +467,7 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -r ${SRR}_trimmed.fq.gz \
+      -r ${dirname_fq}${SRR}_trimmed.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
       --gcBias \
@@ -461,8 +482,8 @@ do
       # libtype auto detection mode
       $SALMON quant -i $SALMON_INDEX \
       -l A \
-      -1 ${SRR}_1_val_1.fq.gz \
-      -2 ${SRR}_2_val_2.fq.gz \
+      -1 ${dirname_fq}${SRR}_1_val_1.fq.gz \
+      -2 ${dirname_fq}${SRR}_2_val_2.fq.gz \
       -p $THREADS \
       -o salmon_output_${SRR} \
       --gcBias \
@@ -483,13 +504,13 @@ if [[ ! -f "$TX2SYMBOL" ]]; then
 fi
 
 # tximport
-if [[ ! -f "counttable.tsv" ]]; then
-  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE
+if [[ ! -f "$OUTPUT_FILE" ]]; then
+  $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE $OUTPUT_FILE
 fi
 
 
-if [[ "$RUNINDOCKER" -eq "1" ]]; then
-
-  chmod 755 .
-
-fi
+# if [[ "$RUNINDOCKER" -eq "1" ]]; then
+#
+#   chmod 755 .
+#
+# fi
