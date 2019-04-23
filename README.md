@@ -66,11 +66,16 @@ RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-se
 ## Install
 
 dockerかudocker(v1.1.3)をインストール済みであること。
-もしくは、すべてのソフトを手動でインストールして、ikura*.shの`RUNINDOCKER=1`に設定する。
-shell scriptなのでpathを通すだけ。以下は一例。
+もしくはどちらも使いたくない場合は、すべてのソフトを手動でインストールして、`--without-docker`を用いる。
+shell scriptなのでcloneするだけ。
 
 ```bash
 $ git clone https://github.com/yyoshiaki/ikra.git
+```
+
+pathを通したい場合は続けて以下を実行（bashの場合）。
+
+```bash
 $ cd ikra
 $ echo "export PATH=$PATH:$PWD" >> ~/.bashrc
 $ source ~/.bashrc
