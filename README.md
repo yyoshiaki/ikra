@@ -5,7 +5,7 @@
 ## Usage
 
 ```
-Usage: ikra.sh experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -67,8 +67,8 @@ dockerかudocker(v1.1.3)をインストール済みであること。
 shell scriptなのでpathを通すだけ。以下は一例。
 
 ```bash
-$ git clone https://github.com/yyoshiaki/auto_counttable_maker.git
-$ cd auto_counttable_maker
+$ git clone https://github.com/yyoshiaki/ikra.git
+$ cd ikra
 $ echo "export PATH=$PATH:$PWD" >> ~/.bashrc
 $ source ~/.bashrc
 ```
