@@ -5,7 +5,10 @@
 ## Usage
 
 ```
-Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
+Usage: ikra.sh experiment_table.csv spiece \
+        [--test, --fastq, --help, --without-docker, --udocker] \
+        [--threads [VALUE]][--output [VALUE]]\
+        [--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
