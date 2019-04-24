@@ -1,4 +1,4 @@
-# ikra v1.1 -RNAseq pipeline centered on Salmon-<img src="img/ikura.png" width="20%" align="right" />
+# ikra v1.1 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
@@ -90,7 +90,7 @@ $ source ~/.bashrc
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_SRR.csv mouse --test -t 10
+$ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_SRR.csv mouse --test -t 10
 ```
 
 **fastq mode**
@@ -98,7 +98,7 @@ $ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_SRR.csv mouse --test -t
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_fastq.csv mouse --fastq -t 10
+$ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
 #### PE
@@ -106,7 +106,7 @@ $ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_fastq.csv mouse --fastq
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_SRR.csv mouse --test -t 50
+$ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_SRR.csv mouse --test -t 50
 ```
 
 **fastq mode**
@@ -114,13 +114,13 @@ $ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_SRR.csv mouse --test -t
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+$ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
 ```
 
 ### Ion (ThermoFisher)
 
 ```bash
-$ cd test/Ion && bash ../../ikura_Ion_SRR.sh Ion_SRR.csv mouse
+$ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
 ### Macのひと
@@ -158,7 +158,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - pigz(gzipのマルチスレッド版)
 - fasterq-dump
 - cwl開発少しだけ
-- 名前の変更（ikura）
+- 名前の変更（ikra）
 
 ## legacy
 
