@@ -56,6 +56,13 @@ experiment matrixはカンマ区切りで（csv形式）。
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
+### OUTPUT
+
+- output.tsv
+
+- multiqc_report.html
+salmonのマッピング率（トランスクリプトに対するマッピング率）
+
 ### 仕様について
 
 - outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
