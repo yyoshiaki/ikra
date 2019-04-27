@@ -56,7 +56,7 @@ experiment matrixはカンマ区切りで（csv形式）。
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
-### OUTPUT
+### Output
 
 - output.tsv
 
@@ -136,6 +136,10 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
+
+### ikra pipeline
+
+<img src="img/ikra_pipeline.png"  />
 
 ## Tips
 
