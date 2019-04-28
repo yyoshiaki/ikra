@@ -80,14 +80,6 @@ shell scriptなのでcloneするだけ。
 $ git clone https://github.com/yyoshiaki/ikra.git
 ```
 
-pathを通したい場合は続けて以下を実行（bashの場合）。
-
-```bash
-$ cd ikra
-$ echo "export PATH=$PATH:$PWD" >> ~/.bashrc
-$ source ~/.bashrc
-```
-
 ## test
 
 ### Illumina trim_galore ver.
@@ -130,14 +122,14 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 $ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
-### Macのひと
+## Macのひと
 
 salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com/inutano)に解決していただいた。macではdefaultで2Gbしかメモリをdockerに振っていないことが原因らしい。写真のように、8Gb等大きめのメモリ量を割り振って、Apply & Restartすると解決する。
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
 
-### ikra pipeline
+## ikra pipeline
 
 <img src="img/ikra_pipeline.png"  />
 
