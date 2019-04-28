@@ -1,11 +1,14 @@
-# Ikra v1.1 -RNAseq pipeline centered on Salmon-<img src="img/ikura.png" width="20%" align="right" />
+# ikra v1.1 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
 ## Usage
 
 ```
-Usage: ikra.sh experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]]
+Usage: ikra.sh experiment_table.csv spiece \
+        [--test, --fastq, --help, --without-docker, --udocker] \
+        [--threads [VALUE]][--output [VALUE]]\
+        [--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -53,6 +56,13 @@ experiment matrixはカンマ区切りで（csv形式）。
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
+### Output
+
+- output.tsv
+
+- multiqc_report.html
+salmonのマッピング率（トランスクリプトに対するマッピング率）
+
 ### 仕様について
 
 - outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
@@ -63,14 +73,11 @@ RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-se
 ## Install
 
 dockerかudocker(v1.1.3)をインストール済みであること。
-もしくは、すべてのソフトを手動でインストールして、ikura*.shの`RUNINDOCKER=1`に設定する。
-shell scriptなのでpathを通すだけ。以下は一例。
+もしくはどちらも使いたくない場合は、すべてのソフトを手動でインストールして、`--without-docker`を用いる。
+shell scriptなのでcloneするだけ。
 
 ```bash
-$ git clone https://github.com/yyoshiaki/auto_counttable_maker.git
-$ cd auto_counttable_maker
-$ echo "export PATH=$PATH:$PWD" >> ~/.bashrc
-$ source ~/.bashrc
+$ git clone https://github.com/yyoshiaki/ikra.git
 ```
 
 ## test
@@ -82,7 +89,7 @@ $ source ~/.bashrc
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_SRR.csv mouse --test -t 10
+$ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_SRR.csv mouse --test -t 10
 ```
 
 **fastq mode**
@@ -90,7 +97,7 @@ $ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_SRR.csv mouse --test -t
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_fastq.csv mouse --fastq -t 10
+$ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
 #### PE
@@ -98,7 +105,7 @@ $ cd test/Illumina_SE && bash ../../ikura.sh Illumina_SE_fastq.csv mouse --fastq
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_SRR.csv mouse --test -t 50
+$ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_SRR.csv mouse --test -t 50
 ```
 
 **fastq mode**
@@ -106,21 +113,25 @@ $ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_SRR.csv mouse --test -t
 SRR modeを実行したあとしかできない。（fastqはつけていないから。）
 
 ```bash
-$ cd test/Illumina_PE && bash ../../ikura.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+$ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
 ```
 
 ### Ion (ThermoFisher)
 
 ```bash
-$ cd test/Ion && bash ../../ikura_Ion_SRR.sh Ion_SRR.csv mouse
+$ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
-### Macのひと
+## Macのひと
 
 salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com/inutano)に解決していただいた。macではdefaultで2Gbしかメモリをdockerに振っていないことが原因らしい。写真のように、8Gb等大きめのメモリ量を割り振って、Apply & Restartすると解決する。
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
+
+## ikra pipeline
+
+<img src="img/ikra_pipeline.png"  />
 
 ## Tips
 
@@ -150,7 +161,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - pigz(gzipのマルチスレッド版)
 - fasterq-dump
 - cwl開発少しだけ
-- 名前の変更（ikura）
+- 名前の変更（ikra）
 
 ## legacy
 
