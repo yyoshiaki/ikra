@@ -157,20 +157,19 @@ SRA_ROOT=$HOME/ncbi/public/sra
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
 if [[ $REF_SPIECE = mouse ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M19
-  REF_TRANSCRIPT=gencode.vM19.transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21
+  REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
   SALMON_INDEX=salmon_index_mouse
 #   REF_GTF=gencode.vM19.annotation.gtf.gz
-  TX2SYMBOL=gencode.vM19.metadata.MGI.gz
+  TX2SYMBOL=gencode.vM21.metadata.MGI.gz
 
 elif [[ $REF_SPIECE = human ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29
-  # REF_TRANSCRIPT=gencode.v29.pc_translations.fa.gz
-  REF_TRANSCRIPT=gencode.v29.transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30
+  # REF_TRANSCRIPT=gencode.v30.pc_translations.fa.gz
+  REF_TRANSCRIPT=gencode.v30.transcripts.fa.gz
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
-  TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-
+  TX2SYMBOL=gencode.v30.metadata.HGNC.gz
 else
   echo No reference speice!
   exit
