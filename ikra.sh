@@ -147,6 +147,7 @@ DOCKER ${DOCKER}
 THREADS ${THREADS}
 IF_TEST ${IF_TEST:-false}
 IF_FASTQ ${IF_FASTQ:-false}
+IF_PC ${IF_PC:-false}
 EOS
 
 set -u
