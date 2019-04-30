@@ -6,7 +6,7 @@
 
 ```
 Usage: ikra.sh experiment_table.csv spiece \
-        [--test, --fastq, --help, --without-docker, --udocker] \
+        [--test, --fastq, --help, --without-docker, --udocker --protein-coding] \
         [--threads [VALUE]][--output [VALUE]]\
         [--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
@@ -18,6 +18,7 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
@@ -105,7 +106,7 @@ $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq 
 **SRR mode**
 
 ```bash
-$ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_SRR.csv mouse --test -t 50
+$ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_SRR.csv mouse --test -t 10
 ```
 
 **fastq mode**

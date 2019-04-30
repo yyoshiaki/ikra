@@ -22,7 +22,7 @@ PROGNAME="$( basename $0 )"
 # Usage
 function usage() {
   cat << EOS >&2
-Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
+Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -32,6 +32,7 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
@@ -47,6 +48,7 @@ DOCKER=docker
 THREADS=1
 IF_TEST=false
 IF_FASTQ=false
+IF_PC=false
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
@@ -61,6 +63,9 @@ for opt in "$@"; do
             ;;
         '--fastq' )
             IF_FASTQ=true; shift
+            ;;
+        '-pc'|'--protein-coding' )
+            IF_PC=true; shift
             ;;
         '-u'|'--undocker' )
             DOCKER=udocker; shift
@@ -159,14 +164,25 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 if [[ $REF_SPIECE = mouse ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21
   REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+  if [ $IF_PC = false ]; then
+    REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+  else
+    REF_TRANSCRIPT=gencode.vM21.pc_transcripts.fa.gz
+  fi
   SALMON_INDEX=salmon_index_mouse
-#   REF_GTF=gencode.vM19.annotation.gtf.gz
+#   REF_GTF=gencode.vM21.annotation.gtf.gz
   TX2SYMBOL=gencode.vM21.metadata.MGI.gz
 
 elif [[ $REF_SPIECE = human ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30
-  # REF_TRANSCRIPT=gencode.v30.pc_translations.fa.gz
-  REF_TRANSCRIPT=gencode.v30.transcripts.fa.gz
+  # REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+
+  if [ $IF_PC = false ]; then
+    REF_TRANSCRIPT=gencode.v30.transcripts.fa.gz
+  else
+    REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+  fi
+
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
   TX2SYMBOL=gencode.v30.metadata.HGNC.gz
@@ -410,7 +426,7 @@ if [ $LAYOUT = SE ]; then
 # PE
 else
   # trimmomatic
-  if [[ ! -f " ${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
+  if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
     $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
   fi
 
