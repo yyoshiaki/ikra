@@ -2,6 +2,10 @@
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
+## 重要　bugについて　2019/04/30
+
+ikraのtximport_R.Rにサンプルを取り違えうる重大なバグが見つかり、修正しました。最新版に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、output.tsvを削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
+
 ## Usage
 
 ```
