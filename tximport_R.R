@@ -12,7 +12,7 @@ args3 = commandArgs(trailingOnly=TRUE)[3]
 tx2knownGene <- read_delim(args1, '\t', col_names = c('TXNAME', 'GENEID'))
 exp.table <- read.csv(args2)
 
-files <- list.files('.',recursive=T, include.dirs=T, pattern='quant.sf')
+files <- paste(c("salmon_output_") , exp.table[,2], c("/quant.sf"), sep='')
 names(files) <- exp.table$name
 
 # txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene)
