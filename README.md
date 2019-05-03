@@ -9,7 +9,7 @@ ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見�
 ## Usage
 
 ```
-Usage: ikra.sh experiment_table.csv spiece \
+Usage: ikra.sh experiment_table.csv species \
         [--test, --fastq, --help, --without-docker, --udocker --protein-coding] \
         [--threads [VALUE]][--output [VALUE]]\
         [--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
