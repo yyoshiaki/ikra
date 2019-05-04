@@ -173,7 +173,7 @@ if [[ $REF_SPECIES = mouse ]]; then
   SALMON_INDEX=salmon_index_mouse
 #   REF_GTF=gencode.vM21.annotation.gtf.gz
   TX2SYMBOL=gencode.vM21.metadata.MGI.gz
-REF
+
 elif [[ $REF_SPECIES = human ]]; then
   BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30
   # REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
@@ -281,6 +281,11 @@ cat $EX_MATRIX_FILE
 
 # tximport_R.Rを取ってくる。
 cp $SCRIPT_DIR/tximport_R.R ./
+
+# tximport
+if [[  -f "tximport_R.R" ]]; then
+  rm tximport_R.R
+fi
 
 # trimmomaticのadaptersを取ってくる。
 # cp -r $SCRIPT_DIR/adapters/*.fa ./
@@ -524,6 +529,10 @@ if [[ ! -f "$OUTPUT_FILE" ]]; then
   $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE $OUTPUT_FILE
 fi
 
+# tximport
+if [[  -f "tximport_R.R" ]]; then
+  rm tximport_R.R
+fi
 
 # if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #
