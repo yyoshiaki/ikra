@@ -279,13 +279,13 @@ fi
 echo $EX_MATRIX_FILE
 cat $EX_MATRIX_FILE
 
-# tximport_R.Rを取ってくる。
-cp $SCRIPT_DIR/tximport_R.R ./
-
 # tximport
 if [[  -f "tximport_R.R" ]]; then
   rm tximport_R.R
 fi
+
+# tximport_R.Rを取ってくる。
+cp $SCRIPT_DIR/tximport_R.R ./
 
 # trimmomaticのadaptersを取ってくる。
 # cp -r $SCRIPT_DIR/adapters/*.fa ./
