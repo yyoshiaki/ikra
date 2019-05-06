@@ -147,8 +147,6 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 
 [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)を参照のこと。
 
-フォルダのパーミッションを777にしてrunした後755にしているが、果たして大丈夫？
-
 ## やったこと
 
 - udockerの対応
