@@ -38,6 +38,32 @@ Options:
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
+  -v, --version Show version.
+EOS
+  exit 1
+}
+
+
+# version
+function version() {
+  cat << EOS >&2
+Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
+  args
+    1.experiment matrix(csv)
+    2.reference(human or mouse)
+
+Options:
+  --test  test mode(MAX_SPOT_ID=100000). (dafault : False)
+  --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
+  -u, --udocker
+  -w, --without-docker
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
+  -t, --threads
+  -o, --output  output file. (default : output.tsv)
+  -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
+  -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
+  -h, --help    Show usage.
+  -v, --version Show version.
 EOS
   exit 1
 }
@@ -107,6 +133,9 @@ for opt in "$@"; do
               shift 2
               ;;
         '-h' | '--help' )
+            usage
+            ;;
+        '-v' | '--version' )
             usage
             ;;
         '--' | '-' )
@@ -420,6 +449,16 @@ fi
 # trim_galore
 # SE
 if [ $LAYOUT = SE ]; then
+  if [[  -f "${dirname_fq}${SRR}.fq" ]]; then
+    mv ${dirname_fq}${SRR}.fq ${dirname_fq}${SRR}.fastq
+  fi
+  if [[  -f "${dirname_fq}${SRR}.fastq" ]]; then
+    $PIGZ ${dirname_fq}${SRR}.fastq.gz
+  fi
+  if [[  -f "${dirname_fq}${SRR}.fq.gz" ]]; then
+    mv ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+  fi
+
   if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
     $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
   fi

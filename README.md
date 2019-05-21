@@ -4,7 +4,7 @@
 
 ## 重要　bugについて　2019/04/30
 
-ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。最新版に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
+ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。必ずv1.1.1以降に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
 
 ## Usage
 
@@ -28,6 +28,7 @@ Options:
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
+  -v, --version Show version.
 ```
 
 1. test optionは各サンプルにおいてリード数を100000に限定する。
@@ -54,7 +55,7 @@ experiment matrixはカンマ区切りで（csv形式）。
 
 - nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 - 前3列は必須。
-- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`fastq.gz`のみに対応。
+- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`.fq`, `.fq.gz`. `.fastq`, `fastq.gz`のみに対応。
 - fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
 - suffixが`_1.fastq.gz`,`_2.fastq.gz`ではない場合は-s1, -s2オプションをつける。
 
