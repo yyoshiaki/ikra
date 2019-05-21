@@ -18,7 +18,7 @@ COMMENTOUT
 set +u
 
 PROGNAME="$( basename $0 )"
-VERSION="v1.2.0"
+VERSION="v1.2.0dev"
 
 # Usage
 function usage() {
