@@ -55,7 +55,7 @@ experiment matrixはカンマ区切りで（csv形式）。
 
 - nameはアンダーバー区切りでcondition、replicateをつなげて書く。
 - 前3列は必須。
-- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`.fq`, `.fq.gz`. `.fastq`, `fastq.gz`のみに対応。
+- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`.fq`, `.fq.gz`, `.fastq`, `fastq.gz`のみに対応。
 - fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
 - suffixが`_1.fastq.gz`,`_2.fastq.gz`ではない場合は-s1, -s2オプションをつける。
 - `../fq/**.fastq.gz`など、実行ディレクトリより上の階層を指定することはdockerの都合上不可能。
