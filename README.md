@@ -58,6 +58,7 @@ experiment matrixはカンマ区切りで（csv形式）。
 - 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`.fq`, `.fq.gz`. `.fastq`, `fastq.gz`のみに対応。
 - fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
 - suffixが`_1.fastq.gz`,`_2.fastq.gz`ではない場合は-s1, -s2オプションをつける。
+- `../fq/**.fastq.gz`など、実行ディレクトリより上の階層を指定することはdockerの都合上不可能。
 
 - Illumina用 : trimmomatic -> trim_galoreに切り替えた。
 - Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
@@ -192,7 +193,6 @@ trimmomaticを使ったトリミングを用いたフローは`./legacy`に移�
 ```
 cd test/cwl_PE && bash test.sh
 ```
-
 
 ## cwl_toolsの由来、参考
 
