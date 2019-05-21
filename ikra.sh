@@ -18,10 +18,13 @@ COMMENTOUT
 set +u
 
 PROGNAME="$( basename $0 )"
+VERSION="v1.2.0"
 
 # Usage
 function usage() {
   cat << EOS >&2
+ikra ${VERSION} -RNAseq pipeline centered on Salmon
+
 Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
@@ -47,23 +50,7 @@ EOS
 # version
 function version() {
   cat << EOS >&2
-Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
-  args
-    1.experiment matrix(csv)
-    2.reference(human or mouse)
-
-Options:
-  --test  test mode(MAX_SPOT_ID=100000). (dafault : False)
-  --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
-  -u, --udocker
-  -w, --without-docker
-  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
-  -t, --threads
-  -o, --output  output file. (default : output.tsv)
-  -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
-  -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
-  -h, --help    Show usage.
-  -v, --version Show version.
+ikra ${VERSION} -RNAseq pipeline centered on Salmon
 EOS
   exit 1
 }
