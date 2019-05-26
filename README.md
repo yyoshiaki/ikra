@@ -1,10 +1,6 @@
-# ikra v1.2 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v1.2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
-
-## 重要　bugについて　2019/04/30
-
-ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。必ずv1.1.1以降に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
 
 ## Usage
 
@@ -66,17 +62,21 @@ experiment matrixはカンマ区切りで（csv形式）。
 
 ### Output
 
-- output.tsv
+- output.tsv(scaledTPM)
 
 - multiqc_report.html
 salmonのマッピング率（トランスクリプトに対するマッピング率）
 
-### 仕様について
+### 各種仕様
 
 - outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
 - GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
 - validateMappings optionを採用。（alignment-base modeでは使えない。）詳しくは[salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/)。
+
+## 重要　bugについて　2019/04/30
+
+ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。必ずv1.1.1以降に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
 
 ## Install
 
@@ -153,6 +153,8 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 
 ## やったこと
 
+詳しくは[Relases](https://github.com/yyoshiaki/ikra/releases)を参照。
+
 - udockerの対応
 - 生物種の判別(アナログ)
 - gtf, transcript file をGENCODEから
@@ -168,6 +170,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - fasterq-dump
 - cwl開発少しだけ
 - 名前の変更（ikra）
+- protein coding option
 
 ## legacy
 
