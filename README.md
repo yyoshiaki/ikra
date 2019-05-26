@@ -32,11 +32,12 @@ Options:
   -v, --version Show version.
 ```
 
-1. test optionは各サンプルにおいてリード数を100000に限定する。
-2. udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
-3. without-docker modeはすべてのツールをインストールした状態で動く。非推奨。
-4. threads
-5. outputはデフォルトでは`output.tsv`。
+- test optionは各サンプルにおいてリード数を100000に限定する。
+- udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
+- without-docker modeはすべてのツールをインストールした状態で動く。非推奨。
+- protein-coding modeはgenesをprotein coding genesのみに限定する。
+- threads
+- outputはデフォルトでは`output.tsv`。
 
 experiment matrixはカンマ区切りで（csv形式）。
 
