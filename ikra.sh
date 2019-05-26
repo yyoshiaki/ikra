@@ -9,7 +9,7 @@ COMMENTOUT
 #　オプション関連ここから
 #　大部分は http://dojineko.hateblo.jp/entry/2016/06/30/225113 から引用させていただきました。
 
-#　変数 EX_MATRIX_FILE, REF_SPIECE はここで定義
+#　変数 EX_MATRIX_FILE, REF_SPECIES はここで定義
 #　if [[ $IF_TEST = true ]]; then でテストモード用の実行が可能
 
 #　今まで$1 = EX_MATRIX_FILEだったのを変更している
@@ -18,11 +18,14 @@ COMMENTOUT
 set +u
 
 PROGNAME="$( basename $0 )"
+VERSION="v1.2.0dev"
 
 # Usage
 function usage() {
   cat << EOS >&2
-Usage: ${PROGNAME} experiment_table.csv spiece [--test, --fastq, --help, --without-docker, --udocker] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
+ikra ${VERSION} -RNAseq pipeline centered on Salmon
+
+Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
@@ -32,11 +35,22 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
+  -v, --version Show version.
+EOS
+  exit 1
+}
+
+
+# version
+function version() {
+  cat << EOS >&2
+ikra ${VERSION} -RNAseq pipeline centered on Salmon
 EOS
   exit 1
 }
@@ -47,6 +61,7 @@ DOCKER=docker
 THREADS=1
 IF_TEST=false
 IF_FASTQ=false
+IF_PC=false
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
@@ -61,6 +76,9 @@ for opt in "$@"; do
             ;;
         '--fastq' )
             IF_FASTQ=true; shift
+            ;;
+        '-pc'|'--protein-coding' )
+            IF_PC=true; shift
             ;;
         '-u'|'--undocker' )
             DOCKER=udocker; shift
@@ -104,6 +122,9 @@ for opt in "$@"; do
         '-h' | '--help' )
             usage
             ;;
+        '-v' | '--version' )
+            usage
+            ;;
         '--' | '-' )
             shift
             PARAM+=( "$@" )
@@ -123,10 +144,10 @@ done
 
 # オプション無しの値を使う場合はここで処理する
 EX_MATRIX_FILE="${PARAM}"; PARAM=("${PARAM[@]:1}")
-REF_SPIECE="${PARAM}"; PARAM=("${PARAM[@]:1}")
+REF_SPECIES="${PARAM}"; PARAM=("${PARAM[@]:1}")
 
 [[ -z "${EX_MATRIX_FILE}" ]] && usage
-[[ -z "${REF_SPIECE}" ]] && usage
+[[ -z "${REF_SPECIES}" ]] && usage
 
 # 規定外のオプションがある場合にはusageを表示
 if [[ -n "${PARAM[@]}" ]]; then
@@ -136,12 +157,13 @@ fi
 # 結果を表示(オプションテスト用)
 cat << EOS | column -t
 EX_MATRIX_FILE ${EX_MATRIX_FILE}
-REF_SPIECE ${REF_SPIECE}
+REF_SPECIES ${REF_SPECIES}
 RUNINDOCKER ${RUNINDOCKER}
 DOCKER ${DOCKER}
 THREADS ${THREADS}
 IF_TEST ${IF_TEST:-false}
 IF_FASTQ ${IF_FASTQ:-false}
+IF_PC ${IF_PC:-false}
 EOS
 
 set -u
@@ -156,21 +178,31 @@ SRA_ROOT=$HOME/ncbi/public/sra
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
-if [[ $REF_SPIECE = mouse ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M19
-  REF_TRANSCRIPT=gencode.vM19.transcripts.fa.gz
+if [[ $REF_SPECIES = mouse ]]; then
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21
+  REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+  if [ $IF_PC = false ]; then
+    REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+  else
+    REF_TRANSCRIPT=gencode.vM21.pc_transcripts.fa.gz
+  fi
   SALMON_INDEX=salmon_index_mouse
-#   REF_GTF=gencode.vM19.annotation.gtf.gz
-  TX2SYMBOL=gencode.vM19.metadata.MGI.gz
+#   REF_GTF=gencode.vM21.annotation.gtf.gz
+  TX2SYMBOL=gencode.vM21.metadata.MGI.gz
 
-elif [[ $REF_SPIECE = human ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29
-  # REF_TRANSCRIPT=gencode.v29.pc_translations.fa.gz
-  REF_TRANSCRIPT=gencode.v29.transcripts.fa.gz
+elif [[ $REF_SPECIES = human ]]; then
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30
+  # REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+
+  if [ $IF_PC = false ]; then
+    REF_TRANSCRIPT=gencode.v30.transcripts.fa.gz
+  else
+    REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+  fi
+
   SALMON_INDEX=salmon_index_human
 #   REF_GTF=gencode.v29.annotation.gtf.gz
-  TX2SYMBOL=gencode.v29.metadata.HGNC.gz
-
+  TX2SYMBOL=gencode.v30.metadata.HGNC.gz
 else
   echo No reference speice!
   exit
@@ -404,6 +436,16 @@ fi
 # trim_galore
 # SE
 if [ $LAYOUT = SE ]; then
+  if [[  -f "${dirname_fq}${SRR}.fq" ]]; then
+    mv ${dirname_fq}${SRR}.fq ${dirname_fq}${SRR}.fastq
+  fi
+  if [[  -f "${dirname_fq}${SRR}.fastq" ]]; then
+    $PIGZ ${dirname_fq}${SRR}.fastq.gz
+  fi
+  if [[  -f "${dirname_fq}${SRR}.fq.gz" ]]; then
+    mv ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+  fi
+
   if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
     $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
   fi
@@ -416,7 +458,7 @@ if [ $LAYOUT = SE ]; then
 # PE
 else
   # trimmomatic
-  if [[ ! -f " ${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
+  if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
     $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
   fi
 
@@ -513,6 +555,10 @@ if [[ ! -f "$OUTPUT_FILE" ]]; then
   $RSCRIPT_TXIMPORT tximport_R.R $TX2SYMBOL $EX_MATRIX_FILE $OUTPUT_FILE
 fi
 
+# tximport
+if [[  -f "tximport_R.R" ]]; then
+  rm tximport_R.R
+fi
 
 # if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #
