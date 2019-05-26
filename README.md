@@ -1,6 +1,11 @@
 # ikra v1.2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
+
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
+
+## 重要　bugについて　2019/04/30
+
+ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。最新版に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`およびexperiment matrixと同じディレクトリにコピーされている`tximport_R.R`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
 
 ## Usage
 

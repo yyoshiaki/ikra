@@ -26,7 +26,7 @@ split.vec <- sapply(files.raw, basename)
 
 # files <- paste(c("salmon_output_") , exp.table[,2], c("/quant.sf"), sep='')
 files <- paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep='')
-names(files) <- exp.table$name
+
 
 #print(files)
 
