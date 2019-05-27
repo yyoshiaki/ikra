@@ -11,7 +11,7 @@ args2 = commandArgs(trailingOnly=TRUE)[2]
 args3 = commandArgs(trailingOnly=TRUE)[3]
 
 tx2knownGene <- read_delim(args1, '\t', col_names = c('TXNAME', 'GENEID'))
-exp.table <- read.csv(args2)
+exp.table <- read.csv(args2, row.names=NULL)
 
 files.raw <- exp.table[,2]
 
