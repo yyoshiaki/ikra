@@ -11,7 +11,7 @@ args2 = commandArgs(trailingOnly=TRUE)[2]
 args3 = commandArgs(trailingOnly=TRUE)[3]
 
 tx2knownGene <- read_delim(args1, '\t', col_names = c('TXNAME', 'GENEID'))
-exp.table <- read.csv(args2, row.names=NULL)
+exp.table <- read.csv(args2)
 
 files.raw <- exp.table[,2]
 
@@ -26,9 +26,9 @@ split.vec <- sapply(files.raw, basename)
 
 # files <- paste(c("salmon_output_") , exp.table[,2], c("/quant.sf"), sep='')
 files <- paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep='')
+names(files) <- exp.table[,1]
 
-
-#print(files)
+print(files)
 
 # txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene)
 txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene, countsFromAbundance="scaledTPM")
