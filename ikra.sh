@@ -80,7 +80,7 @@ for opt in "$@"; do
         '-pc'|'--protein-coding' )
             IF_PC=true; shift
             ;;
-        '-u'|'--undocker' )
+        '-u'|'--udocker' )
             DOCKER=udocker; shift
             ;;
         '-w'|'--without-docker' )
