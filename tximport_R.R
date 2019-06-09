@@ -1,5 +1,8 @@
 #! /usr/bin/Rscript
 
+#　2019/06/09 embedded in ikra.sh
+# このファイルを書き換えた際は直接ikra.shも書き換えること。
+
 library(tximport)
 library(readr)
 library(stringr)
