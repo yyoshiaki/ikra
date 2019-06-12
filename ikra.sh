@@ -305,7 +305,7 @@ fi
 
 # 2019/06/09 devv1.3 tximport_R.Rを埋め込み
 
-cat << EOF > tximport_R.R
+cat << 'EOF' > tximport_R.R
 #! /usr/bin/Rscript
 
 library(tximport)
