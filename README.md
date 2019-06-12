@@ -130,7 +130,7 @@ SRR modeを実行したあとしかできない。（fastqはつけていない�
 $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
 ```
 
-**開発用**
+#### 開発用
 
 書きを実行できてからcommitすべし。
 
