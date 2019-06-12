@@ -240,13 +240,13 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
-  SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
+  SRA_TOOLKIT_IMAGE=inutano/sra-toolkit:2.9.0
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
   TRIMGALORE_IMAGE=miasteinberg/trim-galore
-  SALMON_IMAGE=combinelab/salmon:latest
+  SALMON_IMAGE=combinelab/salmon:0.14.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
