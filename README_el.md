@@ -207,4 +207,4 @@ cd test/cwl_PE && bash test.sh
 ## cwl_toolsの由来、参考
 
 - https://github.com/pitagora-galaxy/cwl
-- https://github.com/roryk/salmon-cwl
+- https://github.com/roryk/salmon-cwl test--------
