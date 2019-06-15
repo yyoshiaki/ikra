@@ -178,7 +178,7 @@ Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 - rename to "ikra"
 - protein coding option
 
-## legacy
+## Legacy
 
 Move program flow used trimming by trimmomatic to `./legacy`
 
