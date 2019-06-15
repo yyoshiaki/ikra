@@ -180,7 +180,7 @@ Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 
 ## legacy
 
-Move program flow　used trimming by trimmomatic to `./legacy`
+Move program flow used trimming by trimmomatic to `./legacy`
 
 ## Development Strategy
 
