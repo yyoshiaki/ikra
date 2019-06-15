@@ -149,7 +149,7 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 
 ## Tips
 
-You can find SRR data quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)
+You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
 
@@ -161,9 +161,9 @@ Please refer to [issue](https://github.com/yyoshiaki/auto_counttable_maker/issue
 
 Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 
-- udockerの対応
+- add support for udocker
 - 生物種の判別(アナログ)
-- gtf, transcript file をGENCODEから
+- gtf, transcript file from GENCODE
 - salmon
 - trimmomatic(legacy)
 - trim_galore!
@@ -172,7 +172,7 @@ Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 - fastqかSRRの判別(マニュアル)
 - introduce "salmon gcbias correction"
 - salomn validateMappings
-- pigz(gzipのマルチスレッド版)
+- pigz(multithread version of gzip)
 - fasterq-dump
 - cwl開発少しだけ
 - rename to "ikra"
@@ -180,22 +180,22 @@ Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 
 ## legacy
 
-Move trimmomaticを使ったトリミングを用いたフロー to `./legacy`
+Move program flow　used trimming by trimmomatic to `./legacy`
 
 ## Development Strategy
 
-今はまだ完成とは言えないので各自
+Still hasn't been complicated, so
 
-Fork -> Pull Request in **In "development" branch.** Don't change "master."
+Fork -> Pull Request in **in "development" branch.** Don't change "master."
 
-## 参考
+## Reference
 
 - [biocontainers : SNP-calling](http://biocontainers.pro/docs/containers-examples/SNP-Calling/)
 - [idep](http://bioinformatics.sdstate.edu/idep/)
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
 
-## Development of ver. cwl
+## Development of cwl ver.
 
 2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。 test
 とりあえずPEでtrim_galoreとsalmonをcwl化した。
