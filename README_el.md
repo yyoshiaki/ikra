@@ -149,17 +149,17 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 
 ## Tips
 
-SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)が爆速でおすすめ。
+You can find SRR data quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
 
-## やること
+## Issues
 
-[issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)を参照のこと。
+Please refer to [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)
 
-## やったこと
+## Releases
 
-詳しくは[Relases](https://github.com/yyoshiaki/ikra/releases)を参照。
+Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 
 - udockerの対応
 - 生物種の判別(アナログ)
@@ -168,25 +168,25 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 - trimmomatic(legacy)
 - trim_galore!
 - tximport
-- fastxtools(Ion用)
+- fastxtools(for Ion)
 - fastqかSRRの判別(マニュアル)
-- salmon gcbias correctionの導入
+- introduce "salmon gcbias correction"
 - salomn validateMappings
 - pigz(gzipのマルチスレッド版)
 - fasterq-dump
 - cwl開発少しだけ
-- 名前の変更（ikra）
+- rename to "ikra"
 - protein coding option
 
 ## legacy
 
-trimmomaticを使ったトリミングを用いたフローは`./legacy`に移動しました。
+Move trimmomaticを使ったトリミングを用いたフロー to `./legacy`
 
-## 開発戦略
+## Development Strategy
 
 今はまだ完成とは言えないので各自
 
-**"development" branchの中** でFork -> Pull Request。直接masterは変えない。
+Fork -> Pull Request in **In "development" branch.** Don't change "master."
 
 ## 参考
 
@@ -195,7 +195,7 @@ trimmomaticを使ったトリミングを用いたフローは`./legacy`に移�
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
 
-## cwl版の開発
+## Development of ver. cwl
 
 2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。 test
 とりあえずPEでtrim_galoreとsalmonをcwl化した。
