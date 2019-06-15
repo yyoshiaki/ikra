@@ -153,7 +153,7 @@ You can find SRR data quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/inde
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
 
-## Issues
+## Issue
 
 Please refer to [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)
 
