@@ -197,7 +197,7 @@ trimmomaticを使ったトリミングを用いたフローは`./legacy`に移�
 
 ## cwl版の開発
 
-2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。
+2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。 test
 とりあえずPEでtrim_galoreとsalmonをcwl化した。
 
 ```
