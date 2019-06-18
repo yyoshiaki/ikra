@@ -71,24 +71,24 @@ experiment matrixはカンマ区切りで（csv形式）。
 - output.tsv(scaledTPM)
 
 - multiqc_report.html
-salmonのマッピング率（トランスクリプトに対するマッピング率）
+mapping rate of salmon(mapping rate for transcript)
 
-### 各種仕様
+### Various Specifications
 
-- outputは**scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
-- GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
-RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
-- validateMappings optionを採用。（alignment-base modeでは使えない。）詳しくは[salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/)。
+- output is **scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
+- About GCbias   —-gcbias became available on salmon. You can refer to https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/ about the influence on RNAseq by GCbias.
+- ValidateMappings option was adopted.(You can’t use it while using alignment-base mode.) Please see https://combine-lab.github.io/salmon/faq/ for further details.
 
-## 重要　bugについて　2019/04/30
 
-ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。必ずv1.1.1以降に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
+## Important  About a Bug  2019/04/30
+
+A serious bug which had a risk of mistaking samples in tximport_R.R of ikra was corrected. Please surely renew ikra after v1.1.1. If you used old version ikra, please delete ‘output.tsv’ and execute new ikra.sh again because there are no problems in intermediate file. I sincerely apologize for the inconvenience.
 
 ## Install
 
-dockerかudocker(v1.1.3)をインストール済みであること。
-もしくはどちらも使いたくない場合は、すべてのソフトを手動でインストールして、`--without-docker`を用いる。
-shell scriptなのでcloneするだけ。
+You need to install docker or udocker(v1.1.3).
+If you don’t want to use both of them, you must install all softwares by yourself and use ‘—-without-docker’.
+It’s a shell script ,so you have only to clone it.
 
 ```bash
 $ git clone https://github.com/yyoshiaki/ikra.git
@@ -108,7 +108,7 @@ $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_SRR.csv mouse --test -t 
 
 **fastq mode**
 
-SRR modeを実行したあとしかできない。（fastqはつけていないから。）
+You can execute it after you execute SRR mode.(That is because you don’t have fastq file.)
 
 ```bash
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
@@ -124,7 +124,8 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_SRR.csv mouse --test -t 
 
 **fastq mode**
 
-SRR modeを実行したあとしかできない。（fastqはつけていないから。）
+You can execute it after you execute SRR mode.(That is because you don’t have fastq file.)
+
 
 ```bash
 $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
@@ -136,9 +137,9 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 $ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
-## Macのひと
+## For Mac Users
 
-salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com/inutano)に解決していただいた。macではdefaultで2Gbしかメモリをdockerに振っていないことが原因らしい。写真のように、8Gb等大きめのメモリ量を割り振って、Apply & Restartすると解決する。
+[DBCLS Mr.Ota](https://github.com/inutano) solved the problem that salmon doesn’t work on Mac.The cause of the problem is that Docker is allocated only 2GB by default on Mac. Therefore,like this picture, the problem will be solved by allocating large amount of memories to Docker, such as 8GB,and doing Apply & Restart.
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
