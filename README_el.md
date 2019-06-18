@@ -149,62 +149,62 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 
 ## Tips
 
-SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)が爆速でおすすめ。
+You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
 
-## やること
+## Issue
 
-[issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)を参照のこと。
+Please refer to [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)
 
-## やったこと
+## Releases
 
-詳しくは[Relases](https://github.com/yyoshiaki/ikra/releases)を参照。
+Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 
-- udockerの対応
-- 生物種の判別(アナログ)
-- gtf, transcript file をGENCODEから
+- add support for udocker
+- add setting of species
+- gtf, transcript file from GENCODE
 - salmon
 - trimmomatic(legacy)
 - trim_galore!
 - tximport
-- fastxtools(Ion用)
-- fastqかSRRの判別(マニュアル)
-- salmon gcbias correctionの導入
+- fastxtools(for Ion)
+- judging fastq or SRR(manual)
+- introduce "salmon gcbias correction"
 - salomn validateMappings
-- pigz(gzipのマルチスレッド版)
+- pigz(multithread version of gzip)
 - fasterq-dump
-- cwl開発少しだけ
-- 名前の変更（ikra）
+- cwl　development is in progress
+- rename to "ikra"
 - protein coding option
 
-## legacy
+## Legacy
 
-trimmomaticを使ったトリミングを用いたフローは`./legacy`に移動しました。
+Move program flow used trimming by trimmomatic to `./legacy`
 
-## 開発戦略
+## Development Strategy
 
-今はまだ完成とは言えないので各自
+Still hasn't been complicated.
 
-**"development" branchの中** でFork -> Pull Request。直接masterは変えない。
+Fork -> Pull Request in **in "development" branch.** Don't change "master."
 
-## 参考
+##  Reference
 
 - [biocontainers : SNP-calling](http://biocontainers.pro/docs/containers-examples/SNP-Calling/)
 - [idep](http://bioinformatics.sdstate.edu/idep/)
 - [GENCODE](https://www.gencodegenes.org/)
 - [salmon](https://combine-lab.github.io/salmon/getting_started/)
 
-## cwl版の開発
+## Development of cwl ver.
 
-2019/03/22 https://youtu.be/weJrq5QNt1M cwl作者のMichaelさんの来日配信に合わせてやってみた。
-とりあえずPEでtrim_galoreとsalmonをcwl化した。
+2019/03/22 https://youtu.be/weJrq5QNt1M tried developing it because Mr. Michael would come into Japan   
+For now, cwlnized trim_galore and salmon in PE
 
 ```
 cd test/cwl_PE && bash test.sh
 ```
 
-## cwl_toolsの由来、参考
+## sorce and reference ー cwl_tools
 
 - https://github.com/pitagora-galaxy/cwl
-- https://github.com/roryk/salmon-cwl test--------
+- https://github.com/roryk/salmon-cwl
