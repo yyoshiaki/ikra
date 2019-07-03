@@ -1,11 +1,11 @@
 # ikra v1.2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 
-[idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
+An expression amount table (gene × sample) is automatically created from the experiment matrix as an input of [idep](http://bioinformatics.sdstate.edu/idep/). This tool uses [salmon](https://combine-lab.github.io/salmon/).
 
-## 重要　bugについて　2019/04/30
+## Important　about bug　2019/04/30
 
-ikraの`tximport_R.R`にサンプルを取り違えうる重大なバグが見つかり、修正しました。最新版に更新してお使いください。古いバージョンを使われていた方は、中間ファイルは問題ありませんので、`output.tsv`およびexperiment matrixと同じディレクトリにコピーされている`tximport_R.R`を削除し、もう一度新しいikra.shを実行してください。大変ご迷惑をおかけいたしました。
+A serious bug has been found and fixed that could misinterpret a sample in the `tximport_R.R` of ikra.Please update it to the latest version.If you are using the old version, there is no problem with the intermediate file, so delete `tximport_R.R` copied to the same directory as` output.tsv` and experiment matrix, and execute new ikra.sh again. please.We apologize for the inconvenience.
 
 ## Usage
 
@@ -32,14 +32,13 @@ Options:
   -v, --version Show version.
 ```
 
-- test optionは各サンプルにおいてリード数を100000に限定する。
-- udocker modeはUser権限しか使えないサーバー環境用。詳しくは[https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
-- without-docker modeはすべてのツールをインストールした状態で動く。非推奨。
-- protein-coding modeはgenesをprotein coding genesのみに限定する。
+- test option limits the number of reads to 100,000 in each sample.
+- udocker mode is for server environments that can only use User privileges.For more information [https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
+- without-docker mode works with all tools installed. Not recommended.
+- protein-coding mode restricts genes to protein coding genes only.
 - threads
-- outputはデフォルトでは`output.tsv`。
-
-experiment matrixはカンマ区切りで（csv形式）。
+- output is `output.tsv` by default.
+experiment matrix is separated by commas (csv format).
 
 **SRR mode**
 
@@ -55,16 +54,16 @@ experiment matrixはカンマ区切りで（csv形式）。
 |  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
 
-- nameはアンダーバー区切りでcondition、replicateをつなげて書く。
-- 前3列は必須。
-- 自前のfastq fileを使いたいときは`--fastq`をつける。拡張子は`.fq`, `.fq.gz`, `.fastq`, `fastq.gz`のみに対応。
-- fastq fileは`fastq.gz`もしくは`_1.fastq.gz`,`_2.fastq.gz`を除いたpathを。例えば`hoge/SRR5385247.fastq.gz`なら`hoge/SRR5385247`と記載。
-- suffixが`_1.fastq.gz`,`_2.fastq.gz`ではない場合は-s1, -s2オプションをつける。
-- `../fq/**.fastq.gz`など、実行ディレクトリより上の階層を指定することはdockerの都合上不可能だが、symbolic linkを貼ることで回避できる。
+- name is written by connecting condition and replicate with underscores separated.
+- The first three columns are required.
+- If you want to use your own fastq file, add `--fastq`.The extension supports only `.fq`,` .fq.gz`, `.fastq` and` fastq.gz`.
+- fastq file specifies path excluding `fastq.gz` or` _1.fastq.gz` and `_2.fastq.gz`.For example, `hoge / SRR 5385247.fastq.gz` is described as` hoge / SRR 5385247`.
+- If suffix is not `_1.fastq.gz` or` _2.fastq.gz`, add -s1 and -s2 options.
+- It is impossible for docker to specify a hierarchy above the execution directory, such as `../ fq / **. fastq.gz`, but it can be avoided by pasting a symbolic link.
 [bonohu blog](https://bonohu.github.io/running-ikra.html)
 
-- Illumina用 : trimmomatic -> trim_galoreに切り替えた。
-- Ion S5用: SEしか無い。trimmomaticではなくfastx-toolsを使う。adapterはNoneを入れておく。(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
+- For Illumina : switched to trimmomatic-> trim_galore.
+- For Ion S5 : Only for SE. Use fastx-tools instead of trimmomatic.The adapter contains None.(test : [DRP003376](https://trace.ncbi.nlm.nih.gov/Traces/sra/?study=DRP003376))
 
 ### Output
 
