@@ -138,7 +138,7 @@ $ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 
 ## For Mac Users
 
-[DBCLS Mr.Ota](https://github.com/inutano) solved the problem that salmon doesn’t work on Mac. The cause of the problem is that Docker is allocated only 2GB by default on Mac. Therefore,like this picture, the problem will be solved by allocating large amount of memories to Docker, such as 8GB,and doing Apply & Restart.
+[DBCLS Mr.Ota](https://github.com/inutano) solved the problem that salmon doesn’t work on Mac. The cause of the problem is that Docker is allocated only 2GB by default on Mac. Therefore,like this picture, the problem will be solved by allocating large amount of memories to Docker, such as 8GB, and doing Apply & Restart.
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
@@ -155,7 +155,7 @@ You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/i
 
 ## Issue
 
-Please refer to [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)
+Please refer to [issue](https://github.com/yyoshiaki/ikra/issues)
 
 ## Releases
 
@@ -163,7 +163,7 @@ Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 
 - add support for udocker
 - add setting of species
-- gtf, transcript file from GENCODE
+- gtf and transcript file from GENCODE
 - salmon
 - trimmomatic(legacy)
 - trim_galore!
@@ -174,7 +174,7 @@ Please refer to [Relases](https://github.com/yyoshiaki/ikra/releases)
 - salomn validateMappings
 - pigz(multithread version of gzip)
 - fasterq-dump
-- cwl　development is in progress
+- cwl development is in progress
 - rename to "ikra"
 - protein coding option
 
@@ -197,7 +197,7 @@ Fork -> Pull Request in **in "development" branch.** Don't change "master" direc
 
 ## Development of cwl ver.
 
-2019/03/22 https://youtu.be/weJrq5QNt1M tried developing it because Mr.Michael would come into Japan.  
+2019/03/22 https://youtu.be/weJrq5QNt1M We tried developing it because Mr.Michael would come into Japan.  
 For now, cwlnized trim_galore and salmon in PE.
 
 ```
