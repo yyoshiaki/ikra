@@ -50,6 +50,10 @@ Options:
 |  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
 
+
+input sample
+![img](img/Illumina_PE_fastq_csv.png)
+
 - name is written by connecting condition and replicate with underbars.
 - The first three columns are required.
 - If you want to use your own fastq file, add `--fastq`. The extension supports only `.fq`, `.fq.gz`, `.fastq` and `fastq.gz`.
@@ -67,6 +71,9 @@ Options:
 
 - multiqc_report.html  
 mapping rate of salmon(mapping rate for transcript)
+
+output sample
+![img](img/Illumina_PE_test_output.png)
 
 ### Various Specifications
 
