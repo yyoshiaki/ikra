@@ -32,13 +32,13 @@ Options:
   -v, --version Show version.
 ```
 
-- test option limits the number of reads to 100,000 in each sample.
-- udocker mode is for server environments that can only use User privileges.For more information [https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker)。
-- without-docker mode works with all tools installed. Not recommended.
-- protein-coding mode restricts genes to protein coding genes only.
-- threads
-- output is `output.tsv` by default.
-experiment matrix is separated by commas (csv format).
+- **test option** limits the number of reads to 100,000 in each sample.
+- **udocker mode** is for server environments that can only use User privileges. For more information [https://github.com/indigo-dc/udocker](https://github.com/indigo-dc/udocker).
+- **without-docker mode** works with all tools installed. Not recommended.
+- **protein-coding mode** restricts genes to protein coding genes only.
+- **threads**
+- **output** is `output.tsv` by default.
+**experiment matrix** is separated by commas (csv format).
 
 **SRR mode**
 
