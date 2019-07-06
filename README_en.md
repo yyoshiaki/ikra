@@ -132,9 +132,18 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 
 ### Ion (ThermoFisher)
 
+**SRR mode**
+
 ```bash
 $ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 ```
+
+**fastq mode**
+
+```bash
+$ cd test/Ion && bash ../../ikra_Ion_fastq.sh Ion_SRR.csv mouse
+```
+
 
 ## For Mac Users
 
