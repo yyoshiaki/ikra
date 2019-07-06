@@ -57,7 +57,7 @@ Options:
 - name is written by connecting condition and replicate with underbars.
 - The first three columns are required.
 - If you want to use your own fastq file, add `--fastq`. The extension supports only `.fq`, `.fq.gz`, `.fastq` and `fastq.gz`.
-- fastq file specifies path excluding `fastq.gz` or` _1.fastq.gz` and `_2.fastq.gz`. For example, `hoge/SRR5385247.fastq.gz` is described as `hoge/SRR5385247`.
+- fastq file specifies path excluding `fastq.gz` or `_1.fastq.gz` and `_2.fastq.gz`. For example, `hoge/SRR5385247.fastq.gz` is described as `hoge/SRR5385247`.
 - If suffix is not `_1.fastq.gz` or `_2.fastq.gz`, add -s1 and -s2 options.
 - It is impossible for docker to specify a hierarchy above the execution directory, such as `../fq/**.fastq.gz`, but it can be avoided by pasting a symbolic link.
 [bonohu blog](https://bonohu.github.io/running-ikra.html)
