@@ -5,7 +5,7 @@ An expression amount table (gene × sample) is automatically created from the ex
 
 ## Important　about bug　2019/04/30
 
-A serious bug has been found and fixed that could misinterpret a sample in the `tximport_R.R` of ikra.Please update it to the latest version.If you are using the old version, there is no problem with the intermediate file, so delete `tximport_R.R` copied to the same directory as` output.tsv` and experiment matrix, and execute new ikra.sh again. please.We apologize for the inconvenience.
+A serious bug has been found and fixed that could misinterpret a sample in the `tximport_R.R` of ikra. Please update it to the latest version. If you are using the old version, there is no problem with the intermediate file, so delete `tximport_R.R` copied to the same directory as `output.tsv` and experiment matrix, and execute new ikra.sh again, please. We apologize for the inconvenience.
 
 ## Usage
 
