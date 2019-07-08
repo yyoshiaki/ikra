@@ -1,7 +1,7 @@
 # ikra v1.2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 
-An expression amount table (gene × sample) is automatically created from the experiment matrix as an input of [idep](http://bioinformatics.sdstate.edu/idep/). This tool uses [salmon](https://combine-lab.github.io/salmon/).
+An expression level table (gene × sample) is automatically created from the experiment matrix as an input of [idep](http://bioinformatics.sdstate.edu/idep/). This tool uses [salmon](https://combine-lab.github.io/salmon/).
 
 ## Usage
 
