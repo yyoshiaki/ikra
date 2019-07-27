@@ -109,7 +109,7 @@ $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_SRR.csv mouse --test -t 
 
 **fastq mode**
 
-You can execute it after you execute SRR mode. (That is because you don’t have fastq file.)
+You can execute it after you execute SRR mode. (That is because you don’t have fastq files.)
 
 ```bash
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
@@ -125,7 +125,7 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_SRR.csv mouse --test -t 
 
 **fastq mode**
 
-You can execute it after you execute SRR mode. (That is because you don’t have fastq file.)
+You can execute it after you execute SRR mode. (That is because you don’t have fastq files.)
 
 
 ```bash
@@ -135,7 +135,7 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 
 ## For Mac Users
 
-[Dr.Ota(DBCLS)](https://github.com/inutano) solved the problem that salmon doesn’t work on Mac. The cause of the problem is that Docker is allocated only 2GB by default on Mac. Therefore,like this picture, the problem will be solved by allocating large amount of memories to Docker, such as 8GB, and doing Apply & Restart.
+[Dr.Ota(DBCLS)](https://github.com/inutano) solved the problem that salmon doesn’t work on Mac. The cause of the problem is that Docker is allocated only 2GB by default on Mac. The problem will be solved by allocating sufficient memory space(>=8Gb) for Docker, and applying and restarting Docker.
 
 ![img](img/docker_mac0.png)
 ![img](img/docker_mac1.png)
