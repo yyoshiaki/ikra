@@ -1,4 +1,4 @@
-#! bin/bash
+#!/bin/bash
 set -xeu
 
 <<COMMENTOUT
@@ -18,7 +18,9 @@ COMMENTOUT
 set +u
 
 PROGNAME="$( basename $0 )"
-VERSION="v1.2.0"
+
+VERSION="v1.2.1dev"
+
 
 # Usage
 function usage() {
@@ -240,13 +242,13 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
-  SRA_TOOLKIT_IMAGE=inutano/sra-toolkit
+  SRA_TOOLKIT_IMAGE=inutano/sra-toolkit:2.9.0
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
-  MULTIQC_IMAGE=maxulysse/multiqc
+  MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIMGALORE_IMAGE=miasteinberg/trim-galore
-  SALMON_IMAGE=combinelab/salmon:latest
+  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.3--0
+  SALMON_IMAGE=combinelab/salmon:0.14.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
@@ -300,8 +302,51 @@ if [[  -f "tximport_R.R" ]]; then
   rm tximport_R.R
 fi
 
-# tximport_R.Rを取ってくる。
-cp $SCRIPT_DIR/tximport_R.R ./
+# # tximport_R.Rを取ってくる。
+# cp $SCRIPT_DIR/tximport_R.R ./
+
+# 2019/06/09 devv1.3 tximport_R.Rを埋め込み
+
+cat << 'EOF' > tximport_R.R
+#! /usr/bin/Rscript
+
+library(tximport)
+library(readr)
+library(stringr)
+
+# Rscript tximport_R.R gencode.vM19.metadata.MGI.gz Illumina_PE_SRR.csv output.tsv
+
+args1 = commandArgs(trailingOnly=TRUE)[1]
+args2 = commandArgs(trailingOnly=TRUE)[2]
+args3 = commandArgs(trailingOnly=TRUE)[3]
+
+tx2knownGene <- read_delim(args1, '\t', col_names = c('TXNAME', 'GENEID'))
+exp.table <- read.csv(args2, row.names=NULL)
+
+files.raw <- exp.table[,2]
+
+# files.raw <- c("SE/test/ttt30.fq.gz", "SE/test/ttt2.fq.gz")
+
+files.raw <- gsub(".gz$", "", files.raw)
+files.raw <- gsub(".fastq$", "", files.raw)
+files.raw <- gsub(".fq$", "", files.raw)
+
+split.vec <- sapply(files.raw, basename)
+# print(paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep=''))
+
+# files <- paste(c("salmon_output_") , exp.table[,2], c("/quant.sf"), sep='')
+files <- paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep='')
+names(files) <- exp.table[,1]
+
+print(files)
+
+# txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene)
+txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene, countsFromAbundance="scaledTPM")
+
+write.table(txi.salmon$counts, file=args3, sep="\t",col.names=NA,row.names=T,quote=F,append=F)
+write.table(exp.table[-c(2,3)], file="designtable.csv",row.names=F,quote=F,append=F)
+
+EOF
 
 # trimmomaticのadaptersを取ってくる。
 # cp -r $SCRIPT_DIR/adapters/*.fa ./

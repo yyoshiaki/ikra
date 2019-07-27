@@ -1,4 +1,4 @@
-# ikra v1.2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v1.2.1 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
@@ -128,6 +128,14 @@ SRR modeを実行したあとしかできない。（fastqはつけていない�
 
 ```bash
 $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+```
+
+#### 開発用
+
+書きを実行できてからcommitすべし。
+
+```
+$ cd test && bash test.sh
 ```
 
 ### Ion (ThermoFisher)
