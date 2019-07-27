@@ -218,3 +218,9 @@ cd test/cwl_PE && bash test.sh
 
 - https://github.com/pitagora-galaxy/cwl
 - https://github.com/roryk/salmon-cwl
+
+## Citation
+
+```
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+```
