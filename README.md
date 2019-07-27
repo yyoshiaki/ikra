@@ -201,6 +201,6 @@ cd test/cwl_PE && bash test.sh
 
 ## Citation
 
-```
-Hiraoka, Y., Yamada, K., Kawasaki, Y., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
-```
+
+> Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+
