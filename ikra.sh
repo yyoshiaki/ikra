@@ -19,7 +19,7 @@ set +u
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.0"
+VERSION="v1.2.1dev"
 
 
 # Usage
@@ -244,10 +244,10 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   COWSAY_IMAGE=docker/whalesay
   SRA_TOOLKIT_IMAGE=inutano/sra-toolkit:2.9.0
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
-  MULTIQC_IMAGE=maxulysse/multiqc
+  MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIMGALORE_IMAGE=miasteinberg/trim-galore
+  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.3--0
   SALMON_IMAGE=combinelab/salmon:0.14.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
