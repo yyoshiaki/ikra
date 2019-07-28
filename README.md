@@ -65,7 +65,7 @@ Options:
 ### Output
 
 - output.tsv(scaledTPM)
-- multiqc_report.html : including fastQC reports and mapping rate of salmon(mapping rate for transcript)
+- multiqc_report.html : including fastQC reports and mapping rate of salmon(mapping rate for transcripts)
 
 **output sample**
 
@@ -76,14 +76,14 @@ Options:
 |  0610009B22Rik | 4 | 10 |
 | ... | | |
 
-### Various Specifications
+### Specification
 
 - output is **scaledTPM** (see. [Soneson, C., Love, M. I. & Robinson, M. D. Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences. F1000Research 4, 1521 (2015).](https://f1000research.com/articles/4-1521/v2))。
-- About GCbias   `—-gcbias` is added on salmon. You can refer to https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/ about the influence on RNAseq by GCbias.
-- ValidateMappings option was adopted. (You can’t use it while using alignment-base mode.) Please see https://combine-lab.github.io/salmon/faq/ for further details.
+- `—-gcbias` option was added on salmon. You can refer to [Mike Love's blog :
+RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
+- `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
 
-
-## Important  About a Bug  2019/04/30
+## Bug  2019/04/30
 
 A serious bug was reported in the `tximport_R.R` and fixed. In the older version, Salmon's output and multiqc reports were correct and sometimes `output.tsv` were disturbed. Please update Ikra to the latest version. If you are using the old version(<1.1.1), please update and re-run ikra. We apologize for the inconvenience.
 
