@@ -19,7 +19,7 @@ set +u
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.1dev"
+VERSION="v1.2.1"
 
 
 # Usage
