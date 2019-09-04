@@ -69,10 +69,10 @@ Options:
 
 **output sample**
 
-|  |  Treg_LN_1 |  Treg_LN_2  | 
-| ---- | ---- | - | 
+|  |  Treg_LN_1 |  Treg_LN_2  |
+| ---- | ---- | - |
 |  0610005C13Rik | 0 | 0 |
-|  0610006L08Rik | 0 | 1 | 
+|  0610006L08Rik | 0 | 1 |
 |  0610009B22Rik | 4 | 10 |
 | ... | | |
 
@@ -89,7 +89,7 @@ A serious bug was reported in the `tximport_R.R` and fixed. In the older version
 
 ## Install
 
-All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option. 
+All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option.
 
 ```bash
 $ git clone https://github.com/yyoshiaki/ikra.git
@@ -150,6 +150,13 @@ You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/i
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
 
+## Additional explanation
+
+Answers to the questions from ikra users are added here.
+
+- When iDEP reads output.tsv, please put a check to [Read counts data].
+- The reference of mouse is gencode.vm21 and corresponds to GRCm38.
+
 ## Issue
 
 Please refer to [issue](https://github.com/yyoshiaki/ikra/issues)
@@ -202,5 +209,4 @@ cd test/cwl_PE && bash test.sh
 ## Citation
 
 
-> Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
-
+> Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
