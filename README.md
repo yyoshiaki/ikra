@@ -89,7 +89,7 @@ A serious bug was reported in the `tximport_R.R` and fixed. In the older version
 
 ## Install
 
-All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option.
+All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option. 
 
 ```bash
 $ git clone https://github.com/yyoshiaki/ikra.git
