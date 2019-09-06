@@ -81,6 +81,7 @@ salmonのマッピング率（トランスクリプトに対するマッピン�
 - GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
 - validateMappings optionを採用。（alignment-base modeでは使えない。）詳しくは[salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/)。
+- humanのリファレンスはGENCODE Release 31 (GRCh38.p12)、mouseのリファレンスはGENCODE Release M22 (GRCm38.p6)です。
 
 ## 重要　bugについて　2019/04/30
 
@@ -165,10 +166,9 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 
 ## 補足
 
-今後、ikra使用者から受け付けた質問への回答はこちらで公開してまいります。
+- iDEPへのエクスポートの際はどのデータタイプを指定すればいいですか？
 
-- output.tsvをiDEPに読み込ませる場合は、Read counts dataにチェックを入れてください。
-- mouseのリファレンスはgencode.vM21で、GRCm38に対応しております。
+output.tsvをiDEPで読み込む際は、Read counts dataにチェックを入れてください。
 
 ## やること
 

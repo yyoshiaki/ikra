@@ -72,7 +72,7 @@ Options:
 |  |  Treg_LN_1 |  Treg_LN_2  |
 | ---- | ---- | - |
 |  0610005C13Rik | 0 | 0 |
-|  0610006L08Rik | 0 | 1 | 
+|  0610006L08Rik | 0 | 1 |
 |  0610009B22Rik | 4 | 10 |
 | ... | | |
 
@@ -82,6 +82,7 @@ Options:
 - `—-gcbias` option was added on salmon. You can refer to [Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
 - `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
+- The reference of human is GENCODE Release 31(GRCh38.p12), and that of mouse is GENCODE Release M22(GRCm38.p6).
 
 ## Bug  2019/04/30
 
@@ -152,10 +153,9 @@ You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/i
 
 ## Additional explanation
 
-Answers to the questions from ikra users are added here.
+- In exporting output.tsv to iDEP, which data type should be put a check to?
 
-- When iDEP reads output.tsv, please put a check to [Read counts data].
-- The reference of mouse is gencode.vm21 and corresponds to GRCm38.
+When iDEP reads output.tsv, please put a check to [Read counts data].
 
 ## Issue
 
