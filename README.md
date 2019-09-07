@@ -82,7 +82,7 @@ Options:
 - `—-gcbias` option was added on salmon. You can refer to [Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
 - `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
-- The reference of human is GENCODE Release 31 (GRCh38.p12), and that of mouse is GENCODE Release M22 (GRCm38.p6)
+- The reference for human is GENCODE Release 31 (GRCh38.p12), and that for mouse is GENCODE Release M22 (GRCm38.p6)
 
 ## Bug  2019/04/30
 
@@ -153,9 +153,9 @@ You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/i
 
 ## Q&A
 
-- In exporting output.tsv to iDEP, which data type should be put a check to?
+- In exporting output.tsv to iDEP, which data type should I select?
 
-When iDEP reads output.tsv, please put a check to [Read counts data].
+When iDEP reads output.tsv, please put a check to `Read counts data`.
 
 ## Issue
 
