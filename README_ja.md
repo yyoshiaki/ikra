@@ -163,6 +163,12 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
 
+## Q&A
+
+- iDEPへのエクスポートの際はどのデータタイプを指定すればいいですか？
+
+output.tsvをiDEPで読み込む際は、Read counts dataにチェックを入れてください。
+
 ## やること
 
 [issue](https://github.com/yyoshiaki/auto_counttable_maker/issues)を参照のこと。
@@ -222,5 +228,5 @@ cd test/cwl_PE && bash test.sh
 ## Citation
 
 ```
-Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 ```
