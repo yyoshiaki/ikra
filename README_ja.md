@@ -168,7 +168,7 @@ SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.j
 
 - iDEPへのエクスポートの際はどのデータタイプを指定すればいいですか？
 
-output.tsvをiDEPで読み込む際は、Read counts dataにチェックを入れてください。
+output.tsvをiDEPで読み込む際は、`Read counts data`にチェックを入れてください。
 
 ## やること
 
