@@ -99,9 +99,7 @@ $ git clone https://github.com/yyoshiaki/ikra.git
 
 ## test
 
-### Illumina trim_galore ver.
-
-#### SE
+### SE
 
 **SRR mode**
 
@@ -117,7 +115,7 @@ SRR modeを実行したあとしかできない。（fastqはつけていない�
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
-#### PE
+### PE
 
 **SRR mode**
 

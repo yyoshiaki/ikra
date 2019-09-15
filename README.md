@@ -98,9 +98,7 @@ $ git clone https://github.com/yyoshiaki/ikra.git
 
 ## test
 
-### Illumina trim_galore ver.
-
-#### SE
+### SE
 
 **SRR mode**
 
@@ -116,7 +114,7 @@ You can execute it after you execute SRR mode. (That is because you don’t have
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
-#### PE
+### PE
 
 **SRR mode**
 
@@ -131,6 +129,12 @@ You can execute it after you execute SRR mode. (That is because you don’t have
 
 ```bash
 $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+```
+
+### test all (for developers)
+
+```bash
+cd test && bash test.sh
 ```
 
 
