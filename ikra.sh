@@ -19,7 +19,6 @@ PROGNAME="$( basename $0 )"
 
 VERSION="v1.2.2dev"
 
-
 # Usage
 function usage() {
   cat << EOS >&2
@@ -210,7 +209,6 @@ fi
 
 COWSAY=cowsay
 PREFETCH=prefetch
-PFASTQ_DUMP=pfastq-dump
 FASTQ_DUMP=fastq-dump
 FASTERQ_DUMP=fasterq-dump
 FASTQC=fastqc
@@ -240,7 +238,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
-  SRA_TOOLKIT_IMAGE=inutano/sra-toolkit:2.9.0
+  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.0--pl526he1b5a44_0
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
@@ -264,7 +262,6 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
   PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
-  PFASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $PFASTQ_DUMP"
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTERQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTERQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
@@ -345,45 +342,6 @@ write.table(txi.salmon$counts, file=args3, sep="\t",col.names=NA,row.names=T,quo
 write.table(exp.table[-c(2,3)], file="designtable.csv",row.names=F,quote=F,append=F)
 
 EOF
-
-# trimmomaticのadaptersを取ってくる。
-# cp -r $SCRIPT_DIR/adapters/*.fa ./
-
-
-# # prefetch
-# # 先頭一行をとばす。
-# for i in `tail -n +2  $1`
-# do
-# name=`echo $i | cut -d, -f1`
-# SRR=`echo $i | cut -d, -f2`
-# #   echo "$name $fqfile"
-# if [[ ! -f "$SRA_ROOT/$SRR.sra" ]] && [[ ! -f "$SRR.fastq" ]]; then
-# $PREFETCH $SRR --max-size $MAXSIZE
-# fi
-# done
-# # pfastq_dump
-# for i in `tail -n +2  $1`
-# do
-# name=`echo $i | cut -d, -f1`
-# SRR=`echo $i | cut -d, -f2`
-# LAYOUT=`echo $i | cut -d, -f3`
-# # SE
-# if [ $LAYOUT = SE ]; then
-# if [[ ! -f "$SRR.fastq.gz" ]]; then
-# $PFASTQ_DUMP --threads $THREADS $SRR.sra
-# gzip $SRR.fastq
-# fi
-# # PE
-# else
-# if [[ ! -f "$SRR_1.fastq.gz" ]]; then
-# $PFASTQ_DUMP --threads $THREADS $SRR.sra --split-files
-# gzip $SRR_1.fastq
-# gzip $SRR_2.fastq
-# fi
-# fi
-# done
-
-
 
 if [ $IF_FASTQ = false ]; then
 # fastq_dump
