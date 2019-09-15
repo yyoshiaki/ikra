@@ -1,19 +1,15 @@
 #!/bin/bash
-set -xeu
+set -xe
 
-<<COMMENTOUT
-オプション関連ここから
-大部分は http://dojineko.hateblo.jp/entry/2016/06/30/225113 から引用させていただきました。
+# オプション関連ここから
+# 大部分は http://dojineko.hateblo.jp/entry/2016/06/30/225113 から引用させていただきました。
 
-変数 EX_MATRIX_FILE, REF_SPECIES はここで定義
-if [[ $IF_TEST = true ]]; then でテストモード用の実行が可能
+# 変数 EX_MATRIX_FILE, REF_SPECIES はここで定義
+# if [[ $IF_TEST = true ]]; then でテストモード用の実行が可能
 
-今まで$1 = EX_MATRIX_FILEだったのを変更している
-以降の$1をEX_MATRIX_FILEで置き換える必要がある？(必要なら修正お願いします...)
-COMMENTOUT
+# 今まで$1 = EX_MATRIX_FILEだったのを変更している
+# 以降の$1をEX_MATRIX_FILEで置き換える必要がある？(必要なら修正お願いします...)
 
-
-set +u
 
 PROGNAME="$( basename $0 )"
 
@@ -22,7 +18,7 @@ VERSION="v1.2.2dev"
 # Usage
 function usage() {
   cat << EOS >&2
-ikra ${VERSION} -RNAseq pipeline centered on Salmon
+ikra ${VERSION} -RNAseq pipeline centered on Salmon-
 
 Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
@@ -49,7 +45,7 @@ EOS
 # version
 function version() {
   cat << EOS >&2
-ikra ${VERSION} -RNAseq pipeline centered on Salmon
+ikra ${VERSION} -RNAseq pipeline centered on Salmon-
 EOS
   exit 1
 }
