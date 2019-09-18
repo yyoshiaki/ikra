@@ -42,6 +42,7 @@ Options:
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
+  -r, --remove  Remove intermediate files
 EOS
   exit 1
 }
@@ -65,6 +66,7 @@ IF_PC=false
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
+REMOVE=false
 
 # オプションをパース
 PARAM=()
@@ -124,6 +126,9 @@ for opt in "$@"; do
             ;;
         '-v' | '--version' )
             usage
+            ;;
+        '-r' | '--remove' )
+            REMOVE=true ; shift
             ;;
         '--' | '-' )
             shift
@@ -560,6 +565,13 @@ if [[  -f "tximport_R.R" ]]; then
   rm tximport_R.R
 fi
 
+if [ $REMOVE = true ]; then
+  rm -f *fastq.gz
+  rm -f *fq.gz
+  rm -f gencode*.gz
+  rm -f *fastqc.zip
+  rm -rf salmon_output_*
+fi
 # if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #
 #   chmod 755 .
