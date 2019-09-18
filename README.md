@@ -30,6 +30,7 @@ Options:
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
+  -r, --remove-intermediates Remove intermediate files
 ```
 
 - **test option** limits the number of reads to 100,000 in each sample.
@@ -212,5 +213,5 @@ cd test/cwl_PE && bash test.sh
 
 ## Citation
 
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 
-> Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
