@@ -82,6 +82,7 @@ salmonのマッピング率（トランスクリプトに対するマッピン�
 - GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
 - validateMappings optionを採用。（alignment-base modeでは使えない。）詳しくは[salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/)。
+- humanのリファレンスはGENCODE Release 31 (GRCh38.p12)、mouseのリファレンスはGENCODE Release M22 (GRCm38.p6)です。
 
 ## 重要　bugについて　2019/04/30
 
@@ -99,9 +100,7 @@ $ git clone https://github.com/yyoshiaki/ikra.git
 
 ## test
 
-### Illumina trim_galore ver.
-
-#### SE
+### SE
 
 **SRR mode**
 
@@ -117,7 +116,7 @@ SRR modeを実行したあとしかできない。（fastqはつけていない�
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
-#### PE
+### PE
 
 **SRR mode**
 
@@ -163,6 +162,12 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)が爆速でおすすめ。
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
+
+## Q&A
+
+- iDEPへのエクスポートの際はどのデータタイプを指定すればいいですか？
+
+output.tsvをiDEPで読み込む際は、`Read counts data`にチェックを入れてください。
 
 ## やること
 
@@ -223,5 +228,5 @@ cd test/cwl_PE && bash test.sh
 ## Citation
 
 ```
-Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 ```

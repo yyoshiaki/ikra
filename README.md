@@ -83,6 +83,7 @@ Options:
 - `—-gcbias` option was added on salmon. You can refer to [Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
 - `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
+- The reference for human is GENCODE Release 31 (GRCh38.p12), and that for mouse is GENCODE Release M22 (GRCm38.p6)
 
 ## Bug  2019/04/30
 
@@ -98,9 +99,7 @@ $ git clone https://github.com/yyoshiaki/ikra.git
 
 ## test
 
-### Illumina trim_galore ver.
-
-#### SE
+### SE
 
 **SRR mode**
 
@@ -116,7 +115,7 @@ You can execute it after you execute SRR mode. (That is because you don’t have
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
-#### PE
+### PE
 
 **SRR mode**
 
@@ -131,6 +130,12 @@ You can execute it after you execute SRR mode. (That is because you don’t have
 
 ```bash
 $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+```
+
+### test all (for developers)
+
+```bash
+cd test && bash test.sh
 ```
 
 
@@ -150,6 +155,12 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
+
+## Q&A
+
+- In exporting output.tsv to iDEP, which data type should I select?
+
+When iDEP reads output.tsv, please put a check to `Read counts data`.
 
 ## Issue
 
@@ -202,5 +213,5 @@ cd test/cwl_PE && bash test.sh
 
 ## Citation
 
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 
-> Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
