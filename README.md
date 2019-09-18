@@ -30,6 +30,7 @@ Options:
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
+  -r, --remove-intermediates Remove intermediate files
 ```
 
 - **test option** limits the number of reads to 100,000 in each sample.
@@ -69,10 +70,10 @@ Options:
 
 **output sample**
 
-|  |  Treg_LN_1 |  Treg_LN_2  | 
-| ---- | ---- | - | 
+|  |  Treg_LN_1 |  Treg_LN_2  |
+| ---- | ---- | - |
 |  0610005C13Rik | 0 | 0 |
-|  0610006L08Rik | 0 | 1 | 
+|  0610006L08Rik | 0 | 1 |
 |  0610009B22Rik | 4 | 10 |
 | ... | | |
 
@@ -89,7 +90,7 @@ A serious bug was reported in the `tximport_R.R` and fixed. In the older version
 
 ## Install
 
-All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option. 
+All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option.
 
 ```bash
 $ git clone https://github.com/yyoshiaki/ikra.git
@@ -203,4 +204,3 @@ cd test/cwl_PE && bash test.sh
 
 
 > Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
-
