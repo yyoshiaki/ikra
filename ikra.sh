@@ -130,7 +130,7 @@ for opt in "$@"; do
             ;;
         '-r' | '--remove' )
             REMOVE=true ; shift
-           ;;
+            ;;
         '--' | '-' )
             shift
             PARAM+=( "$@" )
