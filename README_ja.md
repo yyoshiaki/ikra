@@ -32,6 +32,7 @@ Options:
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
+  -r, --remove-intermediates Remove intermediate files
 ```
 
 - test optionは各サンプルにおいてリード数を100000に限定する。
