@@ -87,6 +87,18 @@ RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-se
 
 A serious bug was reported in the `tximport_R.R` and fixed. In the older version, Salmon's output and multiqc reports were correct and sometimes `output.tsv` were disturbed. Please update Ikra to the latest version. If you are using the old version(<1.1.1), please update and re-run ikra. We apologize for the inconvenience.
 
+## Major bugs that have fixed
+
+### tximport_R.R 2019/04/30 
+
+A serious bug was reported in the `tximport_R.R` and fixed. In the older version, Salmon's output and multiqc reports were correct and sometimes `output.tsv` were disturbed. Please update Ikra to the latest version. If you are using the old version(<1.1.1), please update and re-run ikra. We apologize for the inconvenience.
+
+### fasterq-dump error 2019/09/21
+
+A bug has been reported that stops processing due to the following error in sra-tools.
+`docker: Error response from daemon: OCI runtime create failed: container_linux.go:345: starting container process caused "exec: \"fasterq-dump\": executable file not found in $PATH": unknown.`
+The latest version has already been corrected, so if you encounter the same error, please update to the latest version.
+
 ## Install
 
 All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option. 
@@ -95,7 +107,22 @@ All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need
 $ git clone https://github.com/yyoshiaki/ikra.git
 ```
 
-## test
+## Upgrade
+
+```bash
+$ git fetch
+```
+
+## Confirm the version
+
+```bash 
+ $ bash ikra.sh --version
+ ...
+ ikra v1.2.1 -RNAseq pipeline centered on Salmon-
+ ...
+```
+
+## Test
 
 ### Illumina trim_galore ver.
 

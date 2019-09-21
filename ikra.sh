@@ -25,7 +25,7 @@ VERSION="v1.2.1"
 # Usage
 function usage() {
   cat << EOS >&2
-ikra ${VERSION} -RNAseq pipeline centered on Salmon
+ikra ${VERSION} -RNAseq pipeline centered on Salmon-
 
 Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
@@ -52,7 +52,7 @@ EOS
 # version
 function version() {
   cat << EOS >&2
-ikra ${VERSION} -RNAseq pipeline centered on Salmon
+ikra ${VERSION} -RNAseq pipeline centered on Salmon-
 EOS
   exit 1
 }
