@@ -110,7 +110,7 @@ $ git clone https://github.com/yyoshiaki/ikra.git
 ## Upgrade
 
 ```bash
-$ git fetch
+$ git pull origin master
 ```
 
 ## Confirm the version
