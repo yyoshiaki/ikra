@@ -125,7 +125,7 @@ for opt in "$@"; do
             usage
             ;;
         '-v' | '--version' )
-            usage
+            version
             ;;
         '--' | '-' )
             shift
