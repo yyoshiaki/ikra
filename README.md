@@ -83,10 +83,6 @@ Options:
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
 - `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
 
-## Bug  2019/04/30
-
-A serious bug was reported in the `tximport_R.R` and fixed. In the older version, Salmon's output and multiqc reports were correct and sometimes `output.tsv` were disturbed. Please update Ikra to the latest version. If you are using the old version(<1.1.1), please update and re-run ikra. We apologize for the inconvenience.
-
 ## Major bugs that have fixed
 
 ### tximport_R.R 2019/04/30 
