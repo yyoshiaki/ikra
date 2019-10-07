@@ -158,7 +158,7 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 ### test all (for developers)
 
 ```bash
-cd test && bash test.sh
+cd test && bash test.sh && bash test.full.sh
 ```
 
 

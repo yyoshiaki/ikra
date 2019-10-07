@@ -152,10 +152,10 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 
 #### 開発用
 
-書きを実行できてからcommitすべし。
+下記を実行できてからcommitすべし。test.full.shはfasterq-dumpをテストするために全リードをダウンロードするため時間がかかる。
 
 ```
-$ cd test && bash test.sh
+$ cd test && bash test.sh && bash test.full.sh
 ```
 
 ### Ion (ThermoFisher)
