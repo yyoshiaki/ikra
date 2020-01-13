@@ -23,10 +23,12 @@ Options:
   -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
   -o, --output  output file. (default : output.tsv)
+  -l, --log  log file. (default : ikra.log)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
+  -r, --remove-intermediates Remove intermediate files
 ```
 
 - test optionは各サンプルにおいてリード数を100000に限定する。
@@ -76,6 +78,7 @@ salmonのマッピング率（トランスクリプトに対するマッピン�
 - GCbiasについて、salmonで`--gcBias`を追加した。GCbiasのRNAseqにおける影響に関しては[Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/)。
 - validateMappings optionを採用。（alignment-base modeでは使えない。）詳しくは[salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/)。
+- humanのリファレンスはGENCODE Release 31 (GRCh38.p12)、mouseのリファレンスはGENCODE Release M22 (GRCm38.p6)です。
 
 ## Major bugs that have fixed
 
@@ -110,15 +113,13 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v1.2.1 -RNAseq pipeline centered on Salmon-
+ ikra v1.2.2 -RNAseq pipeline centered on Salmon-
  ...
 ```
 
 ## test
 
-### Illumina trim_galore ver.
-
-#### SE
+### SE
 
 **SRR mode**
 
@@ -134,7 +135,7 @@ SRR modeを実行したあとしかできない。（fastqはつけていない�
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
-#### PE
+### PE
 
 **SRR mode**
 
@@ -152,10 +153,10 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 
 #### 開発用
 
-書きを実行できてからcommitすべし。
+下記を実行できてからcommitすべし。test.full.shはfasterq-dumpをテストするために全リードをダウンロードするため時間がかかる。
 
 ```
-$ cd test && bash test.sh
+$ cd test && bash test.sh && bash test.full.sh
 ```
 
 ### Ion (ThermoFisher)
@@ -180,6 +181,12 @@ salmonがmacで走らない問題だが、[DBCLS大田さん](https://github.com
 SRRデータを探している場合は[http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)が爆速でおすすめ。
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
+
+## Q&A
+
+- iDEPへのエクスポートの際はどのデータタイプを指定すればいいですか？
+
+output.tsvをiDEPで読み込む際は、`Read counts data`にチェックを入れてください。
 
 ## やること
 
@@ -240,5 +247,5 @@ cd test/cwl_PE && bash test.sh
 ## Citation
 
 ```
-Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 ```

@@ -26,10 +26,12 @@ Options:
   -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
   -o, --output  output file. (default : output.tsv)
+  -l, --log  log file. (default : ikra.log)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
+  -r, --remove-intermediates Remove intermediate files
 ```
 
 - **test option** limits the number of reads to 100,000 in each sample.
@@ -69,10 +71,10 @@ Options:
 
 **output sample**
 
-|  |  Treg_LN_1 |  Treg_LN_2  | 
-| ---- | ---- | - | 
+|  |  Treg_LN_1 |  Treg_LN_2  |
+| ---- | ---- | - |
 |  0610005C13Rik | 0 | 0 |
-|  0610006L08Rik | 0 | 1 | 
+|  0610006L08Rik | 0 | 1 |
 |  0610009B22Rik | 4 | 10 |
 | ... | | |
 
@@ -82,6 +84,7 @@ Options:
 - `—-gcbias` option was added on salmon. You can refer to [Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
 - `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
+- The reference for human is GENCODE Release 31 (GRCh38.p12), and that for mouse is GENCODE Release M22 (GRCm38.p6)
 
 ## Major bugs that have fixed
 
@@ -97,7 +100,7 @@ The latest version has already been corrected, so if you encounter the same erro
 
 ## Install
 
-All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option. 
+All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need for installing plenty of softwares! If you don’t want to use docker (or udocker), you must install all softwares by yourself and use `—-without-docker` option.
 
 ```bash
 $ git clone https://github.com/yyoshiaki/ikra.git
@@ -109,20 +112,27 @@ $ git clone https://github.com/yyoshiaki/ikra.git
 $ git pull origin master
 ```
 
-## Confirm the version
+## Version
 
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v1.2.1 -RNAseq pipeline centered on Salmon-
+ ikra v1.2.2 -RNAseq pipeline centered on Salmon-
  ...
 ```
 
+### Version of each tool
+
+- sra-tools : 2.10.0
+- FastQC 0.11.5
+- MultiQC : 1.4
+- Trim Galore! : 0.6.3
+- Salmon : 0.14.0
+- tximport : 1.6.0
+
 ## Test
 
-### Illumina trim_galore ver.
-
-#### SE
+### SE
 
 **SRR mode**
 
@@ -138,7 +148,7 @@ You can execute it after you execute SRR mode. (That is because you don’t have
 $ cd test/Illumina_SE && bash ../../ikra.sh Illumina_SE_fastq.csv mouse --fastq -t 10
 ```
 
-#### PE
+### PE
 
 **SRR mode**
 
@@ -153,6 +163,12 @@ You can execute it after you execute SRR mode. (That is because you don’t have
 
 ```bash
 $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq -t 10
+```
+
+### test all (for developers)
+
+```bash
+cd test && bash test.sh && bash test.full.sh
 ```
 
 
@@ -172,6 +188,12 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 You can find SRR data so quickly in [http://sra.dbcls.jp/](http://sra.dbcls.jp/index.html)
 
 <img src="https://github.com/yyoshiaki/mishima_gassyuku/blob/master/img/dbcls_sra.png?raw=true" width="50%" >
+
+## Q&A
+
+- In exporting output.tsv to iDEP, which data type should I select?
+
+When iDEP reads output.tsv, please put a check to `Read counts data`.
 
 ## Issue
 
@@ -224,6 +246,5 @@ cd test/cwl_PE && bash test.sh
 
 ## Citation
 
-
-> Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, K., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 
