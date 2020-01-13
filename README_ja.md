@@ -23,6 +23,7 @@ Options:
   -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
   -o, --output  output file. (default : output.tsv)
+  -l, --log  log file. (default : ikra.log)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
@@ -112,7 +113,7 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v1.2.1 -RNAseq pipeline centered on Salmon-
+ ikra v1.2.2 -RNAseq pipeline centered on Salmon-
  ...
 ```
 

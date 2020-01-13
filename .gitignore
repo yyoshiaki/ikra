@@ -13,3 +13,4 @@ test/cwl_PE/docker*
 *.gz
 *.ipynb_checkpoints*
 *.Rhistory
+*log*

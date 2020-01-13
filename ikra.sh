@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.2dev"
+VERSION="v1.2.2"
 
 cat << "EOF" 
     __                       
@@ -43,12 +43,18 @@ Options:
   -w, --without-docker
   -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
   -t, --threads
-  -o, --output  output file. (default : output.tsv)
+  -o, --output  output file. (default : output.tsv)  
+  -l, --log  log file. (default : ikra.log)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
   -r, --remove-intermediates Remove intermediate files
+
+Citation :
+Hiraoka, Yu, Yamada, Kohki, Kawasaki, Yusuke, Hirose, Haruka, Matsumoto, Yasunari, Ishikawa, Kaito, & Yasumizu, Yoshiaki. (2019, July 27). ikra : RNAseq pipeline centered on Salmon. (Version v1.2). Zenodo. http://doi.org/10.5281/zenodo.3352573
+
+Github repo : https://github.com/yyoshiaki/ikra
 EOS
   exit 1
 }
@@ -72,6 +78,7 @@ IF_PC=false
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
+LOG_FILE=ikra.log
 IF_REMOVE_INTERMEDIATES=false
 
 # オプションをパース
@@ -119,14 +126,22 @@ for opt in "$@"; do
             shift 2
             ;;
 
-          '-o'|'--output' )
-              if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-                  echo "$PROGNAME: option requires an argument -- $1" 1>&2
-                  exit 1
-              fi
+        '-o'|'--output' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
               OUTPUT_FILE="$2"
               shift 2
               ;;
+        '-l'|'--log' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+              LOG_FILE="$2"
+              shift 2
+                ;;
         '-h' | '--help' )
             usage
             ;;
@@ -165,8 +180,19 @@ if [[ -n "${PARAM[@]}" ]]; then
     usage
 fi
 
+
+cat << EOS | tee -a ${LOG_FILE}
+ikra ${VERSION} -RNAseq pipeline centered on Salmon-
+
+EOS
+
+date >> ${LOG_FILE}
+pwd >> ${LOG_FILE}
+whoami >> ${LOG_FILE}
+uname -n >> ${LOG_FILE}
+
 # 結果を表示(オプションテスト用)
-cat << EOS | column -t
+cat << EOS | column -t | tee -a ${LOG_FILE}
 EX_MATRIX_FILE ${EX_MATRIX_FILE}
 REF_SPECIES ${REF_SPECIES}
 RUNINDOCKER ${RUNINDOCKER}
@@ -176,6 +202,8 @@ IF_TEST ${IF_TEST:-false}
 IF_FASTQ ${IF_FASTQ:-false}
 IF_PC ${IF_PC:-false}
 IF_REMOVE_INTERMEDIATES ${IF_REMOVE_INTERMEDIATES:-false}
+OUTPUT_FILE ${OUTPUT_FILE}
+LOG_FILE ${LOG_FILE}
 EOS
 
 set -u
@@ -381,7 +409,7 @@ COMMENTOUT
     # fastq_dump
     if [[ ! -f "$SRR.fastq.gz" ]]; then
       if [[ $MAX_SPOT_ID == "" ]]; then
-        $FASTERQ_DUMP $SRR --threads $THREADS
+        $FASTERQ_DUMP $SRR --threads $THREADS --force
         # gzip $SRR.fastq
         $PIGZ $SRR.fastq
       else
@@ -399,7 +427,7 @@ COMMENTOUT
     # fastq_dump
     if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
       if [[ $MAX_SPOT_ID == "" ]]; then
-        $FASTERQ_DUMP $SRR --split-files --threads $THREADS
+        $FASTERQ_DUMP $SRR --split-files --threads $THREADS --force
         # gzip ${SRR}_1.fastq
         # gzip ${SRR}_2.fastq
         $PIGZ ${SRR}_1.fastq
@@ -425,64 +453,65 @@ fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE`
 do
-if [ $IF_FASTQ = false ]; then
-  # fasterq_dump
-  name=`echo $i | cut -d, -f1`
-  SRR=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
-  dirname_fq=""
-else
-  name=`echo $i | cut -d, -f1`
-  fq=`echo $i | cut -d, -f2`
-  LAYOUT=`echo $i | cut -d, -f3`
-  fqname_ext="${fq##*/}"
-  # echo $fqname_ext
+  if [ $IF_FASTQ = false ]; then
+    # fasterq_dump
+    name=`echo $i | cut -d, -f1`
+    SRR=`echo $i | cut -d, -f2`
+    LAYOUT=`echo $i | cut -d, -f3`
+    dirname_fq=""
+  else
+    name=`echo $i | cut -d, -f1`
+    fq=`echo $i | cut -d, -f2`
+    LAYOUT=`echo $i | cut -d, -f3`
+    fqname_ext="${fq##*/}"
+    # echo $fqname_ext
 
-  # ファイル名を取り出す（拡張子なし）
-  # basename_fq="${fqname_ext%.*.*}"
-  basename_fq=${fqname_ext}
-  dirname_fq=`dirname $fq`
-  dirname_fq=${dirname_fq}/
-  SRR=${basename_fq}
-fi
-
-
-# trim_galore
-# SE
-if [ $LAYOUT = SE ]; then
-  if [[  -f "${dirname_fq}${SRR}.fq" ]]; then
-    mv ${dirname_fq}${SRR}.fq ${dirname_fq}${SRR}.fastq
-  fi
-  if [[  -f "${dirname_fq}${SRR}.fastq" ]]; then
-    $PIGZ ${dirname_fq}${SRR}.fastq.gz
-  fi
-  if [[  -f "${dirname_fq}${SRR}.fq.gz" ]]; then
-    mv ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+    # ファイル名を取り出す（拡張子なし）
+    # basename_fq="${fqname_ext%.*.*}"
+    basename_fq=${fqname_ext}
+    dirname_fq=`dirname $fq`
+    dirname_fq=${dirname_fq}/
+    SRR=${basename_fq}
   fi
 
-  if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
-    $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
-  fi
 
-  # fastqc
-  if [[ ! -f "${dirname_fq}${SRR}_trimmed_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${dirname_fq}${SRR}_trimmed.fq.gz
-  fi
+  # trim_galore
+  # SE
+  if [ $LAYOUT = SE ]; then
+    if [[  -f "${dirname_fq}${SRR}.fq" ]]; then
+      mv ${dirname_fq}${SRR}.fq ${dirname_fq}${SRR}.fastq
+    fi
+    if [[  -f "${dirname_fq}${SRR}.fastq" ]]; then
+      $PIGZ ${dirname_fq}${SRR}.fastq.gz
+    fi
+    if [[  -f "${dirname_fq}${SRR}.fq.gz" ]]; then
+      mv ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+    fi
 
-# PE
-else
-  # trimmomatic
-  if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
-    $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
-  fi
+    if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
+      $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
+    fi
 
-  # fastqc
-  if [[ ! -f "${dirname_fq}${SRR}_1_val_1_fastqc.zip" ]]; then
-    $FASTQC -t $THREADS ${dirname_fq}${SRR}_1_val_1.fq.gz
-    $FASTQC -t $THREADS ${dirname_fq}${SRR}_2_val_2.fq.gz
+    # fastqc
+    if [[ ! -f "${dirname_fq}${SRR}_trimmed_fastqc.zip" ]]; then
+      $FASTQC -t $THREADS ${dirname_fq}${SRR}_trimmed.fq.gz
+    fi
+
+  # PE
+  else
+    # trimmomatic
+    if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
+      $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
+    fi
+
+    # fastqc
+    if [[ ! -f "${dirname_fq}${SRR}_1_val_1_fastqc.zip" ]]; then
+      $FASTQC -t $THREADS ${dirname_fq}${SRR}_1_val_1.fq.gz
+      $FASTQC -t $THREADS ${dirname_fq}${SRR}_2_val_2.fq.gz
+    fi
   fi
-fi
 done
+
 # download $REF_TRANSCRIPT
 if [[ ! -f "$REF_TRANSCRIPT" ]]; then
   $WGET $BASE_REF_TRANSCRIPT/$REF_TRANSCRIPT
@@ -533,7 +562,7 @@ do
       -o salmon_output_${SRR} \
       --gcBias \
       --validateMappings
-#       -g $REF_GTF
+  #       -g $REF_GTF
     fi
 
    # PE
@@ -549,7 +578,7 @@ do
       -o salmon_output_${SRR} \
       --gcBias \
       --validateMappings
-#       -g $REF_GTF
+  #       -g $REF_GTF
     fi
   fi
 done
@@ -586,3 +615,8 @@ fi
 #   chmod 755 .
 #
 # fi
+
+cat << EOS | tee -a ${LOG_FILE}
+RUN : success!
+
+EOS
