@@ -409,7 +409,7 @@ COMMENTOUT
     # fastq_dump
     if [[ ! -f "$SRR.fastq.gz" ]]; then
       if [[ $MAX_SPOT_ID == "" ]]; then
-        $FASTERQ_DUMP $SRR --threads $THREADS --force
+        $FASTERQ_DUMP $SRR --threads $THREADS --force -p
         # gzip $SRR.fastq
         $PIGZ $SRR.fastq
       else
@@ -427,7 +427,7 @@ COMMENTOUT
     # fastq_dump
     if [[ ! -f "${SRR}_1.fastq.gz" ]]; then
       if [[ $MAX_SPOT_ID == "" ]]; then
-        $FASTERQ_DUMP $SRR --split-files --threads $THREADS --force
+        $FASTERQ_DUMP $SRR --split-files --threads $THREADS --force -p
         # gzip ${SRR}_1.fastq
         # gzip ${SRR}_2.fastq
         $PIGZ ${SRR}_1.fastq
