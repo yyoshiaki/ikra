@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.2"
+VERSION="v1.2.3"
 
 cat << "EOF" 
     __                       
@@ -279,7 +279,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
-  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.0--pl526he1b5a44_0
+  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
