@@ -249,7 +249,7 @@ else
 fi
 
 COWSAY=cowsay
-PREFETCH=prefetch
+# PREFETCH=prefetch
 FASTQ_DUMP=fastq-dump
 FASTERQ_DUMP=fasterq-dump
 FASTQC=fastqc
@@ -279,7 +279,9 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
-  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1
+  # quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1 had an error.
+  # the earlier version may stop during the download.
+  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_0
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
@@ -302,7 +304,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $PIGZ_IMAGE
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
-  PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
+  # PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
   FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTERQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTERQ_DUMP"
   FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
