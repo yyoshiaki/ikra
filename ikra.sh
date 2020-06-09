@@ -456,6 +456,14 @@ if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
   $MULTIQC -n multiqc_report_raw_reads.html .
 fi
 
+# determin threads for trim galore.
+# the sweet spot for TG is 4
+if [ $THREADS -gt 4 ] ; then
+  THREADS_TRIMGALORE=4
+else
+  THREADS_TRIMGALORE=$THREADS
+fi
+
 
 for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
@@ -495,7 +503,7 @@ do
     fi
 
     if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
-      $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
+      $TRIMGALORE --cores ${THREADS_TRIMGALORE} ${dirname_fq}${SRR}.fastq.gz
     fi
 
     # fastqc
@@ -507,7 +515,7 @@ do
   else
     # trimmomatic
     if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
-      $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
+      $TRIMGALORE --cores ${THREADS_TRIMGALORE} --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
     fi
 
     # fastqc
