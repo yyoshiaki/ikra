@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.3"
+VERSION="v1.2.3dev"
 
 cat << "EOF" 
     __                       
@@ -41,7 +41,8 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
-  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts. (defalut : True)
+  -ct, --comprehensive-transcripts use comprehensive transcripts instead of protein coding transcripts. (default : False) 
   -t, --threads
   -o, --output  output file. (default : output.tsv)  
   -l, --log  log file. (default : ikra.log)
@@ -74,7 +75,7 @@ DOCKER=docker
 THREADS=1
 IF_TEST=false
 IF_FASTQ=false
-IF_PC=false
+IF_PC=True
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
@@ -93,6 +94,9 @@ for opt in "$@"; do
             IF_FASTQ=true; shift
             ;;
         '-pc'|'--protein-coding' )
+            IF_PC=true; shift
+            ;;
+        '-ct'|'--comprehensive-transcripts' )
             IF_PC=true; shift
             ;;
         '-u'|'--udocker' )
@@ -388,7 +392,7 @@ EOF
 
 if [ $IF_FASTQ = false ]; then
 # fastq_dump
-for i in `tail -n +2  $EX_MATRIX_FILE`
+for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
@@ -453,7 +457,7 @@ if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
 fi
 
 
-for i in `tail -n +2  $EX_MATRIX_FILE`
+for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
   if [ $IF_FASTQ = false ]; then
     # fasterq_dump
@@ -529,7 +533,7 @@ if [[ ! -d "$SALMON_INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
 fi
 
-for i in `tail -n +2  $EX_MATRIX_FILE`
+for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
   if [ $IF_FASTQ = false ]; then
     # fasterq_dump

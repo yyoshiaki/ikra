@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3352573.svg)](https://doi.org/10.5281/zenodo.3352573)
 
-# ikra v1.2.2 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v1.2.3 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
@@ -20,7 +20,8 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
-  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts. (default : True)
+  -ct, --comprehensive-transcripts use comprehensive transcripts instead of protein coding transcripts. (default : False)
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -l, --log  log file. (default : ikra.log)
@@ -42,14 +43,14 @@ experiment matrixはカンマ区切りで（csv形式）。
 
 **SRR mode**
 
-|  name  |  SRR |  Layout  | condition1 | ... |
+|  name  |  SRR |  Layout  | condition1 (optional) | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  SRR5385248  | SE  | Treg | ... |
 
 **fastq mode**
 
-|  name  |  fastq(PREFIX) |  Layout  | condition1 | ... |
+|  name  |  fastq(PREFIX) |  Layout  | condition1 (optional) | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
