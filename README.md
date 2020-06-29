@@ -7,6 +7,8 @@ A gene expression table (gene × sample) is automatically created from the exper
 
 ## [日本語ドキュメントはこちら](./README_ja.md)
 
+## Note that sra-tools should be installed locally. This is up to NCBI's tool upgrade.
+
 ## Usage
 
 ```
