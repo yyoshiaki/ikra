@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.2"
+VERSION="v1.2.3"
 
 cat << "EOF" 
     __                       
@@ -41,7 +41,8 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
-  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts. (defalut : True)
+  -ct, --comprehensive-transcripts use comprehensive transcripts instead of protein coding transcripts. (default : False) 
   -t, --threads
   -o, --output  output file. (default : output.tsv)  
   -l, --log  log file. (default : ikra.log)
@@ -74,7 +75,7 @@ DOCKER=docker
 THREADS=1
 IF_TEST=false
 IF_FASTQ=false
-IF_PC=false
+IF_PC=True
 SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
@@ -93,6 +94,9 @@ for opt in "$@"; do
             IF_FASTQ=true; shift
             ;;
         '-pc'|'--protein-coding' )
+            IF_PC=true; shift
+            ;;
+        '-ct'|'--comprehensive-transcripts' )
             IF_PC=true; shift
             ;;
         '-u'|'--udocker' )
@@ -249,7 +253,7 @@ else
 fi
 
 COWSAY=cowsay
-PREFETCH=prefetch
+# PREFETCH=prefetch
 FASTQ_DUMP=fastq-dump
 FASTERQ_DUMP=fasterq-dump
 FASTQC=fastqc
@@ -279,7 +283,9 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # chmod 777 .
 
   COWSAY_IMAGE=docker/whalesay
-  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.0--pl526he1b5a44_0
+  # quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1 had an error.
+  # the earlier version may stop during the download.
+  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_0
   FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
   MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
@@ -302,10 +308,13 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $PIGZ_IMAGE
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
-  PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
-  FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
-  FASTERQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTERQ_DUMP"
-  FASTQC="$DRUN $FASTQC_IMAGE $FASTQC"
+  # PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
+  # FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
+  FASTQ_DUMP="$FASTQ_DUMP"
+#  FASTERQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTERQ_DUMP"
+#  FASTQC="$DRUN $FASTQC_IMAGE $FASTQC" 
+  FASTQ_DUMP="$FASTQ_DUMP"
+  FASTERQ_DUMP="$FASTERQ_DUMP"
   MULTIQC="$DRUN $MULTIQC_IMAGE $MULTIQC"
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   # TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
@@ -386,7 +395,7 @@ EOF
 
 if [ $IF_FASTQ = false ]; then
 # fastq_dump
-for i in `tail -n +2  $EX_MATRIX_FILE`
+for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
 name=`echo $i | cut -d, -f1`
 SRR=`echo $i | cut -d, -f2`
@@ -450,8 +459,16 @@ if [[ ! -f "multiqc_report_raw_reads.html" ]]; then
   $MULTIQC -n multiqc_report_raw_reads.html .
 fi
 
+# determin threads for trim galore.
+# the sweet spot for TG is 4
+if [ $THREADS -gt 4 ] ; then
+  THREADS_TRIMGALORE=4
+else
+  THREADS_TRIMGALORE=$THREADS
+fi
 
-for i in `tail -n +2  $EX_MATRIX_FILE`
+
+for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
   if [ $IF_FASTQ = false ]; then
     # fasterq_dump
@@ -489,7 +506,7 @@ do
     fi
 
     if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
-      $TRIMGALORE ${dirname_fq}${SRR}.fastq.gz
+      $TRIMGALORE --cores ${THREADS_TRIMGALORE} ${dirname_fq}${SRR}.fastq.gz
     fi
 
     # fastqc
@@ -501,7 +518,7 @@ do
   else
     # trimmomatic
     if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
-      $TRIMGALORE --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
+      $TRIMGALORE --cores ${THREADS_TRIMGALORE} --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
     fi
 
     # fastqc
@@ -527,7 +544,7 @@ if [[ ! -d "$SALMON_INDEX" ]]; then
   $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
 fi
 
-for i in `tail -n +2  $EX_MATRIX_FILE`
+for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
 do
   if [ $IF_FASTQ = false ]; then
     # fasterq_dump

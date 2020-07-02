@@ -1,11 +1,13 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3352573.svg)](https://doi.org/10.5281/zenodo.3352573)
 
-# ikra v1.2.2 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v1.2.3 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 A gene expression table (gene × sample) is automatically created from the experiment matrix. The output can be used as an input of [idep](http://bioinformatics.sdstate.edu/idep/). Ikra is an RNAseq pipeline centered on [salmon](https://combine-lab.github.io/salmon/).
 
 
 ## [日本語ドキュメントはこちら](./README_ja.md)
+
+## Note that sra-tools has to be installed locally. This is up to NCBI's tool upgrade. Please install sra-tools (>=2.10.7).
 
 ## Usage
 
@@ -23,7 +25,8 @@ Options:
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
   -u, --udocker
   -w, --without-docker
-  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts.
+  -pc, --protein-coding use protein coding transcripts instead of comprehensive transcripts. (default : True)
+  -ct, --comprehensive-transcripts use comprehensive transcripts instead of protein coding transcripts. (default : False) 
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -l, --log  log file. (default : ikra.log)
@@ -44,14 +47,14 @@ Options:
 
 **SRR mode**
 
-|  name  |  SRR |  Layout  | condition1 | ... |
+|  name  |  SRR |  Layout  | condition1 (optional) | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  SRR5385248  | SE  | Treg | ... |
 
 **fastq mode**
 
-|  name  |  fastq(PREFIX) |  Layout  | condition1 | ... |
+|  name  |  fastq(PREFIX) |  Layout  | condition1 (optional) | ... |
 | ---- | ---- | - | - | - |
 |  Treg_LN_1  | hoge/SRR5385247 | SE | Treg | ...|
 |  Treg_LN_2  |  hoge/SRR5385248  | SE  | Treg | ... |
@@ -117,13 +120,13 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v1.2.2 -RNAseq pipeline centered on Salmon-
+ ikra v1.2.3 -RNAseq pipeline centered on Salmon-
  ...
 ```
 
 ### Version of each tool
 
-- sra-tools : 2.10.0
+- sra-tools : > 2.10.7
 - FastQC 0.11.5
 - MultiQC : 1.4
 - Trim Galore! : 0.6.3
