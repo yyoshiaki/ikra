@@ -7,7 +7,7 @@ A gene expression table (gene × sample) is automatically created from the exper
 
 ## [日本語ドキュメントはこちら](./README_ja.md)
 
-## Note that sra-tools should be installed locally. This is up to NCBI's tool upgrade.
+## Note that sra-tools has to be installed locally. This is up to NCBI's tool upgrade.
 
 ## Usage
 
@@ -126,7 +126,7 @@ $ git pull origin master
 
 ### Version of each tool
 
-- sra-tools : 2.10.7
+- sra-tools : > 2.10.7
 - FastQC 0.11.5
 - MultiQC : 1.4
 - Trim Galore! : 0.6.3

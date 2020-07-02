@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.3dev"
+VERSION="v1.2.3"
 
 cat << "EOF" 
     __                       
