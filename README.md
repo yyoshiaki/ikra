@@ -109,6 +109,9 @@ All you need is `git clone` ikra, and install docker or udocker(v1.1.3). No need
 $ git clone https://github.com/yyoshiaki/ikra.git
 ```
 
+**if you use SRR mode, install [sra-toolkit](https://github.com/ncbi/sra-tools/wiki) locally.**
+
+
 ## Upgrade
 
 ```bash
