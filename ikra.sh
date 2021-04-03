@@ -495,14 +495,15 @@ do
   # trim_galore
   # SE
   if [ $LAYOUT = SE ]; then
-    if [[  -f "${dirname_fq}${SRR}.fq" ]]; then
-      mv ${dirname_fq}${SRR}.fq ${dirname_fq}${SRR}.fastq
+    if [  -f "${dirname_fq}${SRR}.fq"] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
+      $PIGZ ${dirname_fq}${SRR}.fq
+      ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
-    if [[  -f "${dirname_fq}${SRR}.fastq" ]]; then
-      $PIGZ ${dirname_fq}${SRR}.fastq.gz
+    if [ -f "${dirname_fq}${SRR}.fastq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
+      $PIGZ ${dirname_fq}${SRR}.fastq
     fi
-    if [[  -f "${dirname_fq}${SRR}.fq.gz" ]]; then
-      mv ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+    if [ -f "${dirname_fq}${SRR}.fq.gz" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
+      ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
 
     if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
@@ -516,9 +517,29 @@ do
 
   # PE
   else
+    if [ -f "${dirname_fq}${SRR}_1.fq" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
+      ${PIGZ} ${dirname_fq}${SRR}_1.fq
+      ${PIGZ} ${dirname_fq}${SRR}_2.fq
+      ln -s ${dirname_fq}${SRR}_1.fq.gz ${dirname_fq}${SRR}_1.fastq.gz
+      ln -s ${dirname_fq}${SRR}_2.fq.gz ${dirname_fq}${SRR}_2.fastq.gz
+    fi
+    if [ -f "${dirname_fq}${SRR}_1.fastq" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
+      $PIGZ ${dirname_fq}${SRR}_1.fastq
+      $PIGZ ${dirname_fq}${SRR}_2.fastq
+    fi
+    if [  -f "${dirname_fq}${SRR}.fq.gz" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
+      ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+    fi
+    if [ -f "${dirname_fq}${SRR}${SUFFIX_PE_1}" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
+      ln -s ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}_1.fastq.gz
+      ln -s ${dirname_fq}${SRR}${SUFFIX_PE_2} ${dirname_fq}${SRR}_2.fastq.gz
+    fi
+
     # trimmomatic
     if [[ ! -f "${dirname_fq}${SRR}_1_val_1.fq.gz" ]]; then
-      $TRIMGALORE --cores ${THREADS_TRIMGALORE} --paired ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}${SUFFIX_PE_2}
+      $TRIMGALORE --cores ${THREADS_TRIMGALORE} \
+      --paired ${dirname_fq}${SRR}_1.fastq.gz ${dirname_fq}${SRR}_2.fastq.gz \
+      --output_dir ${dirname_fq}
     fi
 
     # fastqc
