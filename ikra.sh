@@ -602,8 +602,8 @@ if [[ $MAPPING_TOOL = HISAT2 ]]; then
     SPECIES_NAME=mm10
   elif [[ $REF_SPECIES = human ]]; then
     BASE_REF_GENOME=https://genome-idx.s3.amazonaws.com/hisat
-    REF_TRANSCRIPT=hg19_genome.tar.gz
-    SPECIES_NAME=hg19
+    REF_TRANSCRIPT=hg38_genome.tar.gz
+    SPECIES_NAME=hg38
   else
     echo No reference genome!
     exit
