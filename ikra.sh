@@ -46,6 +46,7 @@ Options:
   -t, --threads
   -o, --output  output file. (default : output.tsv)  
   -l, --log  log file. (default : ikra.log)
+  -a, --align carry out mapping onto reference genome. hisat2 or star (default : None)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
@@ -661,7 +662,7 @@ if [[ $MAPPING_TOOL = HISAT2 ]]; then
         $HISAT2\
         -p $THREADS \
         --dta \
-        -x mm10/genome \
+        -x $SPECIES_NAME/genome \
         -1 ${dirname_fq}${SRR}_1_val_1.fq.gz \
         -2 ${dirname_fq}${SRR}_2_val_2.fq.gz \
         -S hisat2_output_${SRR}/${SRR}.sam
