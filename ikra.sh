@@ -80,6 +80,7 @@ SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
 LOG_FILE=ikra.log
+MAPPING_TOOL=None
 IF_REMOVE_INTERMEDIATES=false
 
 # オプションをパース
@@ -146,6 +147,19 @@ for opt in "$@"; do
               LOG_FILE="$2"
               shift 2
                 ;;
+
+        '-a'|'--align' )
+            if [[ "$2" == "hisat2" ]]; then
+                MAPPING_TOOL=HISAT2
+            elif [[ "$2" == "star" ]]; then
+                MAPPING_TOOL=STAR
+            elif [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+              shift 2
+                ;;
+
         '-h' | '--help' )
             usage
             ;;
@@ -260,11 +274,14 @@ FASTQC=fastqc
 MULTIQC=multiqc
 # TRIMMOMATIC=trimmomatic
 TRIMGALORE=trim_galore
+HISAT2=hisat2
+SAMBAMBA=sambamba
+BAMCOVERAGE=bamCoverage
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
 WGET=wget
 PIGZ=pigz
-
+TAR=tar
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
@@ -291,11 +308,15 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
   TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.3--0
+  HISAT2_IMAGE=quay.io/biocontainers/hisat2:2.2.1--h1b792b2_3
+  SAMBAMBA_IMAGE=quay.io/biocontainers/sambamba:0.8.0--h984e79f_0
   SALMON_IMAGE=combinelab/salmon:0.14.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
   PIGZ_IMAGE=genevera/docker-pigz
+  TAR_IMAGE=fjukstad/tximport
+  BAMCOVERAGE_IMAGE=quay.io/biocontainers/deeptools:3.5.1--py_0
 
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
@@ -303,9 +324,13 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $MULTIQC_IMAGE
   # $DOCKER pull $TRIMMOMATIC_IMAGE
   $DOCKER pull $TRIMGALORE_IMAGE
+  $DOCKER pull $HISAT2_IMAGE
+  $DOCKER pull $SAMBAMBA_IMAGE
+  $DOCKER pull $BAMCOVERAGE_IMAGE
   $DOCKER pull $SALMON_IMAGE
   $DOCKER pull $RSCRIPT_TXIMPORT_IMAGE
   $DOCKER pull $PIGZ_IMAGE
+  $DOCKER pull $TAR_IMAGE
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
   # PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
@@ -319,11 +344,15 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   # TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   TRIMGALORE="$DRUN $TRIMGALORE_IMAGE $TRIMGALORE"
+  HISAT2="$DRUN $HISAT2_IMAGE $HISAT2"
+  SAMBAMBA="$DRUN $SAMBAMBA_IMAGE $SAMBAMBA"
+  BAMCOVERAGE="$DRUN $BAMCOVERAGE_IMAGE $BAMCOVERAGE"
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
   WGET="$DRUN $WGET_IMAGE $WGET"
   PIGZ="$DRUN $PIGZ_IMAGE"
+  TAR="$DRUN $TAR_IMAGE $TAR"
 
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
@@ -495,7 +524,7 @@ do
   # trim_galore
   # SE
   if [ $LAYOUT = SE ]; then
-    if [  -f "${dirname_fq}${SRR}.fq"] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
+    if [  -f "${dirname_fq}${SRR}.fq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}.fq
       ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
@@ -559,6 +588,98 @@ fi
 # if [[ ! -f "$REF_GTF" ]]; then
 #   wget $BASE_REF_TRANSCRIPT/$REF_GTF
 # fi
+
+################################
+# --alignモードの時にalignmentを行いbamファイルを生成する
+# 2021年4月追加（山崎）
+
+if [[ $MAPPING_TOOL = HISAT2 ]]; then
+
+  # download reference genome index
+  if [[ $REF_SPECIES = mouse ]]; then
+    BASE_REF_GENOME=https://genome-idx.s3.amazonaws.com/hisat
+    REF_GENOME=mm10_genome.tar.gz
+    SPECIES_NAME=mm10
+  elif [[ $REF_SPECIES = human ]]; then
+    BASE_REF_GENOME=https://genome-idx.s3.amazonaws.com/hisat
+    REF_TRANSCRIPT=hg19_genome.tar.gz
+    SPECIES_NAME=hg19
+  else
+    echo No reference genome!
+    exit
+  fi
+
+  if [[ ! -f "$REF_GENOME" ]]; then
+    $WGET $BASE_REF_GENOME/$REF_GENOME
+    $TAR zxvf $REF_GENOME
+  else
+    $TAR zxvf $REF_GENOME
+  fi
+
+  # mapping by hisat2
+  for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
+  do
+    if [ $IF_FASTQ = false ]; then
+      # fasterq_dump
+      name=`echo $i | cut -d, -f1`
+      SRR=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      dirname_fq=""
+    else
+      name=`echo $i | cut -d, -f1`
+      fq=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      fqname_ext="${fq##*/}"
+      # echo $fqname_ext
+
+      # ファイル名を取り出す（拡張子なし）
+      # basename_fq="${fqname_ext%.*.*}"
+      basename_fq=${fqname_ext}
+      dirname_fq=`dirname $fq`
+      dirname_fq=${dirname_fq}/
+      SRR=${basename_fq}
+    fi
+
+    # SE
+    if [ $LAYOUT = SE ]; then
+      if [[ ! -f "hisat2_output_${SRR}/${SRR}.sam" ]]; then
+        mkdir hisat2_output_${SRR}
+        # libtype auto detection mode
+        $HISAT2\
+        -p $THREADS \
+        --dta \
+        -x $SPECIES_NAME/genome \
+        -U ${dirname_fq}${SRR}_trimmed.fq.gz \
+        -S hisat2_output_${SRR}/${SRR}.sam
+      fi
+
+    # PE
+    else
+      if [[ ! -f "hisat2_output_${SRR}/${SRR}.sam" ]]; then
+        mkdir hisat2_output_${SRR}
+        # libtype auto detection mode
+        $HISAT2\
+        -p $THREADS \
+        --dta \
+        -x mm10/genome \
+        -1 ${dirname_fq}${SRR}_1_val_1.fq.gz \
+        -2 ${dirname_fq}${SRR}_2_val_2.fq.gz \
+        -S hisat2_output_${SRR}/${SRR}.sam
+      fi
+    fi
+
+    #sambamba
+    if [[ ! -f "hisat2_output_${SRR}/${SRR}.bam" ]]; then
+      $SAMBAMBA view -S hisat2_output_${SRR}/${SRR}.sam -f bam -o hisat2_output_${SRR}/${SRR}.bam
+      $SAMBAMBA sort hisat2_output_${SRR}/${SRR}.bam
+      $SAMBAMBA index hisat2_output_${SRR}/${SRR}.sorted.bam
+      $BAMCOVERAGE -b hisat2_output_${SRR}/${SRR}.sorted.bam -o hisat2_output_${SRR}/${SRR}.bw
+    fi
+  done
+fi
+
+################################
+
 
 # instance salmon index
 if [[ ! -d "$SALMON_INDEX" ]]; then
