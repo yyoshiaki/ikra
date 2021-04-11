@@ -475,7 +475,7 @@ do
     name=`echo $i | cut -d, -f1`
     SRR=`echo $i | cut -d, -f2`
     LAYOUT=`echo $i | cut -d, -f3`
-    dirname_fq=""
+    dirname_fq="./"
   else
     name=`echo $i | cut -d, -f1`
     fq=`echo $i | cut -d, -f2`
