@@ -30,6 +30,7 @@ Options:
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -l, --log  log file. (default : ikra.log)
+  -a, --align carry out mapping onto reference genome. hisat2 or star (default : None)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
