@@ -304,15 +304,15 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   COWSAY_IMAGE=docker/whalesay
   # quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1 had an error.
   # the earlier version may stop during the download.
-  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_0
-  FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
-  MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
+  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.9--pl526haddd2b5_0
+  FASTQC_IMAGE=biocontainers/fastqc:v0.11.9_cv8
+  MULTIQC_IMAGE=quay.io/biocontainers/multiqc:1.10.1--py_0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.3--0
+  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.6--hdfd78af_1
   HISAT2_IMAGE=quay.io/biocontainers/hisat2:2.2.1--h1b792b2_3
   SAMBAMBA_IMAGE=quay.io/biocontainers/sambamba:0.8.0--h984e79f_0
-  SALMON_IMAGE=combinelab/salmon:0.14.0
+  SALMON_IMAGE=combinelab/salmon:1.4.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
@@ -685,7 +685,7 @@ fi
 
 # instance salmon index
 if [[ ! -d "$SALMON_INDEX" ]]; then
-  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
+  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX -k 31 --gencode
 fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
