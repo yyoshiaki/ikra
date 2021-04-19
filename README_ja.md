@@ -116,6 +116,12 @@ $ git pull origin master
  ...
  ikra v1.2.2 -RNAseq pipeline centered on Salmon-
  ...
+ - sra-tools : 2.10.9
+- FastQC : 0.11.9
+- MultiQC : 0.10.1
+- Trim Galore! : 0.6.6
+- Salmon : 1.4.0
+- tximport : 1.6.0
 ```
 
 ## test
