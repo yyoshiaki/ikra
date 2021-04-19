@@ -129,11 +129,11 @@ $ git pull origin master
 
 ### Version of each tool
 
-- sra-tools : > 2.10.7
-- FastQC 0.11.5
-- MultiQC : 1.4
-- Trim Galore! : 0.6.3
-- Salmon : 0.14.0
+- sra-tools : 2.10.9
+- FastQC : 0.11.9
+- MultiQC : 0.10.1
+- Trim Galore! : 0.6.6
+- Salmon : 1.4.0
 - tximport : 1.6.0
 
 ## Test
