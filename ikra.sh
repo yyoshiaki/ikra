@@ -254,30 +254,30 @@ SRA_ROOT=$HOME/ncbi/public/sra
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
 if [[ $REF_SPECIES = mouse ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M$M_GEN_VER
-  REF_TRANSCRIPT=gencode.vM$M_GEN_VER.transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M${M_GEN_VER}
+  REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.transcripts.fa.gz
   if [ $IF_PC = false ]; then
-    REF_TRANSCRIPT=gencode.vM$M_GEN_VER.transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.transcripts.fa.gz
   else
-    REF_TRANSCRIPT=gencode.vM$M_GEN_VER.pc_transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.pc_transcripts.fa.gz
   fi
   SALMON_INDEX=salmon_index_mouse
-#   REF_GTF=gencode.vM$M_GEN_VER.annotation.gtf.gz
-  TX2SYMBOL=gencode.vM$M_GEN_VER.metadata.MGI.gz
+#   REF_GTF=gencode.vM${M_GEN_VER}.annotation.gtf.gz
+  TX2SYMBOL=gencode.vM${M_GEN_VER}.metadata.MGI.gz
 
 elif [[ $REF_SPECIES = human ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_$H_GEN_VER
-  # REF_TRANSCRIPT=gencode.v$H_GEN_VER.pc_transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_${H_GEN_VER}
+  # REF_TRANSCRIPT=gencode.v${H_GEN_VER}.pc_transcripts.fa.gz
 
   if [ $IF_PC = false ]; then
-    REF_TRANSCRIPT=gencode.v$H_GEN_VER.transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.v${H_GEN_VER}.transcripts.fa.gz
   else
-    REF_TRANSCRIPT=gencode.v$H_GEN_VER.pc_transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.v${H_GEN_VER}.pc_transcripts.fa.gz
   fi
 
   SALMON_INDEX=salmon_index_human
-#   REF_GTF=gencode.v$H_GEN_VER.annotation.gtf.gz
-  TX2SYMBOL=gencode.v$H_GEN_VER.metadata.HGNC.gz
+#   REF_GTF=gencode.v${H_GEN_VER}.annotation.gtf.gz
+  TX2SYMBOL=gencode.v${H_GEN_VER}.metadata.HGNC.gz
 else
   echo No reference speice!
   exit
