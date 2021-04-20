@@ -47,6 +47,7 @@ Options:
   -o, --output  output file. (default : output.tsv)  
   -l, --log  log file. (default : ikra.log)
   -a, --align carry out mapping onto reference genome. hisat2 or star (default : None)
+  -g, --gencode specify the version of gencode. (defalut : Mouse=26, Human=37)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
@@ -83,6 +84,8 @@ OUTPUT_FILE=output.tsv
 LOG_FILE=ikra.log
 MAPPING_TOOL=None
 IF_REMOVE_INTERMEDIATES=false
+M_GEN_VER=26
+H_GEN_VER=37
 
 # オプションをパース
 PARAM=()
@@ -161,6 +164,16 @@ for opt in "$@"; do
               shift 2
                 ;;
 
+        '-g'|'--gencode' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "${PROGNAME}: option requires an argument -- $( echo $1 | sed 's/^-*//' )" 1>&2
+                exit 1
+            fi
+            H_GEN_VER="$2"
+            M_GEN_VER="$2"
+            shift 2
+            ;;
+
         '-h' | '--help' )
             usage
             ;;
@@ -223,6 +236,8 @@ IF_PC ${IF_PC:-false}
 IF_REMOVE_INTERMEDIATES ${IF_REMOVE_INTERMEDIATES:-false}
 OUTPUT_FILE ${OUTPUT_FILE}
 MAPPING_TOOL ${MAPPING_TOOL}
+M_GEN_VER ${M_GEN_VER}
+H_GEN_VER ${H_GEN_VER}
 LOG_FILE ${LOG_FILE}
 EOS
 
@@ -239,30 +254,30 @@ SRA_ROOT=$HOME/ncbi/public/sra
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
 if [[ $REF_SPECIES = mouse ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21
-  REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M${M_GEN_VER}
+  REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.transcripts.fa.gz
   if [ $IF_PC = false ]; then
-    REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.transcripts.fa.gz
   else
-    REF_TRANSCRIPT=gencode.vM21.pc_transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.pc_transcripts.fa.gz
   fi
   SALMON_INDEX=salmon_index_mouse
-#   REF_GTF=gencode.vM21.annotation.gtf.gz
-  TX2SYMBOL=gencode.vM21.metadata.MGI.gz
+#   REF_GTF=gencode.vM${M_GEN_VER}.annotation.gtf.gz
+  TX2SYMBOL=gencode.vM${M_GEN_VER}.metadata.MGI.gz
 
 elif [[ $REF_SPECIES = human ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30
-  # REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_${H_GEN_VER}
+  # REF_TRANSCRIPT=gencode.v${H_GEN_VER}.pc_transcripts.fa.gz
 
   if [ $IF_PC = false ]; then
-    REF_TRANSCRIPT=gencode.v30.transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.v${H_GEN_VER}.transcripts.fa.gz
   else
-    REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.v${H_GEN_VER}.pc_transcripts.fa.gz
   fi
 
   SALMON_INDEX=salmon_index_human
-#   REF_GTF=gencode.v29.annotation.gtf.gz
-  TX2SYMBOL=gencode.v30.metadata.HGNC.gz
+#   REF_GTF=gencode.v${H_GEN_VER}.annotation.gtf.gz
+  TX2SYMBOL=gencode.v${H_GEN_VER}.metadata.HGNC.gz
 else
   echo No reference speice!
   exit
