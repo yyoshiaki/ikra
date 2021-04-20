@@ -30,12 +30,10 @@ EOF
 function usage() {
   cat << EOS >&2        
 ikra ${VERSION} -RNAseq pipeline centered on Salmon-
-
 Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
-
 Options:
   --test  test mode(MAX_SPOT_ID=100000). (dafault : False)
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
@@ -53,10 +51,8 @@ Options:
   -h, --help    Show usage.
   -v, --version Show version.
   -r, --remove-intermediates Remove intermediate files
-
 Citation :
 Hiraoka, Yu, Yamada, Kohki, Kawasaki, Yusuke, Hirose, Haruka, Matsumoto, Yasunari, Ishikawa, Kaito, & Yasumizu, Yoshiaki. (2019, July 27). ikra : RNAseq pipeline centered on Salmon. (Version v1.2). Zenodo. http://doi.org/10.5281/zenodo.3352573
-
 Github repo : https://github.com/yyoshiaki/ikra
 EOS
   exit 1
@@ -215,7 +211,6 @@ fi
 
 cat << EOS | tee -a ${LOG_FILE}
 ikra ${VERSION} -RNAseq pipeline centered on Salmon-
-
 EOS
 
 date >> ${LOG_FILE}
@@ -292,6 +287,7 @@ MULTIQC=multiqc
 # TRIMMOMATIC=trimmomatic
 TRIMGALORE=trim_galore
 HISAT2=hisat2
+STAR_MAPPING=STAR
 SAMBAMBA=sambamba
 BAMCOVERAGE=bamCoverage
 SALMON=salmon
@@ -326,6 +322,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
   TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.6--hdfd78af_1
   HISAT2_IMAGE=quay.io/biocontainers/hisat2:2.2.1--h1b792b2_3
+  STAR_IMAGE=quay.io/biocontainers/star:2.7.8a--h9ee0642_1
   SAMBAMBA_IMAGE=quay.io/biocontainers/sambamba:0.8.0--h984e79f_0
   SALMON_IMAGE=combinelab/salmon:1.4.0
 #   SALMON_IMAGE=fjukstad/salmon
@@ -342,6 +339,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # $DOCKER pull $TRIMMOMATIC_IMAGE
   $DOCKER pull $TRIMGALORE_IMAGE
   $DOCKER pull $HISAT2_IMAGE
+  $DOCKER pull $STAR_IMAGE
   $DOCKER pull $SAMBAMBA_IMAGE
   $DOCKER pull $BAMCOVERAGE_IMAGE
   $DOCKER pull $SALMON_IMAGE
@@ -362,6 +360,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   TRIMGALORE="$DRUN $TRIMGALORE_IMAGE $TRIMGALORE"
   HISAT2="$DRUN $HISAT2_IMAGE $HISAT2"
+  STAR_MAPPING="$DRUN $STAR_IMAGE $STAR_MAPPING"
   SAMBAMBA="$DRUN $SAMBAMBA_IMAGE $SAMBAMBA"
   BAMCOVERAGE="$DRUN $BAMCOVERAGE_IMAGE $BAMCOVERAGE"
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
@@ -400,43 +399,30 @@ fi
 
 cat << 'EOF' > tximport_R.R
 #! /usr/bin/Rscript
-
 library(tximport)
 library(readr)
 library(stringr)
-
 # Rscript tximport_R.R gencode.vM19.metadata.MGI.gz Illumina_PE_SRR.csv output.tsv
-
 args1 = commandArgs(trailingOnly=TRUE)[1]
 args2 = commandArgs(trailingOnly=TRUE)[2]
 args3 = commandArgs(trailingOnly=TRUE)[3]
-
 tx2knownGene <- read_delim(args1, '\t', col_names = c('TXNAME', 'GENEID'))
 exp.table <- read.csv(args2, row.names=NULL)
-
 files.raw <- exp.table[,2]
-
 # files.raw <- c("SE/test/ttt30.fq.gz", "SE/test/ttt2.fq.gz")
-
 files.raw <- gsub(".gz$", "", files.raw)
 files.raw <- gsub(".fastq$", "", files.raw)
 files.raw <- gsub(".fq$", "", files.raw)
-
 split.vec <- sapply(files.raw, basename)
 # print(paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep=''))
-
 # files <- paste(c("salmon_output_") , exp.table[,2], c("/quant.sf"), sep='')
 files <- paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep='')
 names(files) <- exp.table[,1]
-
 print(files)
-
 # txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene)
 txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene, countsFromAbundance="scaledTPM")
-
 write.table(txi.salmon$counts, file=args3, sep="\t",col.names=NA,row.names=T,quote=F,append=F)
 write.table(exp.table[-c(2,3)], file="designtable.csv",row.names=F,quote=F,append=F)
-
 EOF
 
 if [ $IF_FASTQ = false ]; then
@@ -449,13 +435,10 @@ LAYOUT=`echo $i | cut -d, -f3`
 # ADAPTER=`echo $i | cut -d, -f4`
 
 <<COMMENTOUT
-
 There is no -N|--minSpotId and no -X|--maxSpotId option.
 fasterq-dump version 2.9.1 processes always the whole accession,
 although it may support partial access in future versions.
-
 ということで条件分岐させる。
-
 COMMENTOUT
 
 # fasterq_dump
@@ -619,7 +602,7 @@ if [[ $MAPPING_TOOL = HISAT2 ]]; then
     SPECIES_NAME=mm10
   elif [[ $REF_SPECIES = human ]]; then
     BASE_REF_GENOME=https://genome-idx.s3.amazonaws.com/hisat
-    REF_TRANSCRIPT=hg38_genome.tar.gz
+    REF_GENOME=hg38_genome.tar.gz
     SPECIES_NAME=hg38
   else
     echo No reference genome!
@@ -691,6 +674,104 @@ if [[ $MAPPING_TOOL = HISAT2 ]]; then
       $SAMBAMBA sort hisat2_output_${SRR}/${SRR}.bam
       $SAMBAMBA index hisat2_output_${SRR}/${SRR}.sorted.bam
       $BAMCOVERAGE -b hisat2_output_${SRR}/${SRR}.sorted.bam -o hisat2_output_${SRR}/${SRR}.bw
+    fi
+  done
+fi
+
+if [[ $MAPPING_TOOL = STAR ]]; then
+
+  # download reference genome
+  if [[ $REF_SPECIES = mouse ]]; then
+    BASE_REF_GENOME=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M26
+    REF_GENOME=GRCm39.primary_assembly.genome.fa
+    REF_ANNOTATION=gencode.vM26.annotation.gtf
+  elif [[ $REF_SPECIES = human ]]; then
+    BASE_REF_GENOME=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37
+    REF_GENOME=GRCh38.primary_assembly.genome.fa
+    REF_ANNOTATION=gencode.v37.annotation.gtf
+  else
+    echo No reference genome!
+    exit
+  fi
+
+  if [[ ! -f "$REF_GENOME" ]]; then
+    $WGET $BASE_REF_GENOME/${REF_GENOME}.gz
+    gunzip ${REF_GENOME}.gz
+  fi
+
+  if [[ ! -f "$REF_ANNOTATION" ]]; then
+    $WGET $BASE_REF_GENOME/${REF_ANNOTATION}.gz
+    gunzip ${REF_ANNOTATION}.gz
+  fi
+
+  # make indexes of reference genome
+  if [[ ! -f "STAR_index/SAindex" ]]; then
+    mkdir STAR_index
+    $STAR_MAPPING \
+    --runMode genomeGenerate \
+    --genomeDir STAR_index \
+    --runThreadN $THREADS \
+    --genomeFastaFiles $REF_GENOME \
+    --sjdbGTFfile $REF_ANNOTATION
+  fi
+
+  # mapping by hisat2
+  for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
+  do
+    if [ $IF_FASTQ = false ]; then
+      # fasterq_dump
+      name=`echo $i | cut -d, -f1`
+      SRR=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      dirname_fq=""
+    else
+      name=`echo $i | cut -d, -f1`
+      fq=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      fqname_ext="${fq##*/}"
+      # echo $fqname_ext
+
+      # ファイル名を取り出す（拡張子なし）
+      # basename_fq="${fqname_ext%.*.*}"
+      basename_fq=${fqname_ext}
+      dirname_fq=`dirname $fq`
+      dirname_fq=${dirname_fq}/
+      SRR=${basename_fq}
+    fi
+
+    # SE
+    if [ $LAYOUT = SE ]; then
+      if [[ ! -f "STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam" ]]; then
+        mkdir STAR_output_${SRR}
+        $STAR_MAPPING \
+        --genomeDir STAR_index \
+        --runThreadN $THREADS \
+        --outFileNamePrefix STAR_output_${SRR}/${SRR}_ \
+        --quantMode TranscriptomeSAM \
+        --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn ${dirname_fq}${SRR}_trimmed.fq.gz \
+        --readFilesCommand gunzip -c
+      fi
+
+    # PE
+    else
+      if [[ ! -f "STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam" ]]; then
+        mkdir STAR_output_${SRR}
+        $STAR_MAPPING \
+        --genomeDir STAR_index \
+        --runThreadN $THREADS \
+        --outFileNamePrefix STAR_output_${SRR}/${SRR}_ \
+        --quantMode TranscriptomeSAM \
+        --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn ${dirname_fq}${SRR}_1_val_1.fq.gz ${dirname_fq}${SRR}_2_val_2.fq.gz \
+        --readFilesCommand gunzip -c
+      fi
+    fi
+
+    #sambamba
+    if [[ ! -f "STAR_output_${SRR}/${SRR}.bw" ]]; then
+      $SAMBAMBA index STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam
+      $BAMCOVERAGE -b STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam -o STAR_output_${SRR}/${SRR}.bw
     fi
   done
 fi
@@ -794,5 +875,4 @@ fi
 
 cat << EOS | tee -a ${LOG_FILE}
 RUN : success!
-
 EOS
