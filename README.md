@@ -129,7 +129,7 @@ $ git pull origin master
  ...
 ```
 
-### Version of each tool
+### Version of tools
 
 - sra-tools : > 2.10.7
 - FastQC 0.11.5
