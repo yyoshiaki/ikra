@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.3"
+VERSION="v2.0"
 
 cat << "EOF" 
     __                       
@@ -55,7 +55,7 @@ Options:
   -r, --remove-intermediates Remove intermediate files
 
 Citation :
-Hiraoka, Yu, Yamada, Kohki, Kawasaki, Yusuke, Hirose, Haruka, Matsumoto, Yasunari, Ishikawa, Kaito, & Yasumizu, Yoshiaki. (2019, July 27). ikra : RNAseq pipeline centered on Salmon. (Version v1.2). Zenodo. http://doi.org/10.5281/zenodo.3352573
+Hiraoka, Yu, Yamada, Kohki, Kawasaki, Yusuke, Hirose, Haruka, Matsumoto, Yasunari, Ishikawa, Kaito, & Yasumizu, Yoshiaki. (2019, July 27). ikra : RNAseq pipeline centered on Salmon. (Version v2.0). Zenodo. http://doi.org/10.5281/zenodo.3352573
 
 Github repo : https://github.com/yyoshiaki/ikra
 EOS

@@ -252,3 +252,11 @@ cd test/cwl_PE && bash test.sh
 ```
 Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 ```
+
+## Licence (Updated in Ver. 2.0)
+
+This software is freely available for academic users. Usage for commercial purposes is not allowed. Please refer to the LICENCE page. If you are not an academic user, please contact to the author.
+
+## Contact
+
+Yoshiaki Yasumizu, M.D. [yyasumizu@ifrec.osaka-u.ac.jp](yyasumizu@ifrec.osaka-u.ac.jp)
