@@ -707,7 +707,7 @@ if [[ $MAPPING_TOOL = STAR ]]; then
     --genomeFastaFiles $REF_GENOME
   fi
 
-  # mapping by hisat2
+  # mapping by STAR
   for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
   do
     if [ $IF_FASTQ = false ]; then
