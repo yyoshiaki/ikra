@@ -682,13 +682,11 @@ if [[ $MAPPING_TOOL = STAR ]]; then
 
   # download reference genome
   if [[ $REF_SPECIES = mouse ]]; then
-    BASE_REF_GENOME=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M26
-    REF_GENOME=GRCm39.primary_assembly.genome.fa
-    REF_ANNOTATION=gencode.vM26.annotation.gtf
+    BASE_REF_GENOME=http://ftp.ensembl.org/pub/release-102/fasta/mus_musculus/dna
+    REF_GENOME=Mus_musculus.GRCm38.dna.primary_assembly.fa
   elif [[ $REF_SPECIES = human ]]; then
     BASE_REF_GENOME=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37
     REF_GENOME=GRCh38.primary_assembly.genome.fa
-    REF_ANNOTATION=gencode.v37.annotation.gtf
   else
     echo No reference genome!
     exit
@@ -699,11 +697,6 @@ if [[ $MAPPING_TOOL = STAR ]]; then
     gunzip ${REF_GENOME}.gz
   fi
 
-  if [[ ! -f "$REF_ANNOTATION" ]]; then
-    $WGET $BASE_REF_GENOME/${REF_ANNOTATION}.gz
-    gunzip ${REF_ANNOTATION}.gz
-  fi
-
   # make indexes of reference genome
   if [[ ! -f "STAR_index/SAindex" ]]; then
     mkdir STAR_index
@@ -711,11 +704,10 @@ if [[ $MAPPING_TOOL = STAR ]]; then
     --runMode genomeGenerate \
     --genomeDir STAR_index \
     --runThreadN $THREADS \
-    --genomeFastaFiles $REF_GENOME \
-    --sjdbGTFfile $REF_ANNOTATION
+    --genomeFastaFiles $REF_GENOME
   fi
 
-  # mapping by STAR
+  # mapping by hisat2
   for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
   do
     if [ $IF_FASTQ = false ]; then
@@ -747,7 +739,6 @@ if [[ $MAPPING_TOOL = STAR ]]; then
         --genomeDir STAR_index \
         --runThreadN $THREADS \
         --outFileNamePrefix STAR_output_${SRR}/${SRR}_ \
-        --quantMode TranscriptomeSAM \
         --outSAMtype BAM SortedByCoordinate \
         --readFilesIn ${dirname_fq}${SRR}_trimmed.fq.gz \
         --readFilesCommand gunzip -c
@@ -761,7 +752,6 @@ if [[ $MAPPING_TOOL = STAR ]]; then
         --genomeDir STAR_index \
         --runThreadN $THREADS \
         --outFileNamePrefix STAR_output_${SRR}/${SRR}_ \
-        --quantMode TranscriptomeSAM \
         --outSAMtype BAM SortedByCoordinate \
         --readFilesIn ${dirname_fq}${SRR}_1_val_1.fq.gz ${dirname_fq}${SRR}_2_val_2.fq.gz \
         --readFilesCommand gunzip -c
