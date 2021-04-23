@@ -142,6 +142,11 @@ $ git pull origin master
 - sambamba : 0.8.0
 - deeptools : 3.5.1
 
+### Version of reference genome (when using alignment option)
+
+- mouse：mm10 (GRCm38)
+- human：hg19 (GRCh38)
+
 ## Test
 
 ### SE
