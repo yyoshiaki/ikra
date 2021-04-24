@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3352573.svg)](https://doi.org/10.5281/zenodo.3352573)
 
-# ikra v1.2.3 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
@@ -116,9 +116,29 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v1.2.2 -RNAseq pipeline centered on Salmon-
+ ikra v2.0 -RNAseq pipeline centered on Salmon-
  ...
 ```
+
+### Version of tools
+
+- sra-tools : > 2.10.7
+- FastQC 0.11.5
+- MultiQC : 1.4
+- Trim Galore! : 0.6.3
+- Salmon : 0.14.0
+- tximport : 1.6.0
+- STAR : 2.7.8a
+- Hisat2 : 2.2.1
+- sambamba : 0.8.0
+- deeptools : 3.5.1
+
+### Version of reference genome (alignment optionを使う場合)
+
+- mouse：mm10 (GRCm38)
+- human：hg19 (GRCh38)
+
+
 
 ## test
 
@@ -160,12 +180,6 @@ $ cd test/Illumina_PE && bash ../../ikra.sh Illumina_PE_fastq.csv mouse --fastq 
 
 ```
 $ cd test && bash test.sh && bash test.full.sh
-```
-
-### Ion (ThermoFisher)
-
-```bash
-$ cd test/Ion && bash ../../ikra_Ion_SRR.sh Ion_SRR.csv mouse
 ```
 
 ## Macのひと
@@ -252,3 +266,11 @@ cd test/cwl_PE && bash test.sh
 ```
 Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 ```
+
+## Licence (Updated in Ver. 2.0)
+
+This software is freely available for academic users. Usage for commercial purposes is not allowed. Please refer to the LICENCE page. If you are not an academic user, please contact to the author.
+
+## Contact
+
+Yoshiaki Yasumizu, M.D. [yyasumizu@ifrec.osaka-u.ac.jp](yyasumizu@ifrec.osaka-u.ac.jp)
