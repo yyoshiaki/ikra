@@ -264,7 +264,7 @@ cd test/cwl_PE && bash test.sh
 
 ## Citation
 
-Hiraoka, Y., Yamada, K., Yamazaki, R., Kawasaki, Y., Kitabatake, R., Matsumoto, Y., Ishikawa, K., Umezu, Y., Hirose, H., & Yasumizu, Y. (2021). ikra v2.0: RNAseq pipeline centered on Salmon. https://doi.org/10.5281/zenodo.4718200
+Hiraoka, Y., Yamada, K., Yamasaki, R., Kawasaki, Y., Kitabatake, R., Matsumoto, Y., Ishikawa, K., Umezu, Y., Hirose, H., & Yasumizu, Y. (2021). ikra v2.0: RNAseq pipeline centered on Salmon. https://doi.org/10.5281/zenodo.4718200
 
 ## Licence (Updated in Ver. 2.0)
 
