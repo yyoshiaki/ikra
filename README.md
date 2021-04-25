@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3352573.svg)](https://doi.org/10.5281/zenodo.3352573)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4718200.svg)](https://doi.org/10.5281/zenodo.4718200)
 
 # ikra v2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
@@ -264,7 +264,7 @@ cd test/cwl_PE && bash test.sh
 
 ## Citation
 
-Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
+Hiraoka, Y., Yamada, K., Yamazaki, R., Kawasaki, Y., Kitabatake, R., Matsumoto, Y., Ishikawa, K., Umezu, Y., Hirose, H., & Yasumizu, Y. (2021). ikra v2.0: RNAseq pipeline centered on Salmon. https://doi.org/10.5281/zenodo.4718200
 
 ## Licence (Updated in Ver. 2.0)
 
