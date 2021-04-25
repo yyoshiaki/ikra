@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v1.2.3"
+VERSION="v2.0"
 
 cat << "EOF" 
     __                       
@@ -30,12 +30,10 @@ EOF
 function usage() {
   cat << EOS >&2        
 ikra ${VERSION} -RNAseq pipeline centered on Salmon-
-
 Usage: ${PROGNAME} experiment_table.csv species [--test, --fastq, --help, --without-docker, --udocker, --protein-coding] [--threads [VALUE]][--output [VALUE]][--suffix_PE_1 [VALUE]][--suffix_PE_2 [VALUE]]
   args
     1.experiment matrix(csv)
     2.reference(human or mouse)
-
 Options:
   --test  test mode(MAX_SPOT_ID=100000). (dafault : False)
   --fastq use fastq files instead of SRRid. The extension must be foo.fastq.gz (default : False)
@@ -46,12 +44,13 @@ Options:
   -t, --threads
   -o, --output  output file. (default : output.tsv)  
   -l, --log  log file. (default : ikra.log)
+  -a, --align carry out mapping onto reference genome. hisat2 or star (default : None)
+  -g, --gencode specify the version of gencode. (defalut : Mouse=26, Human=37)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
   -v, --version Show version.
   -r, --remove-intermediates Remove intermediate files
-
 Citation :
 Hiraoka, Yu, Yamada, Kohki, Kawasaki, Yusuke, Hirose, Haruka, Matsumoto, Yasunari, Ishikawa, Kaito, & Yasumizu, Yoshiaki. (2019, July 27). ikra : RNAseq pipeline centered on Salmon. (Version v1.2). Zenodo. http://doi.org/10.5281/zenodo.3352573
 
@@ -80,7 +79,10 @@ SUFFIX_PE_1=_1.fastq.gz
 SUFFIX_PE_2=_2.fastq.gz
 OUTPUT_FILE=output.tsv
 LOG_FILE=ikra.log
+MAPPING_TOOL=None
 IF_REMOVE_INTERMEDIATES=false
+M_GEN_VER=26
+H_GEN_VER=37
 
 # オプションをパース
 PARAM=()
@@ -146,6 +148,29 @@ for opt in "$@"; do
               LOG_FILE="$2"
               shift 2
                 ;;
+
+        '-a'|'--align' )
+            if [[ "$2" == "hisat2" ]]; then
+                MAPPING_TOOL=HISAT2
+            elif [[ "$2" == "star" ]]; then
+                MAPPING_TOOL=STAR
+            elif [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "$PROGNAME: option requires an argument -- $1" 1>&2
+                exit 1
+            fi
+              shift 2
+                ;;
+
+        '-g'|'--gencode' )
+            if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
+                echo "${PROGNAME}: option requires an argument -- $( echo $1 | sed 's/^-*//' )" 1>&2
+                exit 1
+            fi
+            H_GEN_VER="$2"
+            M_GEN_VER="$2"
+            shift 2
+            ;;
+
         '-h' | '--help' )
             usage
             ;;
@@ -187,7 +212,6 @@ fi
 
 cat << EOS | tee -a ${LOG_FILE}
 ikra ${VERSION} -RNAseq pipeline centered on Salmon-
-
 EOS
 
 date >> ${LOG_FILE}
@@ -207,6 +231,9 @@ IF_FASTQ ${IF_FASTQ:-false}
 IF_PC ${IF_PC:-false}
 IF_REMOVE_INTERMEDIATES ${IF_REMOVE_INTERMEDIATES:-false}
 OUTPUT_FILE ${OUTPUT_FILE}
+MAPPING_TOOL ${MAPPING_TOOL}
+M_GEN_VER ${M_GEN_VER}
+H_GEN_VER ${H_GEN_VER}
 LOG_FILE ${LOG_FILE}
 EOS
 
@@ -223,30 +250,30 @@ SRA_ROOT=$HOME/ncbi/public/sra
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
 if [[ $REF_SPECIES = mouse ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21
-  REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M${M_GEN_VER}
+  REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.transcripts.fa.gz
   if [ $IF_PC = false ]; then
-    REF_TRANSCRIPT=gencode.vM21.transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.transcripts.fa.gz
   else
-    REF_TRANSCRIPT=gencode.vM21.pc_transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.vM${M_GEN_VER}.pc_transcripts.fa.gz
   fi
   SALMON_INDEX=salmon_index_mouse
-#   REF_GTF=gencode.vM21.annotation.gtf.gz
-  TX2SYMBOL=gencode.vM21.metadata.MGI.gz
+#   REF_GTF=gencode.vM${M_GEN_VER}.annotation.gtf.gz
+  TX2SYMBOL=gencode.vM${M_GEN_VER}.metadata.MGI.gz
 
 elif [[ $REF_SPECIES = human ]]; then
-  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30
-  # REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+  BASE_REF_TRANSCRIPT=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_${H_GEN_VER}
+  # REF_TRANSCRIPT=gencode.v${H_GEN_VER}.pc_transcripts.fa.gz
 
   if [ $IF_PC = false ]; then
-    REF_TRANSCRIPT=gencode.v30.transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.v${H_GEN_VER}.transcripts.fa.gz
   else
-    REF_TRANSCRIPT=gencode.v30.pc_transcripts.fa.gz
+    REF_TRANSCRIPT=gencode.v${H_GEN_VER}.pc_transcripts.fa.gz
   fi
 
   SALMON_INDEX=salmon_index_human
-#   REF_GTF=gencode.v29.annotation.gtf.gz
-  TX2SYMBOL=gencode.v30.metadata.HGNC.gz
+#   REF_GTF=gencode.v${H_GEN_VER}.annotation.gtf.gz
+  TX2SYMBOL=gencode.v${H_GEN_VER}.metadata.HGNC.gz
 else
   echo No reference speice!
   exit
@@ -260,11 +287,15 @@ FASTQC=fastqc
 MULTIQC=multiqc
 # TRIMMOMATIC=trimmomatic
 TRIMGALORE=trim_galore
+HISAT2=hisat2
+STAR_MAPPING=STAR
+SAMBAMBA=sambamba
+BAMCOVERAGE=bamCoverage
 SALMON=salmon
 RSCRIPT_TXIMPORT=Rscript
 WGET=wget
 PIGZ=pigz
-
+TAR=tar
 
 if [[ "$RUNINDOCKER" -eq "1" ]]; then
   echo "RUNNING IN DOCKER"
@@ -285,17 +316,22 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   COWSAY_IMAGE=docker/whalesay
   # quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1 had an error.
   # the earlier version may stop during the download.
-  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_0
-  FASTQC_IMAGE=biocontainers/fastqc:v0.11.5_cv2
-  MULTIQC_IMAGE=maxulysse/multiqc:2.0.0
+  SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.9--pl526haddd2b5_0
+  FASTQC_IMAGE=biocontainers/fastqc:v0.11.9_cv8
+  MULTIQC_IMAGE=quay.io/biocontainers/multiqc:1.10.1--py_0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.3--0
-  SALMON_IMAGE=combinelab/salmon:0.14.0
+  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.6--hdfd78af_1
+  HISAT2_IMAGE=quay.io/biocontainers/hisat2:2.2.1--h1b792b2_3
+  STAR_IMAGE=quay.io/biocontainers/star:2.7.8a--h9ee0642_1
+  SAMBAMBA_IMAGE=quay.io/biocontainers/sambamba:0.8.0--h984e79f_0
+  SALMON_IMAGE=combinelab/salmon:1.4.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
   PIGZ_IMAGE=genevera/docker-pigz
+  TAR_IMAGE=fjukstad/tximport
+  BAMCOVERAGE_IMAGE=quay.io/biocontainers/deeptools:3.5.1--py_0
 
   $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
@@ -303,9 +339,14 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $MULTIQC_IMAGE
   # $DOCKER pull $TRIMMOMATIC_IMAGE
   $DOCKER pull $TRIMGALORE_IMAGE
+  $DOCKER pull $HISAT2_IMAGE
+  $DOCKER pull $STAR_IMAGE
+  $DOCKER pull $SAMBAMBA_IMAGE
+  $DOCKER pull $BAMCOVERAGE_IMAGE
   $DOCKER pull $SALMON_IMAGE
   $DOCKER pull $RSCRIPT_TXIMPORT_IMAGE
   $DOCKER pull $PIGZ_IMAGE
+  $DOCKER pull $TAR_IMAGE
 
   COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
   # PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
@@ -319,11 +360,16 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
 #   TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE $TRIMMOMATIC"
   # TRIMMOMATIC="$DRUN $TRIMMOMATIC_IMAGE " # fjukstad/trimmomaticのentrypointのため
   TRIMGALORE="$DRUN $TRIMGALORE_IMAGE $TRIMGALORE"
+  HISAT2="$DRUN $HISAT2_IMAGE $HISAT2"
+  STAR_MAPPING="$DRUN $STAR_IMAGE $STAR_MAPPING"
+  SAMBAMBA="$DRUN $SAMBAMBA_IMAGE $SAMBAMBA"
+  BAMCOVERAGE="$DRUN $BAMCOVERAGE_IMAGE $BAMCOVERAGE"
   SALMON="$DRUN $SALMON_IMAGE $SALMON"
 #   SALMON="$DRUN $SALMON_IMAGE"
   RSCRIPT_TXIMPORT="$DRUN $RSCRIPT_TXIMPORT_IMAGE $RSCRIPT_TXIMPORT"
   WGET="$DRUN $WGET_IMAGE $WGET"
   PIGZ="$DRUN $PIGZ_IMAGE"
+  TAR="$DRUN $TAR_IMAGE $TAR"
 
    # docker run --rm -v $PWD:/data -v $PWD:/root/ncbi/public/sra --workdir /data -it inutano/sra-toolkit bash
 else
@@ -354,43 +400,30 @@ fi
 
 cat << 'EOF' > tximport_R.R
 #! /usr/bin/Rscript
-
 library(tximport)
 library(readr)
 library(stringr)
-
 # Rscript tximport_R.R gencode.vM19.metadata.MGI.gz Illumina_PE_SRR.csv output.tsv
-
 args1 = commandArgs(trailingOnly=TRUE)[1]
 args2 = commandArgs(trailingOnly=TRUE)[2]
 args3 = commandArgs(trailingOnly=TRUE)[3]
-
 tx2knownGene <- read_delim(args1, '\t', col_names = c('TXNAME', 'GENEID'))
 exp.table <- read.csv(args2, row.names=NULL)
-
 files.raw <- exp.table[,2]
-
 # files.raw <- c("SE/test/ttt30.fq.gz", "SE/test/ttt2.fq.gz")
-
 files.raw <- gsub(".gz$", "", files.raw)
 files.raw <- gsub(".fastq$", "", files.raw)
 files.raw <- gsub(".fq$", "", files.raw)
-
 split.vec <- sapply(files.raw, basename)
 # print(paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep=''))
-
 # files <- paste(c("salmon_output_") , exp.table[,2], c("/quant.sf"), sep='')
 files <- paste(c("salmon_output_") , split.vec, c("/quant.sf"), sep='')
 names(files) <- exp.table[,1]
-
 print(files)
-
 # txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene)
 txi.salmon <- tximport(files, type = "salmon", tx2gene = tx2knownGene, countsFromAbundance="scaledTPM")
-
 write.table(txi.salmon$counts, file=args3, sep="\t",col.names=NA,row.names=T,quote=F,append=F)
 write.table(exp.table[-c(2,3)], file="designtable.csv",row.names=F,quote=F,append=F)
-
 EOF
 
 if [ $IF_FASTQ = false ]; then
@@ -403,13 +436,10 @@ LAYOUT=`echo $i | cut -d, -f3`
 # ADAPTER=`echo $i | cut -d, -f4`
 
 <<COMMENTOUT
-
 There is no -N|--minSpotId and no -X|--maxSpotId option.
 fasterq-dump version 2.9.1 processes always the whole accession,
 although it may support partial access in future versions.
-
 ということで条件分岐させる。
-
 COMMENTOUT
 
 # fasterq_dump
@@ -475,7 +505,7 @@ do
     name=`echo $i | cut -d, -f1`
     SRR=`echo $i | cut -d, -f2`
     LAYOUT=`echo $i | cut -d, -f3`
-    dirname_fq=""
+    dirname_fq="./"
   else
     name=`echo $i | cut -d, -f1`
     fq=`echo $i | cut -d, -f2`
@@ -495,7 +525,7 @@ do
   # trim_galore
   # SE
   if [ $LAYOUT = SE ]; then
-    if [  -f "${dirname_fq}${SRR}.fq"] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
+    if [  -f "${dirname_fq}${SRR}.fq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}.fq
       ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
@@ -560,9 +590,189 @@ fi
 #   wget $BASE_REF_TRANSCRIPT/$REF_GTF
 # fi
 
+################################
+# --alignモードの時にalignmentを行いbamファイルを生成する
+# 2021年4月追加（山崎）
+
+if [[ $MAPPING_TOOL = HISAT2 ]]; then
+
+  # download reference genome index
+  if [[ $REF_SPECIES = mouse ]]; then
+    BASE_REF_GENOME=https://genome-idx.s3.amazonaws.com/hisat
+    REF_GENOME=mm10_genome.tar.gz
+    SPECIES_NAME=mm10
+  elif [[ $REF_SPECIES = human ]]; then
+    BASE_REF_GENOME=https://genome-idx.s3.amazonaws.com/hisat
+    REF_GENOME=hg38_genome.tar.gz
+    SPECIES_NAME=hg38
+  else
+    echo No reference genome!
+    exit
+  fi
+
+  if [[ ! -f "$REF_GENOME" ]]; then
+    $WGET $BASE_REF_GENOME/$REF_GENOME
+    $TAR zxvf $REF_GENOME
+  else
+    $TAR zxvf $REF_GENOME
+  fi
+
+  # mapping by hisat2
+  for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
+  do
+    if [ $IF_FASTQ = false ]; then
+      # fasterq_dump
+      name=`echo $i | cut -d, -f1`
+      SRR=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      dirname_fq=""
+    else
+      name=`echo $i | cut -d, -f1`
+      fq=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      fqname_ext="${fq##*/}"
+      # echo $fqname_ext
+
+      # ファイル名を取り出す（拡張子なし）
+      # basename_fq="${fqname_ext%.*.*}"
+      basename_fq=${fqname_ext}
+      dirname_fq=`dirname $fq`
+      dirname_fq=${dirname_fq}/
+      SRR=${basename_fq}
+    fi
+
+    # SE
+    if [ $LAYOUT = SE ]; then
+      if [[ ! -f "hisat2_output_${SRR}/${SRR}.sam" ]]; then
+        mkdir hisat2_output_${SRR}
+        # libtype auto detection mode
+        $HISAT2\
+        -p $THREADS \
+        --dta \
+        -x $SPECIES_NAME/genome \
+        -U ${dirname_fq}${SRR}_trimmed.fq.gz \
+        -S hisat2_output_${SRR}/${SRR}.sam
+      fi
+
+    # PE
+    else
+      if [[ ! -f "hisat2_output_${SRR}/${SRR}.sam" ]]; then
+        mkdir hisat2_output_${SRR}
+        # libtype auto detection mode
+        $HISAT2\
+        -p $THREADS \
+        --dta \
+        -x $SPECIES_NAME/genome \
+        -1 ${dirname_fq}${SRR}_1_val_1.fq.gz \
+        -2 ${dirname_fq}${SRR}_2_val_2.fq.gz \
+        -S hisat2_output_${SRR}/${SRR}.sam
+      fi
+    fi
+
+    #sambamba
+    if [[ ! -f "hisat2_output_${SRR}/${SRR}.bam" ]]; then
+      $SAMBAMBA view -S hisat2_output_${SRR}/${SRR}.sam -f bam -o hisat2_output_${SRR}/${SRR}.bam
+      $SAMBAMBA sort hisat2_output_${SRR}/${SRR}.bam
+      $SAMBAMBA index hisat2_output_${SRR}/${SRR}.sorted.bam
+      $BAMCOVERAGE -b hisat2_output_${SRR}/${SRR}.sorted.bam -o hisat2_output_${SRR}/${SRR}.bw
+    fi
+  done
+fi
+
+if [[ $MAPPING_TOOL = STAR ]]; then
+
+  # download reference genome
+  if [[ $REF_SPECIES = mouse ]]; then
+    BASE_REF_GENOME=http://ftp.ensembl.org/pub/release-102/fasta/mus_musculus/dna
+    REF_GENOME=Mus_musculus.GRCm38.dna.primary_assembly.fa
+  elif [[ $REF_SPECIES = human ]]; then
+    BASE_REF_GENOME=ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_37
+    REF_GENOME=GRCh38.primary_assembly.genome.fa
+  else
+    echo No reference genome!
+    exit
+  fi
+
+  if [[ ! -f "$REF_GENOME" ]]; then
+    $WGET $BASE_REF_GENOME/${REF_GENOME}.gz
+    gunzip ${REF_GENOME}.gz
+  fi
+
+  # make indexes of reference genome
+  if [[ ! -f "STAR_index/SAindex" ]]; then
+    mkdir STAR_index
+    $STAR_MAPPING \
+    --runMode genomeGenerate \
+    --genomeDir STAR_index \
+    --runThreadN $THREADS \
+    --genomeFastaFiles $REF_GENOME
+  fi
+
+  # mapping by STAR
+  for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
+  do
+    if [ $IF_FASTQ = false ]; then
+      # fasterq_dump
+      name=`echo $i | cut -d, -f1`
+      SRR=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      dirname_fq=""
+    else
+      name=`echo $i | cut -d, -f1`
+      fq=`echo $i | cut -d, -f2`
+      LAYOUT=`echo $i | cut -d, -f3`
+      fqname_ext="${fq##*/}"
+      # echo $fqname_ext
+
+      # ファイル名を取り出す（拡張子なし）
+      # basename_fq="${fqname_ext%.*.*}"
+      basename_fq=${fqname_ext}
+      dirname_fq=`dirname $fq`
+      dirname_fq=${dirname_fq}/
+      SRR=${basename_fq}
+    fi
+
+    # SE
+    if [ $LAYOUT = SE ]; then
+      if [[ ! -f "STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam" ]]; then
+        mkdir STAR_output_${SRR}
+        $STAR_MAPPING \
+        --genomeDir STAR_index \
+        --runThreadN $THREADS \
+        --outFileNamePrefix STAR_output_${SRR}/${SRR}_ \
+        --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn ${dirname_fq}${SRR}_trimmed.fq.gz \
+        --readFilesCommand gunzip -c
+      fi
+
+    # PE
+    else
+      if [[ ! -f "STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam" ]]; then
+        mkdir STAR_output_${SRR}
+        $STAR_MAPPING \
+        --genomeDir STAR_index \
+        --runThreadN $THREADS \
+        --outFileNamePrefix STAR_output_${SRR}/${SRR}_ \
+        --outSAMtype BAM SortedByCoordinate \
+        --readFilesIn ${dirname_fq}${SRR}_1_val_1.fq.gz ${dirname_fq}${SRR}_2_val_2.fq.gz \
+        --readFilesCommand gunzip -c
+      fi
+    fi
+
+    #sambamba
+    if [[ ! -f "STAR_output_${SRR}/${SRR}.bw" ]]; then
+      $SAMBAMBA index STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam
+      $BAMCOVERAGE -b STAR_output_${SRR}/${SRR}_Aligned.sortedByCoord.out.bam -o STAR_output_${SRR}/${SRR}.bw
+    fi
+  done
+fi
+
+################################
+
+
 # instance salmon index
 if [[ ! -d "$SALMON_INDEX" ]]; then
-  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX --type quasi -k 31 --gencode
+  $SALMON index --threads $THREADS --transcripts $REF_TRANSCRIPT --index $SALMON_INDEX -k 31 --gencode
 fi
 
 for i in `tail -n +2  $EX_MATRIX_FILE | tr -d '\r'`
@@ -656,5 +866,4 @@ fi
 
 cat << EOS | tee -a ${LOG_FILE}
 RUN : success!
-
 EOS

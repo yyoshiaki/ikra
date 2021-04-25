@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3352573.svg)](https://doi.org/10.5281/zenodo.3352573)
 
-# ikra v1.2.3 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 A gene expression table (gene × sample) is automatically created from the experiment matrix. The output can be used as an input of [idep](http://bioinformatics.sdstate.edu/idep/). Ikra is an RNAseq pipeline centered on [salmon](https://combine-lab.github.io/salmon/).
 
@@ -30,6 +30,8 @@ Options:
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -l, --log  log file. (default : ikra.log)
+  -a, --align carry out mapping onto reference genome. hisat2 or star (default : None)
+  -g, --gencode specify the version of gencode. (defalut : Mouse=26, Human=37)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
   -h, --help    Show usage.
@@ -123,11 +125,11 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v1.2.3 -RNAseq pipeline centered on Salmon-
+ ikra v2.0 -RNAseq pipeline centered on Salmon-
  ...
 ```
 
-### Version of each tool
+### Version of tools
 
 - sra-tools : 2.10.9
 - FastQC : 0.11.9
@@ -135,6 +137,15 @@ $ git pull origin master
 - Trim Galore! : 0.6.6
 - Salmon : 1.4.0
 - tximport : 1.6.0
+- STAR : 2.7.8a
+- Hisat2 : 2.2.1
+- sambamba : 0.8.0
+- deeptools : 3.5.1
+
+### Version of reference genome (when using alignment option)
+
+- mouse：mm10 (GRCm38)
+- human：hg19 (GRCh38)
 
 ## Test
 
@@ -254,3 +265,10 @@ cd test/cwl_PE && bash test.sh
 
 Hiraoka, Y., Yamada, K., Kawasaki, Y., Hirose, H., Matsumoto, Y., Ishikawa, K., & Yasumizu, Y. (2019). ikra : RNAseq pipeline centered on Salmon. https://doi.org/10.5281/ZENODO.3352573
 
+## Licence (Updated in Ver. 2.0)
+
+This software is freely available for academic users. Usage for commercial purposes is not allowed. Please refer to the LICENCE page. If you are not an academic user, please contact to the author.
+
+## Contact
+
+Yoshiaki Yasumizu, M.D. [yyasumizu@ifrec.osaka-u.ac.jp](yyasumizu@ifrec.osaka-u.ac.jp)
