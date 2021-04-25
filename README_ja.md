@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3352573.svg)](https://doi.org/10.5281/zenodo.3352573)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4718200.svg)](https://doi.org/10.5281/zenodo.4718200)
 
 # ikra v2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
