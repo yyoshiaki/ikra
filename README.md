@@ -30,7 +30,7 @@ Options:
   -t, --threads
   -o, --output  output file. (default : output.tsv)
   -l, --log  log file. (default : ikra.log)
-  -a, --align carry out mapping onto reference genome. hisat2 or star (default : None)
+  -a, --align carry out mapping onto a reference genome. hisat2 or star (default : None)
   -g, --gencode specify the version of gencode. (defalut : Mouse=26, Human=37)
   -s1, --suffix_PE_1    suffix for PE fastq files. (default : _1.fastq.gz)
   -s2, --suffix_PE_2    suffix for PE fastq files. (default : _2.fastq.gz)
@@ -45,6 +45,7 @@ Options:
 - **protein-coding mode** restricts genes to protein coding genes only.
 - **threads**
 - **output** is `output.tsv` by default.  
+- **align mode** generates genome-mapped bam and bigwig files. Note that Salmon works quasi-alignment mode similarly as no-align mode. Generated bw files can be visualized on IGV or other genome browsers.
 **experiment matrix** should be separated by commas (csv format).
 
 **SRR mode**
