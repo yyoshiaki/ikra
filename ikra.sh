@@ -677,6 +677,9 @@ if [[ $MAPPING_TOOL = HISAT2 ]]; then
       $SAMBAMBA index hisat2_output_${SRR}/${SRR}.sorted.bam
       $BAMCOVERAGE -b hisat2_output_${SRR}/${SRR}.sorted.bam -o hisat2_output_${SRR}/${SRR}.bw
     fi
+    
+    rm hisat2_output_${SRR}/${SRR}.sam
+    
   done
 fi
 
