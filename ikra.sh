@@ -528,13 +528,13 @@ do
   if [ $LAYOUT = SE ]; then
     if [  -f "${dirname_fq}${SRR}.fq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}.fq
-      ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+      cp ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
     if [ -f "${dirname_fq}${SRR}.fastq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}.fastq
     fi
     if [ -f "${dirname_fq}${SRR}.fq.gz" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
-      ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+      cp ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
 
     if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
@@ -551,19 +551,19 @@ do
     if [ -f "${dirname_fq}${SRR}_1.fq" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
       ${PIGZ} ${dirname_fq}${SRR}_1.fq
       ${PIGZ} ${dirname_fq}${SRR}_2.fq
-      ln -s ${dirname_fq}${SRR}_1.fq.gz ${dirname_fq}${SRR}_1.fastq.gz
-      ln -s ${dirname_fq}${SRR}_2.fq.gz ${dirname_fq}${SRR}_2.fastq.gz
+      cp ${dirname_fq}${SRR}_1.fq.gz ${dirname_fq}${SRR}_1.fastq.gz
+      cp ${dirname_fq}${SRR}_2.fq.gz ${dirname_fq}${SRR}_2.fastq.gz
     fi
     if [ -f "${dirname_fq}${SRR}_1.fastq" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}_1.fastq
       $PIGZ ${dirname_fq}${SRR}_2.fastq
     fi
     if [  -f "${dirname_fq}${SRR}.fq.gz" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
-      ln -s ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+      cp ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
     if [ -f "${dirname_fq}${SRR}${SUFFIX_PE_1}" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
-      ln -s ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}_1.fastq.gz
-      ln -s ${dirname_fq}${SRR}${SUFFIX_PE_2} ${dirname_fq}${SRR}_2.fastq.gz
+      cp ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}_1.fastq.gz
+      cp ${dirname_fq}${SRR}${SUFFIX_PE_2} ${dirname_fq}${SRR}_2.fastq.gz
     fi
 
     # trimmomatic
