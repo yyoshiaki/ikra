@@ -105,6 +105,8 @@ shell scriptなのでcloneするだけ。
 $ git clone https://github.com/yyoshiaki/ikra.git
 ```
 
+**SRR modeを使用する際は、 [sra-toolkit](https://github.com/ncbi/sra-tools/wiki)　をローカルに予めインストールしてください。**
+
 ## upgrade
 
 ```bash
