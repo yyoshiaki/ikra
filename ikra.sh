@@ -13,7 +13,7 @@ set -xe
 
 PROGNAME="$( basename $0 )"
 
-VERSION="v2.0"
+VERSION="v2.0.1"
 
 cat << "EOF" 
     __                       
@@ -322,7 +322,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   MULTIQC_IMAGE=quay.io/biocontainers/multiqc:1.10.1--py_0
 #   TRIMMOMATIC_IMAGE=fjukstad/trimmomatic
 #   TRIMMOMATIC_IMAGR=comics/trimmomatic
-  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.6--hdfd78af_1
+  TRIMGALORE_IMAGE=quay.io/biocontainers/trim-galore:0.6.7--hdfd78af_0
   HISAT2_IMAGE=quay.io/biocontainers/hisat2:2.2.1--h1b792b2_3
   STAR_IMAGE=quay.io/biocontainers/star:2.7.8a--h9ee0642_1
   SAMBAMBA_IMAGE=quay.io/biocontainers/sambamba:0.8.0--h984e79f_0
@@ -528,13 +528,13 @@ do
   if [ $LAYOUT = SE ]; then
     if [  -f "${dirname_fq}${SRR}.fq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}.fq
-      cp ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+      ln -s ${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
     if [ -f "${dirname_fq}${SRR}.fastq" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}.fastq
     fi
     if [ -f "${dirname_fq}${SRR}.fq.gz" ] && [ ! -f "${dirname_fq}${SRR}.fastq.gz" ]; then
-      cp ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
+      ln -s ${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
 
     if [[ ! -f "${dirname_fq}${SRR}_trimmed.fq.gz" ]]; then
@@ -551,8 +551,8 @@ do
     if [ -f "${dirname_fq}${SRR}_1.fq" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
       ${PIGZ} ${dirname_fq}${SRR}_1.fq
       ${PIGZ} ${dirname_fq}${SRR}_2.fq
-      cp ${dirname_fq}${SRR}_1.fq.gz ${dirname_fq}${SRR}_1.fastq.gz
-      cp ${dirname_fq}${SRR}_2.fq.gz ${dirname_fq}${SRR}_2.fastq.gz
+      ln -s ${SRR}_1.fq.gz ${dirname_fq}${SRR}_1.fastq.gz
+      ln -s ${SRR}_2.fq.gz ${dirname_fq}${SRR}_2.fastq.gz
     fi
     if [ -f "${dirname_fq}${SRR}_1.fastq" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
       $PIGZ ${dirname_fq}${SRR}_1.fastq
@@ -562,8 +562,8 @@ do
       cp ${dirname_fq}${SRR}.fq.gz ${dirname_fq}${SRR}.fastq.gz
     fi
     if [ -f "${dirname_fq}${SRR}${SUFFIX_PE_1}" ] && [ ! -f "${dirname_fq}${SRR}_1.fastq.gz" ]; then
-      cp ${dirname_fq}${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}_1.fastq.gz
-      cp ${dirname_fq}${SRR}${SUFFIX_PE_2} ${dirname_fq}${SRR}_2.fastq.gz
+      ln -s ${SRR}${SUFFIX_PE_1} ${dirname_fq}${SRR}_1.fastq.gz
+      ln -s ${SRR}${SUFFIX_PE_2} ${dirname_fq}${SRR}_2.fastq.gz
     fi
 
     # trimmomatic

@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4718200.svg)](https://doi.org/10.5281/zenodo.4718200)
 
-# ikra v2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v2.0.1 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 [idep](http://bioinformatics.sdstate.edu/idep/)のinputとして発現量テーブル（gene × sample）をexperiment matrixから自動でつくる。salmonを用いる。
 
@@ -116,23 +116,17 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v2.0 -RNAseq pipeline centered on Salmon-
+ ikra v2.0.1 -RNAseq pipeline centered on Salmon-
  ...
- - sra-tools : 2.10.9
-- FastQC : 0.11.9
-- MultiQC : 0.10.1
-- Trim Galore! : 0.6.6
-- Salmon : 1.4.0
-- tximport : 1.6.0
 ```
 
 ### Version of tools
 
-- sra-tools : > 2.10.7
-- FastQC 0.11.5
-- MultiQC : 1.4
-- Trim Galore! : 0.6.3
-- Salmon : 0.14.0
+- sra-tools : 2.10.9
+- FastQC : 0.11.9
+- MultiQC : 0.10.1
+- Trim Galore! : 0.6.7
+- Salmon : 1.4.0
 - tximport : 1.6.0
 - STAR : 2.7.8a
 - Hisat2 : 2.2.1
@@ -143,7 +137,6 @@ $ git pull origin master
 
 - mouse：mm10 (GRCm38)
 - human：hg19 (GRCh38)
-
 
 
 ## test
@@ -270,7 +263,7 @@ cd test/cwl_PE && bash test.sh
 ## Citation
 
 ```
-Hiraoka, Y., Yamada, K., Yamasaki, R., Kawasaki, Y., Kitabatake, R., Matsumoto, Y., Ishikawa, K., Umezu, Y., Hirose, H., & Yasumizu, Y. (2021). ikra v2.0: RNAseq pipeline centered on Salmon. https://doi.org/10.5281/zenodo.4718200
+Hiraoka, Y., Yamada, K., Yamasaki, R., Kawasaki, Y., Kitabatake, R., Matsumoto, Y., Ishikawa, K., Umezu, Y., Hirose, H., & Yasumizu, Y. (2021). ikra v2.0.1: RNAseq pipeline centered on Salmon. https://doi.org/10.5281/zenodo.4718200
 ```
 
 ## Licence (Updated in Ver. 2.0)

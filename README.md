@@ -1,6 +1,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4718200.svg)](https://doi.org/10.5281/zenodo.4718200)
 
-# ikra v2.0 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
+# ikra v2.0.1 -RNAseq pipeline centered on Salmon-<img src="img/ikra.png" width="20%" align="right" />
 
 A gene expression table (gene × sample) is automatically created from the experiment matrix. The output can be used as an input of [idep](http://bioinformatics.sdstate.edu/idep/). Ikra is an RNAseq pipeline centered on [salmon](https://combine-lab.github.io/salmon/).
 
@@ -126,7 +126,7 @@ $ git pull origin master
 ```bash 
  $ bash ikra.sh --version
  ...
- ikra v2.0 -RNAseq pipeline centered on Salmon-
+ ikra v2.0.1 -RNAseq pipeline centered on Salmon-
  ...
 ```
 
@@ -135,7 +135,7 @@ $ git pull origin master
 - sra-tools : 2.10.9
 - FastQC : 0.11.9
 - MultiQC : 0.10.1
-- Trim Galore! : 0.6.6
+- Trim Galore! : 0.6.7
 - Salmon : 1.4.0
 - tximport : 1.6.0
 - STAR : 2.7.8a
