@@ -138,7 +138,7 @@ $ git pull origin master
 ### Version of reference genome (alignment optionを使う場合)
 
 - mouse：mm10 (GRCm38)
-- human：hg19 (GRCh38)
+- human：hg38 (GRCh38)
 
 
 ## test
