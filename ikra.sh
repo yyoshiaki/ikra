@@ -851,9 +851,9 @@ if [[ ! -f "$OUTPUT_FILE" ]]; then
 fi
 
 # tximport
-if [[  -f "tximport_R.R" ]]; then
-  rm tximport_R.R
-fi
+# if [[  -f "tximport_R.R" ]]; then
+#   rm tximport_R.R
+# fi
 
 if [ $IF_REMOVE_INTERMEDIATES = true ]; then
   rm -f *fastq.gz
