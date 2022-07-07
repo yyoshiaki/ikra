@@ -326,7 +326,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   HISAT2_IMAGE=quay.io/biocontainers/hisat2:2.2.1--h1b792b2_3
   STAR_IMAGE=quay.io/biocontainers/star:2.7.8a--h9ee0642_1
   SAMBAMBA_IMAGE=quay.io/biocontainers/sambamba:0.8.0--h984e79f_0
-  SALMON_IMAGE=combinelab/salmon:1.4.0
+  SALMON_IMAGE=combinelab/salmon:1.9.0
 #   SALMON_IMAGE=fjukstad/salmon
   RSCRIPT_TXIMPORT_IMAGE=fjukstad/tximport
   WGET_IMAGE=fjukstad/tximport
