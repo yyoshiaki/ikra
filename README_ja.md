@@ -272,6 +272,3 @@ Hiraoka, Y., Yamada, K., Yamasaki, R., Kawasaki, Y., Kitabatake, R., Matsumoto, 
 
 This software is freely available for academic users. Usage for commercial purposes is not allowed. Please refer to the LICENCE page. If you are not an academic user, please contact to the author.
 
-## Contact
-
-Yoshiaki Yasumizu, M.D. [yyasumizu@ifrec.osaka-u.ac.jp](yyasumizu@ifrec.osaka-u.ac.jp)
