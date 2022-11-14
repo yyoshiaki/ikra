@@ -90,7 +90,7 @@ Options:
 - `—-gcBias` option was added on salmon. You can refer to [Mike Love's blog :
 RNA-seq fragment sequence bias](https://mikelove.wordpress.com/2016/09/26/rna-seq-fragment-sequence-bias/).
 - `--validateMappings` flag was also adopted. (You can’t use it while using alignment-base mode.) Please see [salmon Frequently Asked Questions](https://combine-lab.github.io/salmon/faq/) for further details.
-- The reference for human is GENCODE Release 31 (GRCh38.p12), and that for mouse is GENCODE Release M22 (GRCm38.p6)
+- The reference for human is GENCODE Release 37 (GRCh38), and that for mouse is GENCODE Release M26 (GRCm38)
 
 ## Major bugs that have fixed
 
