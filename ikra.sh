@@ -314,7 +314,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   # 危険！
   # chmod 777 .
 
-  COWSAY_IMAGE=docker/whalesay
+  # COWSAY_IMAGE=docker/whalesay
   # quay.io/biocontainers/sra-tools:2.10.7--pl526haddd2b5_1 had an error.
   # the earlier version may stop during the download.
   SRA_TOOLKIT_IMAGE=quay.io/biocontainers/sra-tools:2.10.9--pl526haddd2b5_0
@@ -334,7 +334,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   TAR_IMAGE=fjukstad/tximport
   BAMCOVERAGE_IMAGE=quay.io/biocontainers/deeptools:3.5.1--py_0
 
-  $DOCKER pull $COWSAY_IMAGE
+  # $DOCKER pull $COWSAY_IMAGE
   $DOCKER pull $SRA_TOOLKIT_IMAGE
   $DOCKER pull $FASTQC_IMAGE
   $DOCKER pull $MULTIQC_IMAGE
@@ -349,7 +349,7 @@ if [[ "$RUNINDOCKER" -eq "1" ]]; then
   $DOCKER pull $PIGZ_IMAGE
   $DOCKER pull $TAR_IMAGE
 
-  COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
+  # COWSAY="$DRUN $COWSAY_IMAGE $COWSAY"
   # PREFETCH="$DRUN -v $PWD:/root/ncbi/public/sra $SRA_TOOLKIT_IMAGE $PREFETCH"
   # FASTQ_DUMP="$DRUN $SRA_TOOLKIT_IMAGE $FASTQ_DUMP"
   FASTQ_DUMP="$FASTQ_DUMP"
@@ -380,7 +380,7 @@ fi
 
 # if [ $MAX_SPOT_ID = 0 ]; then
 if [ $IF_TEST = true ]; then
-  $COWSAY "test mode( MAX_SPOT_ID is set)"
+  echo "test mode( MAX_SPOT_ID is set)"
   MAX_SPOT_ID="-X 100000"
 else
   MAX_SPOT_ID=""
