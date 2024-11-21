@@ -100,7 +100,7 @@ for opt in "$@"; do
             IF_PC=true; shift
             ;;
         '-ct'|'--comprehensive-transcripts' )
-            IF_PC=true; shift
+            IF_PC=false; shift
             ;;
         '-u'|'--udocker' )
             DOCKER=udocker; shift
